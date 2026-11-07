@@ -7070,21 +7070,34 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (p.foreign) L.push(['adapt', '적응력', h.adapt]);
     return L;
   }
+  // 능력치 그래프: 정확한 값은 선, 범위(n~n)는 띠, 모르는 항목은 '?' (가운데 값을 찍지 않아 숨긴 정보가 새지 않게)
   function fmRadar(axes) {
     const n = axes.length, cx = 110, cy = 104, R = 74;
-    const pt = (i, r) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
+    const pt = (i, v) => { const r = R * Math.max(0.04, Math.min(1, v / 20)); const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
     let g = '';
-    for (const k of [0.25, 0.5, 0.75, 1]) g += '<polygon points="' + axes.map((_, i) => pt(i, R * k).join(',')).join(' ') + '" fill="none" stroke="var(--line2)" stroke-width="' + (k === 1 ? 1.2 : 0.7) + '"/>';
-    g += axes.map((_, i) => { const [x, y] = pt(i, R); return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y + '" stroke="var(--line)" stroke-width=".7"/>'; }).join('');
-    const known = axes.map((a) => a[1] != null);
-    const poly = axes.map((a, i) => pt(i, R * Math.max(0.04, Math.min(1, (a[1] == null ? 0 : a[1]) / 20))).join(',')).join(' ');
-    g += '<polygon points="' + poly + '" fill="color-mix(in srgb, var(--accent) 28%, transparent)" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>';
-    g += axes.map((a, i) => { const [x, y] = pt(i, R * Math.max(0.04, Math.min(1, (a[1] || 0) / 20))); return known[i] ? '<circle cx="' + x + '" cy="' + y + '" r="2.6" fill="var(--accent)"/>' : ''; }).join('');
+    for (const k of [0.25, 0.5, 0.75, 1]) g += '<polygon points="' + axes.map((_, i) => pt(i, 20 * k).join(',')).join(' ') + '" fill="none" stroke="var(--line2)" stroke-width="' + (k === 1 ? 1.2 : 0.7) + '"/>';
+    g += axes.map((_, i) => { const [x, y] = pt(i, 20); return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y + '" stroke="var(--line)" stroke-width=".7"/>'; }).join('');
+    const lo = axes.map((a) => a[1] == null ? 1 : typeof a[1] === 'object' ? a[1].lo : a[1]);
+    const hi = axes.map((a) => a[1] == null ? 20 : typeof a[1] === 'object' ? a[1].hi : a[1]);
+    const exact = axes.every((a) => typeof a[1] === 'number');
+    const ring = (vals) => vals.map((v, i) => pt(i, v).join(',')).join(' ');
+    if (exact) {
+      g += '<polygon points="' + ring(lo) + '" fill="color-mix(in srgb, var(--accent) 28%, transparent)" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>';
+      g += lo.map((v, i) => { const [x, y] = pt(i, v); return '<circle cx="' + x + '" cy="' + y + '" r="2.6" fill="var(--accent)"/>'; }).join('');
+    } else {
+      // 범위 띠: 바깥(최대)과 안쪽(최소) 사이를 칠함
+      const path = (vals, rev) => { const P = vals.map((v, i) => pt(i, v)); if (rev) P.reverse(); return 'M' + P.map((q) => q.join(',')).join('L') + 'Z'; };
+      g += '<path d="' + path(hi) + path(lo, true) + '" fill="color-mix(in srgb, var(--accent) 22%, transparent)" fill-rule="evenodd"/>';
+      g += '<polygon points="' + ring(hi) + '" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round"/>';
+      g += '<polygon points="' + ring(lo) + '" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-opacity=".6" stroke-linejoin="round"/>';
+    }
     g += axes.map((a, i) => {
-      const [x, y] = pt(i, R + 17); const anc = Math.abs(x - cx) < 6 ? 'middle' : x > cx ? 'start' : 'end';
-      return '<text x="' + x + '" y="' + (y + 4) + '" text-anchor="' + anc + '" font-size="11" fill="var(--muted)">' + a[0] + ' <tspan font-weight="700" fill="var(--fg)">' + (a[1] == null ? '?' : Math.round(a[1])) + '</tspan></text>';
+      const [x, y] = pt(i, 20 + 4.6); const anc = Math.abs(x - cx) < 6 ? 'middle' : x > cx ? 'start' : 'end';
+      const t = a[2] != null ? a[2] : a[1] == null ? '?' : typeof a[1] === 'object' ? a[1].lo + '~' + a[1].hi : Math.round(a[1]);
+      return '<text x="' + x + '" y="' + (y + 4) + '" text-anchor="' + anc + '" font-size="11" fill="var(--muted)">' + a[0] + ' <tspan font-weight="700" fill="' + (a[1] == null ? 'var(--muted)' : 'var(--fg)') + '">' + t + '</tspan></text>';
     }).join('');
-    return '<svg class="fm-radar" viewBox="-30 0 280 210" role="img" aria-label="능력치 그래프">' + g + '</svg>';
+    return '<svg class="fm-radar" viewBox="-36 0 292 210" role="img" aria-label="능력치 그래프' + (exact ? '' : ' (범위로 표시)') + '">' + g + '</svg>' +
+      (exact ? '' : '<p class="fm-note" style="text-align:center">띠는 스카우트가 짐작하는 범위, ?는 아직 모르는 항목입니다.</p>');
   }
   function fmTraits(p, V, pool) {
     const good = [], bad = [];
@@ -7209,8 +7222,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     attrs += '</div>';
     // ---------- 그래프·장단점 ----------
-    const axes = p.pr ? [['구위', fmVal(V.stf)], ['제구', fmVal(V.ctl)], ['무브먼트', fmVal(V.mov)], ['체력', fmVal(V.sta)], ['견제', fmVal(V.hold)], ['구속', fmVal(V.velo) == null ? null : Math.max(1, Math.min(20, (fmVal(V.velo) - 128) / 1.2))]]
-      : [['컨택', fmVal(V.con)], ['파워', fmVal(V.pow)], ['갭파워', fmVal(V.gap)], ['선구안', fmVal(V.eye)], ['삼진 회피', fmVal(V.avk)], ['주력', fmVal(V.spd)], ['수비', fmVal(V.fld)], ['송구', fmVal(V.arm)]];
+    const vsc = (v) => Math.max(1, Math.min(20, Math.round((v - 128) / 1.2)));
+    const veloAx = V.velo == null ? null : typeof V.velo === 'object' ? { lo: vsc(V.velo.lo), hi: vsc(V.velo.hi) } : vsc(V.velo);
+    const veloTxt = V.velo == null ? null : typeof V.velo === 'object' ? V.velo.lo + '~' + V.velo.hi + 'km' : V.velo + 'km';
+    const axes = p.pr ? [['구위', V.stf], ['제구', V.ctl], ['무브먼트', V.mov], ['체력', V.sta], ['견제', V.hold], ['구속', veloAx, veloTxt]]
+      : [['컨택', V.con], ['파워', V.pow], ['갭파워', V.gap], ['선구안', V.eye], ['삼진 회피', V.avk], ['주력', V.spd], ['수비', V.fld], ['송구', V.arm]];
     const [good, bad] = fmTraits(p, V, pool);
     let mid = '<div class="fm-anal"><div class="fm-rad"><h3>능력치 그래프</h3>' + fmRadar(axes) + '</div><div class="fm-traits"><h3 class="rep">장단점 보고서</h3><div><h3 class="good">장점</h3>' + (good.length ? '<ul>' + good.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '<p class="muted">' + (pool && lvN < 2 ? '더 지켜봐야 알 수 있습니다.' : '눈에 띄는 장점이 없습니다.') + '</p>') + '</div>' +
       '<div><h3 class="bad">단점</h3>' + (bad.length ? '<ul>' + bad.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '<p class="muted">' + (pool && lvN < 2 ? '더 지켜봐야 알 수 있습니다.' : '눈에 띄는 약점이 없습니다.') + '</p>') + '</div></div></div>';
