@@ -6450,8 +6450,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function newsHTML() {
     const tr = S.trans || [];
     if (!tr.length) return '<section class="card"><div class="empty">아직 이적 소식이 없습니다.</div></section>';
-    const lab = { trade: '트레이드', release: '방출', waiver: '웨이버', uso: '울산', fa: '자유계약', mgr: '감독' };
-    return '<section class="card"><div class="news">' + tr.map((t) => '<div class="nw"><span class="d num">' + C.fmtDate(t.date) + '</span><span class="badge' + (t.kind === 'trade' ? ' acc' : '') + '">' + (lab[t.kind] || '') + '</span><span>' + esc(t.text) + '</span></div>').join('') + '</div></section>';
+    const lab = { trade: '트레이드', release: '방출', waiver: '웨이버', uso: '울산', fa: '자유계약', mgr: '감독', foreign: '영입', draft: '드래프트', post: '포스팅' };
+    return '<section class="card"><div class="news">' + tr.map((t) => '<div class="nw"><span class="d num">' + C.fmtDate(t.date) + '</span><span class="badge' + (t.kind === 'trade' ? ' acc' : t.kind === 'foreign' || t.kind === 'fa' ? ' win' : t.kind === 'release' ? ' loss' : '') + '">' + (lab[t.kind] || '기타') + '</span><span>' + esc(t.text) + '</span></div>').join('') + '</div></section>';
   }
   function mktHTML() {
     const n = (S.offers || []).filter((o) => o.until >= today()).length;
