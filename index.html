@@ -2581,15 +2581,33 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     { id: 'JP', name: '일본', note: 'NPB, NPB 2군, 독립리그', cost: 250 },
     { id: 'AU', name: '호주', note: 'ABL', cost: 200 }
   ];
-  const DREG = [
-    { id: 'SEL', name: '서울', w: 22, hs: ['한강고', '남산고', '청계고', '관악고', '성동고', '목동고', '도봉고'], un: ['한양체대', '서울과학대', '청량대'] },
-    { id: 'GGI', name: '경기·인천', w: 20, hs: ['수원북고', '인천해송고', '부천고', '성남정보고', '안산공고', '평택고'], un: ['경인대', '인천해양대', '수원체대'] },
-    { id: 'GW', name: '강원', w: 6, hs: ['춘천고', '강릉영동고', '원주고'], un: ['강원체대'] },
-    { id: 'CC', name: '충청', w: 10, hs: ['대전중앙고', '청주고', '천안북일고', '공주고'], un: ['충청대', '대전과학대'] },
-    { id: 'JL', name: '전라', w: 12, hs: ['광주제일고', '전주고', '목포해양고', '순천고', '군산상업고'], un: ['호남대', '전북체대'] },
-    { id: 'GB', name: '경북', w: 14, hs: ['대구상원고', '경북고', '포항제철고', '경주고', '구미공고'], un: ['영남체대', '대구가톨릭대'] },
-    { id: 'GN', name: '경남·부산', w: 16, hs: ['부산고', '경남고', '마산용마고', '김해고', '개성고', '울산공고'], un: ['동아체대', '경남대', '부경대'] }
+  // 아마추어 권역: 고교 12개 권역, 대학 6개 권역 (실제 야구부 목록)
+  const HREG = [
+    { id: 'HSA', name: '서울 A', lvl: 'H', sch: ['경기고', '경기상고', '덕수고', '배재고', '서울고', '신일고', '장충고', '중앙고'] },
+    { id: 'HSB', name: '서울 B', lvl: 'H', sch: ['경동고', '배명고', '서울동산고', '서울디자인고', '서울아이티고', '서울자동차고', '충암고', '휘문고'] },
+    { id: 'HSC', name: '서울 C', lvl: 'H', sch: ['서울컨벤션고', '선린인터넷고', '성남고', '세명컴퓨터고', '우신고', '청원고'] },
+    { id: 'HKA', name: '경인 A', lvl: 'H', sch: ['라온고', '상우고', '세원고', '소래고', '신흥고', '야탑고', '유신고', '장안고'] },
+    { id: 'HKB', name: '경인 B', lvl: 'H', sch: ['경기항공고', '경민IT고', '김포경기과기고', '백송고', '부원고', '인창고', '진영고', '충훈고'] },
+    { id: 'HKC', name: '경인 C', lvl: 'H', sch: ['동산고', '비봉고', '안산공고', '율곡고', '인천고', '제물포고', '청담고'] },
+    { id: 'HGC', name: '강원·충청', lvl: 'H', sch: ['강릉고', '강원고', '상동고', '설악고', '원주고', '공주고', '천안북일고', '세광고', '청주고'] },
+    { id: 'HDJ', name: '대전·전북', lvl: 'H', sch: ['군산상일고', '대전고', '대전제일고', '인상고', '전북인공지능고', '전주고'] },
+    { id: 'HGJ', name: '광주·전남', lvl: 'H', sch: ['광주동성고', '광주일고', '광주진흥고', '순천효천고', '화순고', '광남고'] },
+    { id: 'HGA', name: '경상 A', lvl: 'H', sch: ['금남고', '김해고', '마산고', '마산용마고', '물금고', '야로고', '창원공고'] },
+    { id: 'HGB', name: '경상 B', lvl: 'H', sch: ['경북고', '경주고', '대구고', '대구상원고', '도개고', '예일메디텍고', '의성고', '포항제철고'] },
+    { id: 'HGS', name: '경상 C', lvl: 'H', sch: ['개성고', '경남고', '부경고', '부산고', '부산공고', '제주고'] }
   ];
+  const UREG = [
+    { id: 'USE', name: '서울', lvl: 'U', sch: ['건국대', '고려대', '동국대', '사이버한국외대', '서울대', '연세대'] },
+    { id: 'UKI', name: '경인', lvl: 'U', sch: ['인하대', '경희대', '성균관대', '한양대', '중앙대', '김포대', '홍익대'] },
+    { id: 'UCG', name: '충청·강원', lvl: 'U', sch: ['우석대', '유원대', '충북보건과학대', '단국대', '청운대', '신성대', '강릉영동대'] },
+    { id: 'UDJ', name: '대전·전라', lvl: 'U', sch: ['대덕대', '원광대', '한일장신대', '호원대', '목포과학대'] },
+    { id: 'UGN', name: '경남·부산', lvl: 'U', sch: ['경성대', '동아대', '동의과학대', '동의대', '부산과기대', '경남대', '동원과기대', '제주관광대'] },
+    { id: 'UGB', name: '경북', lvl: 'U', sch: ['경일대', '구미대', '영남대', '계명대', '수성대'] }
+  ];
+  const DREG = HREG.concat(UREG);
+  // 예전 저장의 7개 지역 → 새 권역
+  const OLD_REG = { SEL: ['HSA', 'USE'], GGI: ['HKA', 'UKI'], GW: ['HGC', 'UCG'], CC: ['HGC', 'UCG'], JL: ['HGJ', 'UDJ'], GB: ['HGB', 'UGB'], GN: ['HGS', 'UGN'] };
+  const SCOUT_H = 4; // 아마추어 스카우트 6명 중 고교 담당 4명, 대학 담당 2명
   const SCOUT_SLOTS = { D: 6, F: 3 };
   const SCOUT_WEEK = { D: 3.5, F: 7 }; // 지역에 스카우트 1명이 1주 있을 때 그 지역 후보마다 쌓이는 정보(%)
   const SCOUT_PASSIVE = { D: 1.0, F: 0 }; // 리그 전반 소문
@@ -2598,9 +2616,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   // 후보 지역: 외국인은 소속 리그, 아마추어는 학교 지역
   function assignRegion(p, rng) {
     if (p.pool === 'D') {
-      const r = rng.weighted(DREG.map((x) => [x, x.w]));
-      p.sreg = r.id; p.slvl = p.age <= 19 ? 'H' : 'U';
-      p.school = rng.pick(p.slvl === 'H' ? r.hs : r.un) + (p.slvl === 'H' ? ' 3학년' : p.age <= 20 ? ' 2학년 (얼리)' : ' 4학년');
+      p.slvl = p.age <= 19 ? 'H' : 'U';
+      const L = p.slvl === 'H' ? HREG : UREG;
+      const r = rng.weighted(L.map((x) => [x, x.sch.length]));
+      p.sreg = r.id; p.sch = rng.pick(r.sch);
+      p.school = p.sch + (p.slvl === 'H' ? ' 3학년' : p.age <= 20 ? ' 2학년 (얼리)' : ' 4학년');
     } else if (p.pool === 'F' || p.pool === 'A') {
       const lg = p.lg || '';
       p.sreg = /일본|NPB/.test(lg) ? 'JP' : /ABL|호주/.test(lg) ? 'AU' : 'NA';
@@ -2622,26 +2642,46 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     p.scoutPa = Math.round(clamp(shr(p.pa, 12) + p.sz2 * (4.0 * u + 0.35), p.scout, 20) * 2) / 2;
   }
   function regName(id) { const r = FREG.find((x) => x.id === id) || DREG.find((x) => x.id === id); return r ? r.name : '-'; }
+  function regLabel(id) { const r = DREG.find((x) => x.id === id); return r ? (r.lvl === 'H' ? '고교 ' : '대학 ') + r.name : regName(id); }
+  // 예전 저장 정리: 7개 지역 → 고교·대학 권역, 스카우트는 앞 4명 고교·뒤 2명 대학 담당
+  function migrateScouts(S) {
+    const st = scoutStaff(S);
+    st.D.forEach((x, i) => {
+      const lvl = i < SCOUT_H ? 'H' : 'U';
+      if (x.reg && OLD_REG[x.reg]) x.reg = OLD_REG[x.reg][lvl === 'H' ? 0 : 1];
+      if (x.reg && !(lvl === 'H' ? HREG : UREG).some((r) => r.id === x.reg)) x.reg = null;
+      x.lvl = lvl;
+    });
+    const P = S.league.players;
+    for (const id in P) {
+      const p = P[id];
+      if (p.pool !== 'D' || (p.sch && DREG.some((r) => r.id === p.sreg))) continue;
+      p.sreg = null; assignRegion(p, new RNG((p.id * 2654435761 ^ 0x5c40) >>> 0));
+    }
+  }
   function scoutStaff(S) {
     if (!S.scouts) {
       const rng = new RNG(((S.seed || 7) ^ 0x51c0) >>> 0);
       const mk = (n) => Array.from({ length: n }, () => ({ name: C.koreanName(rng, 1975 + rng.int(0, 20)), reg: null, lvl: 'H' }));
       S.scouts = { F: mk(SCOUT_SLOTS.F), D: mk(SCOUT_SLOTS.D) };
-      S.scouts.F[0].reg = 'NA'; S.scouts.D[0].reg = 'SEL';
+      S.scouts.D.forEach((x, i) => { x.lvl = i < SCOUT_H ? 'H' : 'U'; });
+      S.scouts.F[0].reg = 'NA'; S.scouts.D[0].reg = 'HSA'; S.scouts.D[SCOUT_H].reg = 'USE';
     }
     return S.scouts;
   }
   function setScout(S, kind, idx, reg, lvl) {
     const sc = scoutStaff(S)[kind] && scoutStaff(S)[kind][idx];
     if (!sc) return { ok: false };
-    if (reg !== undefined) sc.reg = reg || null;
-    if (lvl) sc.lvl = lvl === 'U' ? 'U' : 'H';
+    if (reg !== undefined) {
+      if (kind === 'D' && reg && !DREG.some((r) => r.id === reg && r.lvl === sc.lvl)) return { ok: false };
+      sc.reg = reg || null;
+    }
     return { ok: true };
   }
   // 이 후보를 보고 있는 우리 스카우트 수
   function scoutsOn(S, p) {
     const st = scoutStaff(S);
-    if (p.pool === 'D') return st.D.filter((x) => x.reg === p.sreg && x.lvl === p.slvl).length;
+    if (p.pool === 'D') return st.D.filter((x) => x.reg === p.sreg).length;
     if (p.pool === 'F' || p.pool === 'A') return st.F.filter((x) => x.reg === p.sreg).length;
     return 0;
   }
@@ -2711,6 +2751,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function weeklyCost(S) { return scoutStaff(S).F.reduce((a, x) => a + (x.reg ? (FREG.find((r) => r.id === x.reg) || { cost: 0 }).cost : 0), 0); }
   function scoutSync(S, date) {
     if (!date) return;
+    if (G.OD.Amateur) G.OD.Amateur.tick(S, date);
     if (!S.scoutDate) { S.scoutDate = date; return; }
     const days = Math.round((Date.parse(date) - Date.parse(S.scoutDate)) / 864e5);
     if (days < 7) { if (days < 0) S.scoutDate = date; return; }
@@ -2727,7 +2768,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       if (!add || p.sk >= 100) continue;
       const before = p.sk;
       p.sk = Math.min(100, p.sk + add);
-      if (n && before < 95 && p.sk >= 95) { const k = regName(p.sreg) + (kind === 'D' ? (p.slvl === 'H' ? ' 고교' : ' 대학') : ''); (done[k] = done[k] || []).push(p.name); }
+      if (n && before < 95 && p.sk >= 95) { const k = kind === 'D' ? regLabel(p.sreg) : regName(p.sreg); (done[k] = done[k] || []).push(p.name); }
       refreshEst(p);
     }
     const cost = weeklyCost(S) * wk;
@@ -2950,7 +2991,110 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   G.OD.Market = { scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
     acceptOffer, declineOffer, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
     seasonLeft, refreshEntries, log, moveTo, makeCandidate, setupManagers, mgrRating, mgrText, hireManager, weekly, fairSalary,
-    F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, FREG, DREG, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
+    F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, regLabel, migrateScouts, FREG, DREG, HREG, UREG, SCOUT_H, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- amateur.js ---- */
+// 아마추어 야구 대회: 중계 없이 4강·우승 소식만 메시지로 (스카우트 결정용)
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  const C = OD.Core;
+  const MK = () => OD.Market;
+  const SE = () => OD.Season;
+
+  // 대회 정보 파일 기준 일정 (월-일). 4강 확정일 → 이틀 뒤 결승 (U-리그는 9월 플레이오프)
+  const TOURS = [
+    { k: 'emart', name: '신세계 이마트배 전국고교야구대회', lvl: 'H', when: '3월~4월', semi: '04-12', fin: '04-14' },
+    { k: 'gold', name: '황금사자기 전국고교야구대회', lvl: 'H', when: '5월', semi: '05-24', fin: '05-26' },
+    { k: 'blue', name: '청룡기 전국고교야구선수권대회', lvl: 'H', when: '6월~7월 (전반기)', semi: '07-05', fin: '07-07' },
+    { k: 'univ', name: '전국대학야구선수권대회', lvl: 'U', when: '7월', semi: '07-16', fin: '07-18' },
+    { k: 'pres', name: '대통령배 전국고교야구대회', lvl: 'H', when: '7월 (후반기)', semi: '07-25', fin: '07-27' },
+    { k: 'upres', name: '대통령기 전국대학야구대회', lvl: 'U', when: '8월', semi: '08-16', fin: '08-18' },
+    { k: 'phoenix', name: '봉황대기 전국고교야구대회', lvl: 'H', when: '8월', semi: '08-24', fin: '08-26', note: '등록된 모든 고교 참가' },
+    { k: 'uleague', name: 'KSUF 대학야구 U-리그', lvl: 'U', when: '3월~9월', semi: '09-13', fin: '09-20', league: true }
+  ];
+
+  function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  // 학교 전력: 해마다 바뀌는 기본 전력 + 올해 드래프트 후보들의 실력
+  function strengths(S, year, lvl) {
+    const regs = lvl === 'H' ? MK().HREG : MK().UREG;
+    const P = S.league.players, out = {};
+    for (const r of regs) for (const sch of r.sch) {
+      const rng = new C.RNG(hash(year + ':' + sch + ':' + (S.seed || 7)));
+      out[sch] = { sch, reg: r.id, v: rng.normal(0, 1.2), pros: [] };
+    }
+    for (const id in P) {
+      const p = P[id];
+      if (p.pool !== 'D' || p.slvl !== lvl || !out[p.sch]) continue;
+      out[p.sch].pros.push(p);
+      out[p.sch].v += Math.max(0, p.ca - 7) * 0.45;
+    }
+    return out;
+  }
+  function beats(rng, a, b) { return rng.chance(1 / (1 + Math.exp(-(a.v - b.v) * 0.9))); }
+  function play(S, t, year) {
+    const st = strengths(S, year, t.lvl);
+    const rng = new C.RNG(hash(year + ':' + t.k + ':' + (S.seed || 7)));
+    const left = Object.values(st);
+    const four = [];
+    for (let i = 0; i < 4; i++) {
+      const pick = rng.weighted(left.map((x) => [x, Math.exp(x.v / 1.1)]));
+      four.push(pick); left.splice(left.indexOf(pick), 1);
+    }
+    const f1 = beats(rng, four[0], four[3]) ? four[0] : four[3];
+    const f2 = beats(rng, four[1], four[2]) ? four[1] : four[2];
+    const win = beats(rng, f1, f2) ? f1 : f2, ru = win === f1 ? f2 : f1;
+    // MVP: 우승 학교의 드래프트 후보 중 (있을 때만)
+    let mvp = null;
+    if (win.pros.length) mvp = rng.weighted(win.pros.map((p) => [p, Math.exp(p.ca / 2)])).id;
+    return { four: four.map((x) => x.sch), reg: Object.fromEntries(four.map((x) => [x.sch, x.reg])), win: win.sch, ru: ru.sch, mvp };
+  }
+  function schoolLine(S, sch, reg, lvl) {
+    const P = S.league.players;
+    let n = 0; for (const id in P) { const p = P[id]; if (p.pool === 'D' && p.sch === sch) n++; }
+    const sc = MK().scoutStaff(S).D.filter((x) => x.reg === reg).length;
+    return sch + ' (' + MK().regLabel(reg) + ' · 드래프트 후보 ' + n + '명' + (sc ? ' · 우리 스카우트 ' + sc + '명 파견 중' : '') + ')';
+  }
+  function tick(S, date) {
+    if (!date || !S.user) return;
+    const year = Number(date.slice(0, 4));
+    if (!S.amtr || S.amtr.year !== year) S.amtr = { year, start: date, res: {}, sent: {} };
+    const A = S.amtr;
+    for (const t of TOURS) {
+      const sd = year + '-' + t.semi, fd = year + '-' + t.fin;
+      if (sd < A.start) continue; // 이 저장을 처음 연 날보다 앞선 대회는 넘어감
+      if (!A.sent[t.k + ':s'] && date >= sd) {
+        const r = A.res[t.k] || (A.res[t.k] = play(S, t, year));
+        A.sent[t.k + ':s'] = 1;
+        SE().msg(S, sd, '스카우트팀', t.name + ' 4강 확정',
+          (t.league ? '정규리그를 마치고 4강 플레이오프에 오른 학교입니다. ' : '4강에 오른 학교입니다. ') + r.four.map((x) => schoolLine(S, x, r.reg[x], t.lvl)).join(' / ') +
+          '. 결승은 ' + C.fmtDate(fd) + '에 열립니다.');
+      }
+      if (!A.sent[t.k + ':f'] && date >= fd && A.res[t.k]) {
+        const r = A.res[t.k];
+        A.sent[t.k + ':f'] = 1;
+        let body = '우승 ' + r.win + ', 준우승 ' + r.ru + '.';
+        const p = r.mvp && S.league.players[r.mvp];
+        if (p && p.pool === 'D') {
+          body += ' 대회 MVP는 ' + r.win + ' ' + p.name + ' (' + (p.pr ? (p.throws === 'L' ? '좌완 투수' : '우완 투수') : OD.League.POS_KO[p.pos]) + ')입니다. MVP 소식이 퍼져 이 선수 정보가 조금 늘었습니다.';
+          p.sk = Math.min(100, (p.sk || 0) + 6);
+          MK().scoutSeed(p, new C.RNG((p.id * 2654435761) >>> 0));
+        }
+        SE().msg(S, fd, '스카우트팀', t.name + ' 결과', body);
+      }
+    }
+  }
+  // 스카우트 화면용 올해 일정·결과
+  function schedule(S, year) {
+    const A = S.amtr && S.amtr.year === year ? S.amtr : null;
+    return TOURS.map((t) => {
+      const r = A && A.res[t.k];
+      return { t, semi: year + '-' + t.semi, fin: year + '-' + t.fin, four: r && A.sent[t.k + ':s'] ? r.four : null, win: r && A.sent[t.k + ':f'] ? r.win : null, ru: r && A.sent[t.k + ':f'] ? r.ru : null, skipped: A && (year + '-' + t.semi) < A.start };
+    });
+  }
+
+  OD.Amateur = { TOURS, tick, schedule, play };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- military.js ---- */
@@ -5068,7 +5212,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function msg(S, date, from, title, body) {
     S.msgs.unshift({ id: (S.msgSeq = (S.msgSeq || 0) + 1), date, from, title, body, read: false });
-    if (S.msgs.length > 60) S.msgs.length = 60;
+    if (S.msgs.length > 100) S.msgs.length = 100;
   }
 
   // ---- 순위 ----
@@ -5511,6 +5655,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 스카우팅 이전 저장: 후보 등급을 미공개로 (예전에 스카우트를 보낸 후보는 보고서 완성, 진행 중인 드래프트 후보는 대략)
     for (const id in S.league.players) { const p = S.league.players[id]; if (p.pool === 'A' && p.nat === '대만') { delete S.league.players[id]; continue; } if (p.pool && (p.sk == null || !p.sreg)) { if (p.sk == null) p.sk = p.scouted ? 100 : p.pool === 'D' ? 30 : 0; delete p.scouted; if (p.lg) p.lg = p.lg.replace('일본 NPB 2군', 'NPB 2군').replace('메이저리그·트리플A', '메이저리그').replace(/^트리플A$/, '마이너리그 (트리플A)').replace(/^더블A$/, '마이너리그 (더블A)'); MK.scoutSeed(p, new C.RNG((p.id * 2654435761) >>> 0)); } }
     if (!S.scoutDate) S.scoutDate = SE.currentDate(S);
+    if (MK.migrateScouts) MK.migrateScouts(S);
     for (const t of S.league.teams) if (t.cash == null && FI && FI.START_CASH) t.cash = FI.START_CASH;
     // 아마추어 능력치 개편 전 드래프트 후보 → 새로 만들고, 지역·학교급별 스카우팅 진척은 이어받음
     if (S.dclass && S.dclass.v !== 2 && !(S.off && S.off.draft) && OF.makeDraftClass) {
@@ -6197,10 +6342,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const on = si && si.scouts > 0;
     return '<span class="sk' + (on ? ' on' : '') + '"><span class="skbar"><i style="width:' + sk + '%"></i></span><span>' + MK.SCOUT_LV[lv] + (on ? ' · 스카우트 ' + si.scouts + '명' : '') + '</span></span>';
   }
-  function regTag(p) { const si = MK.scoutInfo(S, p); return si ? '<span class="badge dimb">' + esc(si.regName) + (si.kind === 'D' ? (p.slvl === 'H' ? ' 고교' : ' 대학') : '') + '</span>' : ''; }
+  function regTag(p) { const si = MK.scoutInfo(S, p); return si ? '<span class="badge dimb">' + esc(si.kind === 'D' ? MK.regLabel(p.sreg) : si.regName) + '</span>' : ''; }
   function scoutSummary(kind) {
     const st = MK.scoutStaff(S)[kind];
-    const where = st.filter((x) => x.reg).map((x) => MK.regName(x.reg) + (kind === 'D' ? (x.lvl === 'H' ? ' 고교' : ' 대학') : ''));
+    const where = st.filter((x) => x.reg).map((x) => kind === 'D' ? MK.regLabel(x.reg) : MK.regName(x.reg));
     return '<div class="scout-sum"><b>' + (kind === 'D' ? '아마추어 스카우트' : '해외 스카우트') + ' ' + st.length + '명</b><span class="muted">' + (where.length ? where.join(' · ') : '아무 지역에도 가 있지 않습니다') + '</span><button class="btn sm ghost" data-nav="scout" style="justify-self:start;margin-top:4px">스카우트 지역 바꾸기</button></div>';
   }
   function amateurHTML() {
@@ -6216,7 +6361,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     let h = '<section class="card"><div class="card-h"><h2>' + (S.league.year + 1) + ' 신인 드래프트 후보</h2><span class="muted" style="font-size:12.5px">' + ids.length + '명 · 12월 드래프트</span></div>' +
       '<p class="muted" style="font-size:12.5px;margin:0 0 10px">처음엔 등급이 공개되지 않습니다. 스카우트를 지역의 고교나 대학에 보내면 그곳 후보들의 정보가 매주 쌓여 등급이 드러나고 점점 정확해집니다. 같은 곳에 여러 명을 보내면 더 빨라집니다.</p>' + scoutSummary('D') +
       '<div class="tabs" style="margin:10px 0 6px">' + [['all', '전체'], ['pit', '투수'], ['bat', '야수'], ['on', '스카우트 간 곳']].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-amf="' + k + '">' + nm + '</button>').join('') + '</div>' +
-      '<div class="chips-scroll" style="margin-bottom:6px">' + [['all', '모든 지역']].concat(MK.DREG.map((r) => [r.id, r.name])).map(([k, nm]) => '<button class="chip' + (rf === k ? ' on' : '') + '" data-amreg="' + k + '">' + nm + '</button>').join('') + '</div>' +
+      '<div class="chips-scroll" style="margin-bottom:6px">' + [['all', '모든 권역']].concat((lf === 'U' ? MK.UREG : lf === 'H' ? MK.HREG : MK.DREG).map((r) => [r.id, lf === 'all' ? MK.regLabel(r.id) : r.name])).map(([k, nm]) => '<button class="chip' + (rf === k ? ' on' : '') + '" data-amreg="' + k + '">' + nm + '</button>').join('') + '</div>' +
       '<div class="tabs" style="margin-bottom:10px">' + [['all', '고교·대학'], ['H', '고교'], ['U', '대학']].map(([k, nm]) => '<button class="chip' + (lf === k ? ' on' : '') + '" data-amlvl="' + k + '">' + nm + '</button>').join('') + '</div><div class="plist tall">';
     for (const p of ps) {
       h += '<div class="wrow"><div class="prow static"><span class="pr-n">' + esc(p.name) + ' <span class="muted" style="font-weight:400">' + esc(p.school) + '</span></span>' + estStars(p.scoutPa) + '<span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') + ' · ' + (p.throws === 'L' ? '좌완' : '우완') : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · 현재 ' + estStars(p.scout) + '</span><span class="pr-r">' + scoutBar(p) + '</span></div>' +
@@ -6233,18 +6378,31 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>스카우트</h2><span class="muted" style="font-size:12.5px">해외 1주 비용 ' + C.money(MK.weeklyCost(S)) + '</span></div>' +
       '<p class="muted" style="margin:0;font-size:13px">스카우트를 지역에 보내면 그 지역 후보들의 정보가 1주마다 쌓입니다(해외 1명당 1주 +' + MK.SCOUT_WEEK.F + '%, 아마추어 1명당 +' + MK.SCOUT_WEEK.D + '%). 같은 곳에 여러 명을 보내면 더 빨라지고, 아무도 안 간 곳은 아마추어만 리그 소문으로 조금씩(1주 +' + 1 + '%) 알려집니다. 15%가 넘으면 등급이 드러나고, 오래 볼수록 정확해집니다.</p></section>';
     const opt = (list, cur) => '<option value=""' + (!cur ? ' selected' : '') + '>대기 (사무실)</option>' + list.map((r) => '<option value="' + r.id + '"' + (cur === r.id ? ' selected' : '') + '>' + esc(r.name) + '</option>').join('');
-    h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>해외 스카우트</h2><span class="muted" style="font-size:12.5px">외국인·아시아쿼터</span></div><div class="scouts">' +
+    h += '<div><section class="card"><div class="card-h"><h2>해외 스카우트</h2><span class="muted" style="font-size:12.5px">외국인·아시아쿼터</span></div><div class="scouts">' +
       st.F.map((x, i) => '<div class="scout-row"><b>' + esc(x.name) + '</b><select class="sel" data-sreg="F:' + i + '" aria-label="' + esc(x.name) + ' 스카우트 지역">' + opt(MK.FREG, x.reg) + '</select>' + (x.reg ? '<span class="muted">1주 ' + C.moneyShort(MK.FREG.find((r) => r.id === x.reg).cost) + '</span>' : '<span class="muted">비용 없음</span>') + '</div>').join('') + '</div>' +
       '<div class="tbl-wrap" style="margin-top:12px"><table class="t"><thead><tr><th class="l">지역 · 리그</th><th>후보</th><th>스카우트</th><th>파악</th></tr></thead><tbody>' +
       MK.FREG.map((r) => { const o = fs[r.id]; const n = st.F.filter((x) => x.reg === r.id).length; return '<tr><td class="l txt reg-cell"><b>' + esc(r.name) + '</b><small class="muted">' + esc(r.note) + '</small></td><td>' + (o ? o.n : 0) + '</td><td>' + (n ? '<span class="badge acc">' + n + '</span>' : '-') + '</td><td>' + pct(o) + '</td></tr>'; }).join('') + '</tbody></table></div>' +
       '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" data-gomkt="foreign">외국인 후보 보기</button><button class="btn sm ghost" data-gomkt="asia">아시아쿼터 후보 보기</button></div></section>';
-    h += '<section class="card"><div class="card-h"><h2>아마추어 스카우트</h2><span class="muted" style="font-size:12.5px">' + (S.league.year + 1) + ' 신인 드래프트 후보</span></div><div class="scouts">' +
-      st.D.map((x, i) => '<div class="scout-row"><b>' + esc(x.name) + '</b><select class="sel" data-sreg="D:' + i + '" aria-label="' + esc(x.name) + ' 스카우트 지역">' + opt(MK.DREG, x.reg) + '</select><select class="sel" data-slvl="D:' + i + '" aria-label="고교 또는 대학"' + (x.reg ? '' : ' disabled') + '><option value="H"' + (x.lvl === 'H' ? ' selected' : '') + '>고등학교</option><option value="U"' + (x.lvl === 'U' ? ' selected' : '') + '>대학교</option></select></div>').join('') + '</div>' +
-      '<div class="tbl-wrap" style="margin-top:12px"><table class="t"><thead><tr><th class="l">지역</th><th>고교</th><th>파악</th><th>대학</th><th>파악</th><th class="l">눈에 띄는 선수</th></tr></thead><tbody>' +
-      MK.DREG.map((r) => { const hs = ds[r.id + ':H'], un = ds[r.id + ':U']; const nH = st.D.filter((x) => x.reg === r.id && x.lvl === 'H').length, nU = st.D.filter((x) => x.reg === r.id && x.lvl === 'U').length;
-        const best = [hs && hs.best, un && un.best].filter(Boolean).sort((a, b) => b.v - a.v)[0];
-        return '<tr><td class="l txt"><b>' + esc(r.name) + '</b></td><td>' + (hs ? hs.n : 0) + (nH ? ' <span class="badge acc">' + nH + '</span>' : '') + '</td><td>' + pct(hs) + '</td><td>' + (un ? un.n : 0) + (nU ? ' <span class="badge acc">' + nU + '</span>' : '') + '</td><td>' + pct(un) + '</td><td class="l txt">' + (best ? '<button class="mv-p" data-player="' + best.id + '">' + esc(P[best.id].name) + '</button>' : '<span class="muted">-</span>') + '</td></tr>'; }).join('') + '</tbody></table></div>' +
-      '<div style="margin-top:10px"><button class="btn sm" data-gomkt="amateur">아마추어 후보 보기</button></div></section></div>';
+    // 아마추어: 고교 권역 스카우트와 대학 권역 스카우트를 따로
+    const amCard = (lvl) => {
+      const regs = lvl === 'H' ? MK.HREG : MK.UREG;
+      const team = st.D.map((x, i) => [x, i]).filter(([x]) => x.lvl === lvl);
+      return '<section class="card"><div class="card-h"><h2>' + (lvl === 'H' ? '고교 스카우트' : '대학 스카우트') + '</h2><span class="muted" style="font-size:12.5px">' + (lvl === 'H' ? '고교 야구부 12개 권역' : '대학 야구부 6개 권역') + ' · ' + team.length + '명</span></div><div class="scouts">' +
+        team.map(([x, i]) => '<div class="scout-row"><b>' + esc(x.name) + '</b><select class="sel" data-sreg="D:' + i + '" aria-label="' + esc(x.name) + ' 스카우트 권역">' + opt(regs, x.reg) + '</select></div>').join('') + '</div>' +
+        '<div class="tbl-wrap" style="margin-top:12px"><table class="t"><thead><tr><th class="l">권역</th><th>후보</th><th>스카우트</th><th>파악</th><th class="l">눈에 띄는 선수</th></tr></thead><tbody>' +
+        regs.map((r) => { const o = ds[r.id + ':' + lvl]; const n = st.D.filter((x) => x.reg === r.id).length;
+          return '<tr><td class="l txt reg-cell"><b>' + esc(r.name) + '</b><small class="muted">' + esc(r.sch.join(' · ')) + '</small></td><td>' + (o ? o.n : 0) + '</td><td>' + (n ? '<span class="badge acc">' + n + '</span>' : '-') + '</td><td>' + pct(o) + '</td><td class="l txt">' + (o && o.best ? '<button class="mv-p" data-player="' + o.best.id + '">' + esc(P[o.best.id].name) + '</button>' : '<span class="muted">-</span>') + '</td></tr>'; }).join('') + '</tbody></table></div>' +
+        '<div style="margin-top:10px"><button class="btn sm" data-gomkt="amateur" data-amlvl-go="' + lvl + '">' + (lvl === 'H' ? '고교' : '대학') + ' 후보 보기</button></div></section>';
+    };
+    h += '</div><div class="grid2 even" style="margin-top:16px">' + amCard('H') + amCard('U') + '</div>';
+    // 아마추어 대회 일정·결과
+    const yr = Number(SE.currentDate(S).slice(0, 4));
+    const sch = OD.Amateur ? OD.Amateur.schedule(S, yr) : [];
+    if (sch.length) {
+      h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>' + yr + ' 아마추어 대회</h2><span class="muted" style="font-size:12.5px">중계 없음 · 4강과 결과는 메시지로 알려 드립니다</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">대회</th><th>부문</th><th class="l">시기</th><th class="l">4강</th><th class="l">우승 · 준우승</th></tr></thead><tbody>' +
+        sch.map((x) => '<tr><td class="l txt"><b>' + esc(x.t.name) + '</b>' + (x.t.note ? '<small class="muted" style="display:block">' + esc(x.t.note) + '</small>' : '') + '</td><td>' + (x.t.lvl === 'H' ? '고교' : '대학') + '</td><td class="l txt">' + esc(x.t.when) + '<small class="muted" style="display:block">4강 ' + C.fmtDate(x.semi) + ' · 결승 ' + C.fmtDate(x.fin) + '</small></td>' +
+          '<td class="l txt">' + (x.four ? esc(x.four.join(', ')) : x.skipped ? '<span class="muted">이미 끝남</span>' : '<span class="muted">예정</span>') + '</td><td class="l txt">' + (x.win ? '<b>' + esc(x.win) + '</b> · ' + esc(x.ru) : '<span class="muted">-</span>') + '</td></tr>').join('') + '</tbody></table></div></section>';
+    }
     return h + '</div>';
   }
   function offersHTML() {
@@ -7372,7 +7530,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (d.bcastgo) { const r = FI.signBroadcast(S, S.user, d.bcastgo, SE.currentDate(S)); ui.bcastPick = null; if (r.ok) { save(); toast(FI.BCAST[d.bcastgo].name + '와 중계권 계약을 맺었습니다.'); } else toast(r.msg); keepScroll(render); return; }
     if (d.setdiff && S && C.DIFF[d.setdiff]) { S.diff = d.setdiff; for (const t of S.league.teams) delete t.pw; save(); toast('난이도를 ' + C.DIFF[d.setdiff].name + '(으)로 바꿨습니다.'); keepScroll(render); return; }
     if (d.amreg) { ui.amReg = d.amreg; keepScroll(render); return; }
-    if (d.amlvl) { ui.amLvl = d.amlvl; keepScroll(render); return; }
+    if (d.amlvl) { ui.amLvl = d.amlvl; ui.amReg = 'all'; keepScroll(render); return; }
     if (d.nav) { document.body.classList.remove('menu-open'); closeSheet(); view = navTarget(d.nav); ui.confirmNew = false; render(); window.scrollTo(0, 0); return; }
     if (d.sim) return simRun(d.sim);
     if (d.watch) return watchNext();
@@ -7505,7 +7663,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (d.mall) { const m = S.off && S.off.mil; const n = m ? MI.setPlanAll(S, d.mall, m.list) : 0; toast(n + '명의 병역 계획을 정했습니다.'); save(); keepScroll(render); return; }
     if (d.mplan) { const [k, id] = d.mplan.split(':'); const r = MI.setPlan(S, Number(id), k); if (!r.ok && r.msg) toast(r.msg); save(); keepScroll(render); return; }
     if (d.roster) { ui.sheetConfirm = 'rel:' + d.roster; keepScroll(render); return; }
-    if (d.gomkt) { view = 'mkt'; ui.mktTab = d.gomkt; render(); window.scrollTo(0, 0); return; }
+    if (d.gomkt) { view = 'mkt'; ui.mktTab = d.gomkt; if (d.amlvlGo) { ui.amLvl = d.amlvlGo; ui.amReg = 'all'; } render(); window.scrollTo(0, 0); return; }
     if (d.ff) { ui.fFilter = d.ff; render(); return; }
     if (d.nego) {
       const [k, id] = d.nego.split(':');
