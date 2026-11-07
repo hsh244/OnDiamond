@@ -283,6 +283,25 @@ table.t { border-collapse: collapse; width: 100%; font-size: 13px; }
 table.t th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 6px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 table.t td { text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--f-num); font-variant-numeric: tabular-nums; font-size: 12.5px; }
 table.t th.l, table.t td.l { text-align: left; }
+table.t th.srt { padding: 0; }
+table.t th.srt button { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; gap: 3px; width: 100%; min-height: 32px; padding: 6px 6px; cursor: pointer; color: inherit; font: inherit; border-radius: 4px; }
+table.t th.srt.l button { justify-content: flex-start; }
+table.t th.srt button:hover { color: var(--fg); background: var(--panel2); }
+table.t th.srt button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+table.t th.srt.on { color: var(--accent); }
+table.t th.srt i { font-style: normal; font-size: 9px; min-width: 8px; }
+.ftbl td.fc { font-family: var(--f-num); white-space: nowrap; }
+.ftbl td.fc.rng { font-size: 12px; }
+.ftbl .fnat { display: block; font-size: 11.5px; white-space: nowrap; }
+.ftbl .fprev { font-size: 12px; min-width: 120px; max-width: 170px; white-space: normal; line-height: 1.35; }
+.ftbl .fm-v.hid { display: inline-block; vertical-align: middle; }
+.ftbl th:first-child, .ftbl td:first-child { position: sticky; left: 0; z-index: 1; background: var(--panel); }
+.ftbl tr.open td:first-child { background: var(--panel2); }
+.ftbl tr.nego-tr td:first-child { background: transparent; }
+.ftbl tr.nego-tr .nego { position: sticky; left: 0; width: min(640px, calc(100vw - 80px)); margin: 0; }
+.ftbl td.fact { white-space: nowrap; }
+.ftbl tr.open td { background: var(--panel2); }
+.ftbl tr.nego-tr td { padding: 0 0 10px; white-space: normal; text-align: left; }
 table.t td.txt { font-family: var(--f-body); font-size: 13px; }
 table.t tr.me td { background: color-mix(in srgb, var(--accent) 9%, transparent); }
 table.t tr.click { cursor: pointer; }
@@ -6125,6 +6144,26 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return '<div class="bar-row" style="margin-bottom:14px"><div class="tn-cell">' + patch(t, 40) + '<div><h2 class="disp" style="font-size:24px">' + esc(LG.teamName(t)) + ' <span class="muted">' + sub + '</span></h2><span class="muted" style="font-size:12.5px">' + (t.mgr ? '감독 ' + esc(t.mgr.name) + ' · ' : '') + t.market + ' 시장 · 선수 ' + LG.teamPlayers(L, tid).length + '명 · 연봉 총액 <span class="num">' + C.money(LG.totalSalary(L, tid)) + '</span></span></div></div>' +
       '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12.5px">구단</span><select class="sel" id="sqTeam">' + opts + '</select></label></div>';
   }
+  // ---- 표 정렬: 머리글을 누르면 내림차순 ↔ 오름차순 ----
+  const TEXT_KEYS = { name: 1, role: 1, pos: 1 };
+  function sortState(scope) { ui.sorts = ui.sorts || {}; return ui.sorts[scope] || null; }
+  function sortTh(scope, key, label, cls) {
+    const st = sortState(scope), on = st && st.k === key;
+    const arrow = on ? (st.d < 0 ? '▼' : '▲') : '';
+    return '<th class="srt' + (cls ? ' ' + cls : '') + (on ? ' on' : '') + '" aria-sort="' + (on ? (st.d < 0 ? 'descending' : 'ascending') : 'none') + '"><button data-tsort="' + scope + ':' + key + '">' + label + '<i aria-hidden="true">' + arrow + '</i></button></th>';
+  }
+  // val(p, key) → 숫자·문자 또는 null(모름: 항상 맨 아래)
+  function applySort(list, scope, val) {
+    const st = sortState(scope);
+    if (!st) return list;
+    return list.map((p, i) => [p, val(p, st.k), i]).sort((a, b) => {
+      const x = a[1], y = b[1];
+      if (x == null && y == null) return a[2] - b[2];
+      if (x == null) return 1; if (y == null) return -1;
+      const c = typeof x === 'string' ? x.localeCompare(y, 'ko') : x - y;
+      return c * st.d || a[2] - b[2];
+    }).map((x) => x[0]);
+  }
   function squadHTML() {
     const tid = ui.sqTeam || S.user;
     const t = team(tid), L = S.league;
@@ -6137,19 +6176,20 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const pit = ui.sqTab === 'pit';
     const list = pit ? all.filter((p) => p.pr && ent.has(p.id)).sort((a, b) => orderP(t, a) - orderP(t, b))
       : all.filter((p) => !p.pr && ent.has(p.id)).sort((a, b) => LG.POS.indexOf(a.pos) - LG.POS.indexOf(b.pos) || b.ca - a.ca);
-    h += '<section class="card"><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">선수</th><th class="l">역할</th><th>나이</th><th class="l">능력</th>';
+    const sorted = applySort(list, 'sq', (p, k) => k === 'name' ? p.name : k === 'role' ? (pit ? orderP(t, p) : LG.POS.indexOf(p.pos)) : k === 'age' ? p.age : k === 'ca' ? p.ca : k === 'pa' ? p.pa : k === 'sal' ? p.sal : null);
+    h += '<section class="card"><div class="tbl-wrap"><table class="t"><thead><tr>' + sortTh('sq', 'name', '선수', 'l') + sortTh('sq', 'role', pit ? '역할' : '포지션', 'l') + sortTh('sq', 'age', '나이') + sortTh('sq', 'ca', '현재', 'l') + sortTh('sq', 'pa', '잠재력', 'l');
     h += pit ? '<th>경기</th><th>승-패</th><th>세</th><th>홀</th><th>이닝</th><th>ERA</th><th>삼진</th>' : '<th>경기</th><th>타율</th><th>홈런</th><th>타점</th><th>도루</th><th>OPS</th>';
-    h += '<th>연봉</th></tr></thead><tbody>';
-    for (const p of list) {
+    h += sortTh('sq', 'sal', '연봉') + '</tr></thead><tbody>';
+    for (const p of sorted) {
       const s = p.st;
       h += '<tr class="click" data-player="' + p.id + '"><td class="l txt"><span class="pname"><span class="n">' + p.num + '</span>' + esc(p.name) + (p.foreign ? ' <span class="badge acc">' + (p.foreign === 2 ? 'AQ' : '외') + '</span>' : '') + (p.inj ? ' <span class="badge loss">부상</span>' : '') + '</span></td>' +
-        '<td class="l txt muted">' + roleOf(p) + '</td><td>' + p.age + '</td><td class="l">' + starsHTML(p.ca) + '</td>';
+        '<td class="l txt muted">' + (pit ? roleOf(p) : LG.POS_SHORT[p.pos]) + '</td><td>' + p.age + '</td><td class="l">' + starsHTML(p.ca) + '</td><td class="l">' + starsHTML(p.pa) + '</td>';
       if (pit) h += '<td>' + s.pg + '</td><td>' + s.w + '-' + s.l + '</td><td>' + s.sv + '</td><td>' + s.hld + '</td><td>' + C.ipStr(s.outs) + '</td><td>' + C.era(s.er, s.outs) + '</td><td>' + s.pso + '</td>';
       else h += '<td>' + s.g + '</td><td>' + C.avg3(s.h, s.ab) + '</td><td>' + s.hr + '</td><td>' + s.rbi + '</td><td>' + s.sb + '</td><td>' + (s.ab ? (SE.obp(s) + SE.slg(s)).toFixed(3).replace(/^0/, '') : '-') + '</td>';
       h += '<td>' + C.moneyShort(p.sal) + '</td></tr>';
     }
-    if (!list.length) h += '<tr><td colspan="12" class="empty">선수가 없습니다.</td></tr>';
-    return h + '</tbody></table></div></section></div>';
+    if (!list.length) h += '<tr><td colspan="13" class="empty">선수가 없습니다.</td></tr>';
+    return h + '</tbody></table></div><p class="muted" style="font-size:12px;margin:8px 0 0">' + (sortState('sq') ? '머리글을 다시 누르면 순서가 뒤집힙니다. <button class="more" data-tsort="sq:reset">기본 순서로</button>' : '선수·' + (pit ? '역할' : '포지션') + '·나이·현재·잠재력·연봉 머리글을 누르면 정렬됩니다.') + '</p></section></div>';
   }
 
   // ================= 퓨처스 (2군) =================
@@ -6321,25 +6361,32 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else h += '<div class="plist">' + mine.map((p) => { const s = p.st; const rec = p.pr ? (s.pg ? s.w + '승 ' + s.l + '패 ERA ' + C.era(s.er, s.outs) : '1군 기록 없음') : (s.g ? C.avg3(s.h, s.ab) + ' ' + s.hr + '홈런' : '1군 기록 없음');
       return '<button class="prow" data-player="' + p.id + '"><span class="pr-n">' + esc(p.name) + '</span>' + starsHTML(p.ca) + '<span class="pr-m muted">' + esc(p.nat) + ' · ' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · ' + rec + '</span><span class="pr-r"><span class="num">' + C.moneyShort(p.sal) + '</span></span></button>'; }).join('') + '</div>';
     h += '<p class="muted" style="font-size:12.5px;margin:10px 0 0">교체하려면 선수 프로필에서 방출한 뒤 새 후보와 계약하세요.</p></section>';
-    // 후보
-    const f = ui.fFilter || 'all';
-    let cands = MK.pool(S, kind);
-    if (f === 'pit') cands = cands.filter((p) => p.pr); else if (f === 'bat') cands = cands.filter((p) => !p.pr);
+    // 후보: 표 (포지션·나이·능력치·연봉, 머리글로 정렬)
+    const f = ui.fFilter === 'bat' ? 'bat' : 'pit';
+    const pitT = f === 'pit';
+    let cands = MK.pool(S, kind).filter((p) => !!p.pr === pitT);
     cands.sort((a, b) => ((b.scout == null ? -1 : b.scout) - (a.scout == null ? -1 : a.scout)) || a.ask - b.ask);
+    const COLS = pitT ? [['stf', '구위'], ['ctl', '제구'], ['mov', '무브'], ['sta', '체력'], ['velo', '구속']] : [['con', '컨택'], ['pow', '파워'], ['gap', '갭'], ['eye', '선구안'], ['spd', '주력'], ['fld', '수비']];
+    const shown = (p, k) => k === 'velo' ? MK.scoutVelo(p, p.pr.velo) : MK.scoutAttr(p, k, pitT ? p.pr[k] : p.br[k]);
+    const mid = (v) => v == null ? null : typeof v === 'object' ? (v.lo + v.hi) / 2 : v;
+    const scope = 'f' + kind + f;
+    cands = applySort(cands, scope, (p, k) => k === 'name' ? p.name : k === 'pos' ? (pitT ? (p.role === 'SP' ? 0 : 1) * 2 + (p.throws === 'L' ? 0 : 1) : LG.POS.indexOf(p.pos)) : k === 'age' ? p.age : k === 'grade' ? p.scout : k === 'ask' ? p.ask : k === 'sk' ? (p.sk || 0) : mid(shown(p, k)));
+    const cell = (v, k) => v == null ? '<td class="fc"><span class="fm-v hid" aria-label="알 수 없음"></span></td>' : typeof v === 'object' ? '<td class="fc rng' + (k === 'velo' ? '' : ' v' + vcls(mid(v))) + '">' + v.lo + '~' + v.hi + '</td>' : '<td class="fc' + (k === 'velo' ? '' : ' v' + vcls(v)) + '"><b>' + v + '</b></td>';
     h += '<section class="card"><div class="card-h"><h2>' + (isF ? '외국인' : '아시아쿼터') + ' 후보</h2><span class="muted" style="font-size:12.5px">' + cands.length + '명</span></div>' +
-      '<div class="tabs" style="margin-bottom:10px">' + [['all', '전체'], ['pit', '투수'], ['bat', '타자']].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-ff="' + k + '">' + nm + '</button>').join('') + '</div>' +
-      '<p class="muted" style="font-size:12.5px;margin:0 0 10px">처음엔 등급과 능력치가 공개되지 않습니다. 해외 스카우트를 그 선수가 뛰는 지역(북중미·일본·호주)에 보내면 1주마다 정보가 쌓여 등급이 드러나고 점점 정확해집니다. 지난 시즌 기록과 요구 연봉은 누구나 볼 수 있습니다.</p>' + scoutSummary('F') + '<div class="plist tall" style="margin-top:10px">';
+      '<div class="tabs" style="margin-bottom:10px">' + [['pit', '투수 ' + MK.pool(S, kind).filter((p) => p.pr).length], ['bat', '타자 ' + MK.pool(S, kind).filter((p) => !p.pr).length]].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-ff="' + k + '">' + nm + '</button>').join('') + '</div>' +
+      '<p class="muted" style="font-size:12.5px;margin:0 0 10px">처음엔 등급과 능력치가 공개되지 않습니다. 해외 스카우트를 그 선수가 뛰는 지역(북중미·일본·호주)에 보내면 1주마다 정보가 쌓여 범위가 좁아지고 정확해집니다. 지난 시즌 기록과 요구 연봉은 누구나 볼 수 있습니다. 머리글을 누르면 정렬되고, 다시 누르면 순서가 뒤집힙니다.</p>' + scoutSummary('F') +
+      '<div class="tbl-wrap" style="margin-top:10px"><table class="t ftbl"><thead><tr>' + sortTh(scope, 'name', '선수', 'l') + sortTh(scope, 'pos', pitT ? '역할' : '포지션', 'l') + sortTh(scope, 'age', '나이') + sortTh(scope, 'grade', '평가', 'l') +
+      COLS.map(([k, n]) => sortTh(scope, k, n)).join('') + '<th class="l">지난 시즌</th>' + sortTh(scope, 'ask', '희망 연봉') + sortTh(scope, 'sk', '스카우팅', 'l') + '<th class="l"></th></tr></thead><tbody>';
     for (const p of cands) {
       const err = MK.signCheck(S, S.user, p, date);
-      const conf = ui.sheetConfirm === 'fsign:' + p.id;
-      h += '<div class="frow"><button class="prow" data-player="' + p.id + '"><span class="pr-n">' + esc(p.name) + ' <span class="muted" style="font-weight:400">' + esc(p.nat) + '</span>' + '</span>' + estStars(p.scout) +
-        '<span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') + ' · ' + (p.throws === 'L' ? '좌완' : '우완') : LG.POS_SHORT[p.pos] + ' · ' + (p.bats === 'L' ? '좌타' : p.bats === 'S' ? '양타' : '우타')) + ' · ' + p.age + '세 · ' + esc(p.lg) + '</span>' +
-        '<span class="pr-r"><b class="num">' + usd(p) + '</b></span><span class="pr-x muted num">' + esc(p.prev) + ' ' + scoutBar(p) + '</span></button>' +
-        (ui.nego === p.id && !err ? negoBox(p)
-          : '<div class="frow-b">' + regTag(p) + (err ? '<span class="muted" style="font-size:12px">' + esc(err) + '</span>' : '<button class="btn sm" data-nego="open:' + p.id + '">협상하기</button>') + '</div>') + '</div>';
+      h += '<tr class="click' + (ui.nego === p.id ? ' open' : '') + '" data-player="' + p.id + '"><td class="l txt"><span class="pname">' + esc(p.name) + '</span><small class="muted fnat">' + esc(p.nat) + ' · ' + esc(p.lg) + '</small></td>' +
+        '<td class="l txt">' + (pitT ? (p.role === 'SP' ? '선발' : '구원') + ' · ' + (p.throws === 'L' ? '좌완' : '우완') : LG.POS_SHORT[p.pos] + ' · ' + (p.bats === 'L' ? '좌타' : p.bats === 'S' ? '양타' : '우타')) + '</td><td>' + p.age + '</td><td class="l">' + estStars(p.scout) + '</td>' +
+        COLS.map(([k]) => cell(shown(p, k), k)).join('') + '<td class="l txt muted fprev">' + esc(p.prev) + '</td><td class="num"><b>' + usd(p) + '</b></td><td class="l">' + scoutCell(p) + '</td>' +
+        '<td class="l fact">' + (err ? '<span class="muted" style="font-size:12px">' + esc(err) + '</span>' : '<button class="btn sm" data-nego="open:' + p.id + '">협상</button>') + '</td></tr>';
+      if (ui.nego === p.id && !err) h += '<tr class="nego-tr"><td colspan="' + (COLS.length + 9) + '">' + negoBox(p) + '</td></tr>';
     }
-    if (!cands.length) h += '<div class="empty">남은 후보가 없습니다. 매달 새 후보가 들어옵니다.</div>';
-    return h + '</div></section>';
+    if (!cands.length) h += '<tr><td colspan="' + (COLS.length + 9) + '" class="empty">남은 후보가 없습니다. 매달 새 후보가 들어옵니다.</td></tr>';
+    return h + '</tbody></table></div></section>';
   }
   // ---- 스카우팅 표시 ----
   function estStars(v, lg) { return v == null ? '<span class="qstar" title="스카우트가 아직 평가하지 못했습니다">미공개</span>' : starsHTML(v, lg); }
@@ -6347,6 +6394,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const lv = MK.scoutLevel(p), sk = Math.round(p.sk || 0), si = MK.scoutInfo(S, p);
     const on = si && si.scouts > 0;
     return '<span class="sk' + (on ? ' on' : '') + '"><span class="skbar"><i style="width:' + sk + '%"></i></span><span>' + MK.SCOUT_LV[lv] + (on ? ' · 스카우트 ' + si.scouts + '명' : '') + '</span></span>';
+  }
+  function scoutCell(p) {
+    const sk = Math.round(p.sk || 0), si = MK.scoutInfo(S, p), on = si && si.scouts > 0;
+    return '<span class="sk' + (on ? ' on' : '') + '" title="' + (on ? '우리 스카우트 ' + si.scouts + '명이 보는 중' : '보는 스카우트 없음') + '"><span class="skbar"><i style="width:' + sk + '%"></i></span><span>' + sk + '%' + (on ? ' ●' : '') + '</span></span>';
   }
   function regTag(p) { const si = MK.scoutInfo(S, p); return si ? '<span class="badge dimb">' + esc(si.kind === 'D' ? MK.regLabel(p.sreg) : si.regName) + '</span>' : ''; }
   function scoutSummary(kind) {
@@ -7537,7 +7588,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -7717,6 +7768,13 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (d.game) { ui.gtab = 'sum'; return openSheet(gameSheet(d.game)); }
     if (d.team) { ui.sqTeam = d.team; ui.sqTab = 'bat'; view = 'squad'; closeSheet(); render(); window.scrollTo(0, 0); return; }
     if (d.ldr) { const [k, v] = d.ldr.split(':'); if (k === 'bat') ui.ldrBat = v; else ui.ldrPit = v; render(); return; }
+    if (d.tsort) {
+      const [scope, k] = d.tsort.split(':'); ui.sorts = ui.sorts || {};
+      const cur = ui.sorts[scope];
+      if (k === 'reset') delete ui.sorts[scope];
+      else ui.sorts[scope] = cur && cur.k === k ? { k, d: -cur.d } : { k, d: TEXT_KEYS[k] ? 1 : -1 };
+      keepScroll(render); return;
+    }
     if (d.sqtab) { ui.sqTab = d.sqtab; render(); return; }
     if (d.month) { ui.schMonth = d.month; render(); return; }
     switch (d.act) {
