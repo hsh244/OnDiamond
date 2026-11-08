@@ -7,7 +7,7 @@
 <title>On Diamond</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Exo+2:ital,wght@1,800;1,900&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 /* 야간 경기장: 짙은 잔디색 바탕, 분필 흰 글자, 전광판 호박색 강조. 왼쪽 메뉴 + 한 열 카드 */
 :root {
@@ -66,20 +66,41 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 /* ---------- 시작 화면 ---------- */
 #gate, #pick { min-height: 100%; }
 #gate {
+  position: relative; overflow: hidden; isolation: isolate;
   display: grid; place-items: center;
-  padding-block: 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  background:
-    radial-gradient(120% 70% at 50% 110%, rgba(99,193,132,0.12), transparent 60%),
-    var(--bg);
+  padding-block: 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: #03080a; color: #eef6f5;
 }
-.gate-in { width: min(420px, 100%); display: grid; gap: 28px; justify-items: center; text-align: center; }
-.diamond { width: 148px; height: 148px; }
-.gate-title { font-family: var(--f-display); font-size: clamp(44px, 13vw, 64px); line-height: 1; letter-spacing: 0.06em; }
-.gate-title span { color: var(--accent); }
-.gate-sub { color: var(--muted); margin-top: 10px; letter-spacing: 0.08em; font-size: 13px; }
-.gate-btns { display: grid; gap: 10px; width: 100%; }
-.gate-btns .btn { min-height: 52px; font-size: 16px; }
-.gate-note { font-size: 12.5px; color: var(--muted); min-height: 1.5em; }
+/* 배경: 청록 원근 격자 + 가운데 빛 + 양옆 실루엣 */
+.g-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.g-grid { position: absolute; inset: 0; width: 100%; height: 100%; }
+.g-glow { position: absolute; inset: 0;
+  background: radial-gradient(48% 38% at 50% 46%, rgba(40,170,160,.28), transparent 70%), radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,.85) 100%); }
+.g-fig { position: absolute; bottom: 0; height: min(94%, 660px); width: auto; opacity: .62; filter: drop-shadow(0 0 16px rgba(64,214,200,.45)); }
+.g-fl { left: max(-40px, calc(50% - 720px)); }
+.g-fr { right: max(-40px, calc(50% - 720px)); }
+/* 로고 */
+.gate-in { position: relative; width: min(1000px, 100%); display: grid; gap: 22px; justify-items: center; text-align: center; }
+.g-logo { margin: 0; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: .18em; font-family: "Exo 2", var(--f-display); font-style: italic; font-weight: 900;
+  font-size: clamp(34px, 8.6vw, 100px); line-height: .9; white-space: nowrap; letter-spacing: -.01em; }
+.g-word { display: inline-flex; align-items: center; color: #fff; background: linear-gradient(180deg, #ffffff 0%, #e6eeee 52%, #9aa9ab 53%, #dfe8e8 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 0 rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(64,214,200,.25)); }
+.g-ball { display: inline-block; width: .86em; height: .86em; margin-right: .02em; transform: rotate(-18deg); filter: drop-shadow(0 0 14px rgba(255,255,255,.35)); }
+.g-ball svg { width: 100%; height: 100%; display: block; }
+.g-yr { color: transparent; -webkit-text-stroke: .045em #40d6c8; text-stroke: .045em #40d6c8; font-size: .9em; margin-left: .06em; filter: drop-shadow(0 0 12px rgba(64,214,200,.6)); }
+.g-band { transform: skewX(-14deg); background: linear-gradient(180deg, #e8323b, #b81e27); box-shadow: 0 6px 22px rgba(200,30,40,.35), inset 0 1px 0 rgba(255,255,255,.25); padding: 7px 30px; margin-top: -4px; }
+.g-band span { display: inline-block; transform: skewX(14deg); font-family: var(--f-display); font-size: clamp(15px, 3.6vw, 22px); letter-spacing: .14em; color: #fff; }
+.gate-btns { display: grid; gap: 10px; width: min(380px, 100%); margin-top: 18px; }
+.gate-btns .btn { min-height: 52px; font-size: 16px; transform: skewX(-10deg); border-radius: 6px; }
+.gate-btns .btn > * , .gate-btns .btn { letter-spacing: .04em; }
+#gate .btn.primary { background: linear-gradient(180deg, #4fe3d4, #22a99d); border-color: #4fe3d4; color: #032321; box-shadow: 0 0 24px rgba(64,214,200,.35); }
+#gate .btn:not(.primary) { background: rgba(3,20,22,.7); border-color: rgba(64,214,200,.45); color: #dff6f3; }
+#gate .btn:hover { filter: brightness(1.08); }
+.gate-note { font-size: 12.5px; color: #9fc7c3; min-height: 1.5em; text-shadow: 0 1px 2px #000; }
+@media (max-width: 700px) {
+  .g-fig { opacity: .2; height: 62%; }
+  .g-fl { left: -110px; } .g-fr { right: -110px; }
+  }
 
 /* ---------- 구단 선택 ---------- */
 #pick { padding-block: 24px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -745,20 +766,42 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 <body>
 
 <div id="gate" hidden>
+  <div class="g-bg" aria-hidden="true">
+    <svg class="g-grid" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="ggm" cx=".5" cy=".48" r=".62"><stop offset=".12" stop-color="#000"/><stop offset=".55" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff"/></radialGradient><mask id="ggk"><rect width="1600" height="900" fill="url(#ggm)"/></mask></defs><path d="M800 430L-3820 940M800 430L-3820 -40M800 430L-3490 940M800 430L-3490 -40M800 430L-3160 940M800 430L-3160 -40M800 430L-2830 940M800 430L-2830 -40M800 430L-2500 940M800 430L-2500 -40M800 430L-2170 940M800 430L-2170 -40M800 430L-1840 940M800 430L-1840 -40M800 430L-1510 940M800 430L-1510 -40M800 430L-1180 940M800 430L-1180 -40M800 430L-850 940M800 430L-850 -40M800 430L-520 940M800 430L-520 -40M800 430L-190 940M800 430L-190 -40M800 430L140 940M800 430L140 -40M800 430L470 940M800 430L470 -40M800 430L800 940M800 430L800 -40M800 430L1130 940M800 430L1130 -40M800 430L1460 940M800 430L1460 -40M800 430L1790 940M800 430L1790 -40M800 430L2120 940M800 430L2120 -40M800 430L2450 940M800 430L2450 -40M800 430L2780 940M800 430L2780 -40M800 430L3110 940M800 430L3110 -40M800 430L3440 940M800 430L3440 -40M800 430L3770 940M800 430L3770 -40M800 430L4100 940M800 430L4100 -40M800 430L4430 940M800 430L4430 -40M800 430L4760 940M800 430L4760 -40M800 430L5090 940M800 430L5090 -40M800 430L5420 940M800 430L5420 -40M0 432H1600M0 428H1600M0 440H1600M0 421H1600M0 453H1600M0 408H1600M0 473H1600M0 390H1600M0 499H1600M0 367H1600M0 531H1600M0 337H1600M0 569H1600M0 302H1600M0 614H1600M0 260H1600M0 666H1600M0 213H1600M0 724H1600M0 159H1600M0 789H1600M0 99H1600M0 861H1600M0 33H1600M0 940H1600M0 -40H1600M795 0V900M805 0V900M777 0V900M823 0V900M745 0V900M855 0V900M700 0V900M900 0V900M640 0V900M960 0V900M565 0V900M1035 0V900M475 0V900M1125 0V900M370 0V900M1230 0V900M249 0V900M1351 0V900M112 0V900M1488 0V900M-40 0V900M1640 0V900" fill="none" stroke="#40d6c8" stroke-opacity=".3" stroke-width="1.1" mask="url(#ggk)"/><rect x="250" y="160" width="1100" height="540" fill="none" stroke="#40d6c8" stroke-opacity=".16"/></svg>
+    <div class="g-glow"></div>
+    <svg class="g-fig g-fl" viewBox="0 0 320 560"><defs><linearGradient id="gfa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8f3ec"/><stop offset=".5" stop-color="#3aa79e"/><stop offset="1" stop-color="#0d3836" stop-opacity="0"/></linearGradient><pattern id="gsl" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="2.4" fill="#fff"/></pattern><mask id="gsm"><rect width="320" height="560" fill="url(#gsl)"/></mask></defs><g mask="url(#gsm)" fill="url(#gfa)" stroke="url(#gfa)" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="122" y1="96" x2="58" y2="-8" stroke-width="12"/>
+      <path d="M118 62 q2 -38 36 -40 q34 0 38 34 l20 6 q2 8 -8 10 l-14 0 q-4 22 -22 30 q-26 8 -44 -10 q-8 -12 -6 -30 z" stroke="none"/>
+      <rect x="138" y="96" width="26" height="26" rx="8" stroke="none"/>
+      <path d="M104 126 q48 -20 98 2 q8 40 -4 76 l-6 52 q-38 12 -76 0 l-8 -54 q-14 -36 -4 -76 z" stroke="none"/>
+      <polyline points="112,134 82,122 116,98" fill="none" stroke-width="26"/>
+      <polyline points="190,138 172,170 122,104" fill="none" stroke-width="26"/>
+      <circle cx="120" cy="100" r="15" stroke="none"/>
+      <path d="M118 250 q34 -10 74 0 l4 30 q-40 10 -82 0 z" stroke="none"/>
+      <polyline points="132,272 96,380 78,500" fill="none" stroke-width="46"/>
+      <polyline points="178,272 214,380 236,500" fill="none" stroke-width="46"/>
+      <path d="M48 498 q30 -14 56 0 v18 h-60 z M218 498 q30 -14 56 2 v16 h-58 z" stroke="none"/>
+    </g></svg>
+    <svg class="g-fig g-fr" viewBox="0 0 320 560"><defs><linearGradient id="gfb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8f3ec"/><stop offset=".5" stop-color="#3aa79e"/><stop offset="1" stop-color="#0d3836" stop-opacity="0"/></linearGradient><pattern id="gsl2" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="2.4" fill="#fff"/></pattern><mask id="gsm2"><rect width="320" height="560" fill="url(#gsl2)"/></mask></defs><g mask="url(#gsm2)" fill="url(#gfb)" stroke="url(#gfb)" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M150 112 q-2 -36 30 -42 q34 -2 40 32 q4 30 -20 44 q-28 10 -44 -10 z" stroke="none"/>
+      <path d="M146 92 q6 -30 38 -30 q30 2 36 28 z M150 90 l-34 6 q-4 -8 6 -12 l30 -4 z" stroke="none"/>
+      <rect x="168" y="134" width="26" height="24" rx="8" stroke="none"/>
+      <path d="M128 168 q54 -28 108 -6 q6 46 -12 92 l-8 40 q-44 12 -86 -2 l-4 -46 q-12 -40 2 -78 z" stroke="none"/>
+      <polyline points="226,172 250,96 196,40" fill="none" stroke-width="26"/>
+      <circle cx="190" cy="34" r="16" stroke="none"/>
+      <polyline points="138,180 92,214 112,262" fill="none" stroke-width="26"/>
+      <ellipse cx="114" cy="270" rx="26" ry="22" stroke="none"/>
+      <path d="M130 290 q46 -12 92 0 l2 30 q-48 10 -96 0 z" stroke="none"/>
+      <polyline points="146,312 92,400 70,506" fill="none" stroke-width="46"/>
+      <polyline points="206,312 262,400 296,472" fill="none" stroke-width="44"/>
+      <path d="M40 504 q30 -14 56 0 v18 h-60 z" stroke="none"/>
+    </g></svg>
+  </div>
   <div class="gate-in">
-    <svg class="diamond" viewBox="0 0 148 148" aria-hidden="true">
-      <rect x="29" y="29" width="90" height="90" transform="rotate(45 74 74)" fill="none" stroke="#3d5045" stroke-width="2"/>
-      <rect x="44" y="44" width="60" height="60" transform="rotate(45 74 74)" fill="#1a241e" stroke="#27342c"/>
-      <circle cx="74" cy="78" r="6" fill="#27342c"/>
-      <rect x="69" y="133" width="10" height="10" transform="rotate(45 74 138)" fill="#e8ece4"/>
-      <rect x="131" y="69" width="9" height="9" transform="rotate(45 135.5 73.5)" fill="#e8ece4"/>
-      <rect x="69.5" y="6" width="9" height="9" transform="rotate(45 74 10.5)" fill="#e8ece4"/>
-      <rect x="8" y="69" width="9" height="9" transform="rotate(45 12.5 73.5)" fill="#f0b64a"/>
-    </svg>
-    <div>
-      <div class="gate-title">ON <span>DIAMOND</span></div>
-      <div class="gate-sub">KBO 구단 단장 시뮬레이션</div>
-    </div>
+    <h1 class="g-logo" aria-label="On Diamond">
+      <span class="g-word"><span class="g-ball" aria-hidden="true"><svg viewBox="0 0 100 100"><defs><radialGradient id="gbl" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#ffffff"/><stop offset=".7" stop-color="#e9e6dd"/><stop offset="1" stop-color="#b9b4a6"/></radialGradient></defs><circle cx="50" cy="50" r="47" fill="url(#gbl)"/><path d="M22 14 q22 36 0 72" fill="none" stroke="#d2343a" stroke-width="2.4"/><path d="M78 14 q-22 36 0 72" fill="none" stroke="#d2343a" stroke-width="2.4"/><g stroke="#d2343a" stroke-width="2" stroke-linecap="round"><path d="M24 22 l8 -3 M28 31 l8 -2 M30 41 l8 -1 M30 51 l8 0 M30 61 l8 1 M28 71 l8 2 M24 80 l8 3"/><path d="M76 22 l-8 -3 M72 31 l-8 -2 M70 41 l-8 -1 M70 51 l-8 0 M70 61 l-8 1 M72 71 l-8 2 M76 80 l-8 3"/></g></svg></span>N</span><span class="g-word g-dia">DIAMOND</span><span class="g-yr" id="gateYear">27</span>
+    </h1>
+    <div class="g-band"><span>KBO 구단 단장 시뮬레이션</span></div>
     <div class="gate-btns">
       <button class="btn primary" data-gate="start" id="gateStart">게임 시작</button>
       <button class="btn" data-gate="import">게임 불러오기</button>
@@ -766,6 +809,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     </div>
     <div class="gate-note" id="gateNote"></div>
   </div>
+</div>
 </div>
 
 <div id="pick" hidden></div>
@@ -5825,6 +5869,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function gateNote() {
     const s = loadSave(), m = CL.ok && CL.meta;
+    const yEl = $('#gateYear'); if (yEl) { const y = (s && s.league && s.league.year) || (m && m.year) || 2027; yEl.textContent = String(y % 100).padStart(2, '0'); }
     const note = $('#gateNote'); if (!note) return;
     if (m && (!s || !s.user || (s.savedAt || 0) < m.t)) note.textContent = '계정에 저장된 게임: ' + m.name + ' · ' + C.fmtDate(m.date) + ' (' + m.w + '승 ' + m.l + '패)';
     else if (s && s.user) { const t = s.league.teams.find((x) => x.id === s.user); note.textContent = '저장된 게임: ' + LG.teamName(t) + ' · ' + C.fmtDate(SE.currentDate(s)) + ' (' + t.rec.w + '승 ' + t.rec.l + '패)' + (CL.ok ? ' · 계정 저장 켜짐' : ''); }
