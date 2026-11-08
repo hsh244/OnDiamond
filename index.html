@@ -77,11 +77,11 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .g-stad { position: absolute; inset: 0; width: 100%; height: 100%; }
 .g-glow { position: absolute; inset: 0; background: radial-gradient(60% 40% at 50% 46%, rgba(120,190,140,.16), transparent 70%), radial-gradient(130% 100% at 50% 50%, transparent 58%, rgba(0,0,0,.7) 100%); }
 .gate-in { align-self: center; position: relative; width: min(1000px, 100%); display: grid; gap: 26px; justify-items: center; text-align: center; padding-top: 4vh; }
-.g-logo { margin: 0; display: flex; align-items: center; justify-content: center; gap: .16em; font-family: "OD Title", "Russo One", "Arial Black", Impact, var(--f-display); font-weight: 400; font-style: normal;
+.g-logo { margin: 0; display: flex; align-items: center; justify-content: center; gap: .03em; font-family: "OD Title", "Russo One", "Arial Black", Impact, var(--f-display); font-weight: 400; font-style: normal;
   font-size: clamp(40px, 9vw, 116px); line-height: 1; letter-spacing: .01em; white-space: nowrap; }
 .g-word { background: linear-gradient(180deg, #ffffff 0%, #f1f5f1 46%, #b9c6bd 54%, #8e9d93 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #fff;
   filter: drop-shadow(0 4px 0 rgba(0,0,0,.55)) drop-shadow(0 10px 26px rgba(0,0,0,.6)); }
-.g-ball { flex: none; width: 1.02em; height: 1.02em; transform: rotate(-24deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(255,255,255,.18)); }
+.g-ball { flex: none; width: .74em; height: .74em; margin-bottom: .02em; transform: rotate(-24deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(255,255,255,.18)); }
 .g-ball svg { width: 100%; height: 100%; display: block; }
 .gate-btns { display: grid; gap: 10px; width: min(360px, 100%); }
 .gate-btns .btn { min-height: 50px; font-size: 16px; letter-spacing: .04em; border-radius: 10px; }
@@ -92,8 +92,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .g-logos { position: relative; display: grid; grid-template-columns: repeat(5, auto); justify-content: center; gap: 10px clamp(14px, 3.4vw, 38px); padding-top: 14px; }
 .g-logos img { width: clamp(40px, 6vw, 62px); height: clamp(40px, 6vw, 62px); object-fit: contain; filter: drop-shadow(0 3px 6px rgba(0,0,0,.6)); }
 @media (max-width: 700px) {
-  .g-logo { flex-direction: column; gap: .14em; font-size: min(11vw, 72px); }
-  .g-ball { width: 1.25em; height: 1.25em; }
+  .g-logo { font-size: min(11.6vw, 72px); }
   .gate-in { width: 100%; }
 }
 
@@ -791,7 +790,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     <div class="g-glow"></div>
   </div>
   <div class="gate-in">
-    <h1 class="g-logo" aria-label="On Diamond"><span class="g-word">ON DIAMOND</span><span class="g-ball" aria-hidden="true"><svg viewBox="0 0 100 100"><defs><radialGradient id="gbl" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".62" stop-color="#e7ebe6"/><stop offset="1" stop-color="#9aa69e"/></radialGradient></defs><circle cx="50" cy="50" r="47" fill="url(#gbl)"/><path d="M24 12 q24 38 0 76" fill="none" stroke="#1c241f" stroke-width="2.2"/><path d="M76 12 q-24 38 0 76" fill="none" stroke="#1c241f" stroke-width="2.2"/><g stroke="#1c241f" stroke-width="2.4" stroke-linecap="round"><path d="M26 20 l9 -4 M30 29 l9 -3 M33 39 l9 -2 M34 50 l9 0 M33 61 l9 2 M30 71 l9 3 M26 80 l9 4"/><path d="M74 20 l-9 -4 M70 29 l-9 -3 M67 39 l-9 -2 M66 50 l-9 0 M67 61 l-9 2 M70 71 l-9 3 M74 80 l-9 4"/></g></svg></span></h1>
+    <h1 class="g-logo" aria-label="On Diamond"><span class="g-ball" aria-hidden="true"><svg viewBox="0 0 100 100"><defs><radialGradient id="gbl" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".62" stop-color="#e7ebe6"/><stop offset="1" stop-color="#9aa69e"/></radialGradient></defs><circle cx="50" cy="50" r="47" fill="url(#gbl)"/><path d="M24 12 q24 38 0 76" fill="none" stroke="#1c241f" stroke-width="2.2"/><path d="M76 12 q-24 38 0 76" fill="none" stroke="#1c241f" stroke-width="2.2"/><g stroke="#1c241f" stroke-width="2.4" stroke-linecap="round"><path d="M26 20 l9 -4 M30 29 l9 -3 M33 39 l9 -2 M34 50 l9 0 M33 61 l9 2 M30 71 l9 3 M26 80 l9 4"/><path d="M74 20 l-9 -4 M70 29 l-9 -3 M67 39 l-9 -2 M66 50 l-9 0 M67 61 l-9 2 M70 71 l-9 3 M74 80 l-9 4"/></g></svg></span><span class="g-word">N DIAMOND</span></h1>
     <div class="gate-btns">
       <button class="btn primary" data-gate="start" id="gateStart">게임 시작</button>
       <button class="btn" data-gate="import">게임 불러오기</button>
