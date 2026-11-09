@@ -215,6 +215,48 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .readall.sm { min-height: 28px; padding: 0 6px; font-size: 11.5px; }
 .readall b { margin-left: 2px; font-family: var(--f-num); }
 .inbox-h { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+/* 구장·시설 */
+.fac-reqs { display: grid; gap: 8px; margin-top: 10px; }
+.fac-req { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; background: var(--panel2); border: 1px solid var(--line); margin-top: 8px; }
+.fac-req p { margin: 4px 0; font-size: 12.5px; line-height: 1.4; }
+.fac-req small { font-size: 12px; }
+.fac-why { max-width: 160px; text-align: right; }
+@media (max-width: 520px) { .fac-req { grid-template-columns: minmax(0, 1fr); } .fac-why { text-align: left; max-width: none; } .fac-req .btn { justify-self: start; } }
+.fac-lv { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.fac-lv i { width: 26px; height: 10px; border-radius: 3px; background: var(--panel2); border: 1px solid var(--line2); }
+.fac-lv i.on { background: var(--accent); border-color: var(--accent); }
+.fac-lv i.bld { background: repeating-linear-gradient(45deg, var(--accent) 0 3px, transparent 3px 6px); }
+.fac-lv b { margin-left: 8px; } .fac-lv span { color: var(--muted); font-size: 12.5px; }
+.fac-build { margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); font-size: 12.5px; }
+table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+/* 유망주 파견 */
+.dp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+@media (max-width: 420px) { .dp-grid { grid-template-columns: minmax(0, 1fr); } }
+.dp-card { display: grid; gap: 8px; align-content: start; padding: 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); min-width: 0; }
+.dp-card.off { opacity: .72; }
+.dp-h { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.dp-h b { display: block; font-size: 14.5px; } .dp-h small { color: var(--muted); font-size: 12px; }
+.dp-flag { font-size: 11.5px; font-weight: 700; padding: 3px 7px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line2); color: var(--accent); }
+.dp-cost { font-weight: 700; white-space: nowrap; } .dp-cost small { font-weight: 400; color: var(--muted); font-size: 11px; }
+.dp-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--fg); }
+.dp-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; font-size: 12.5px; }
+.dp-kv dt { color: var(--muted); } .dp-kv dd { margin: 0; }
+.dp-why { margin: 0; font-size: 12px; color: var(--muted); }
+.dp-card .btn { justify-self: start; }
+.dp-pick { display: grid; gap: 4px; max-height: 300px; overflow: auto; padding: 6px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); }
+.dp-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 12.5px; padding: 3px 2px; }
+.dp-row .muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dp-g { display: inline-flex; align-items: center; gap: 3px; } .dp-g i { font-style: normal; color: var(--muted); font-size: 11px; }
+@media (max-width: 420px) { .dp-row { grid-template-columns: minmax(0, 1fr) auto; } .dp-row .muted { grid-column: 1; } .dp-g { grid-column: 2; grid-row: 1; } .dp-row .btn { grid-column: 2; } }
+/* 라인업 (보기 전용) */
+.lu-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; margin-top: 16px; align-items: start; }
+@media (max-width: 900px) { .lu-grid { grid-template-columns: minmax(0, 1fr); } }
+.lu-field { width: 100%; max-width: 460px; display: block; margin: 0 auto; height: auto; }
+.lu-m { cursor: pointer; }
+.lu-m:hover rect { stroke-width: 2; }
+.lu-no { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 12px; }
+.lu-bench-h { font-size: 12.5px; color: var(--muted); margin: 14px 0 8px; font-weight: 600; }
+.lu-bench { display: flex; flex-wrap: wrap; gap: 6px; }
 /* 단장실 요약 타일 */
 .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 @media (min-width: 900px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
@@ -1879,11 +1921,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         if (p.inj) return;
         const tr = ((side.t.staff && side.t.staff.med && side.t.staff.med.r) || 10) - 10;
         const injR = (p.h && p.h.inj) || 9; // 숨은 능력치: 부상 위험도
-        const risk = base * (1 + (injR - 9) * 0.09) * (p.age >= 33 ? 1.35 : p.age >= 30 ? 1.1 : 1) * (1 - tr * 0.03) * (opt.fut ? 0.5 : 1) * (side.t.campInj || 1);
+        const risk = base * (1 + (injR - 9) * 0.09) * (p.age >= 33 ? 1.35 : p.age >= 30 ? 1.1 : 1) * (1 - tr * 0.03) * (opt.fut ? 0.5 : 1) * (side.t.campInj || 1) * (side.t.facInj || 1);
         if (rng.next() >= risk) return;
         const r = rng.next();
         let days = r < 0.6 ? 5 + Math.floor(rng.next() * 8) : r < 0.9 ? 12 + Math.floor(rng.next() * 22) : 35 + Math.floor(rng.next() * 60);
-        days = Math.max(3, Math.round(days * (1 - tr * 0.025)));
+        days = Math.max(3, Math.round(days * (1 - tr * 0.025) * (side.t.farmRehab || 1)));
         const parts = p.pr ? ['팔꿈치 염증', '어깨 염증', '옆구리 근육', '허리 통증', '햄스트링', '손가락 물집', '팔꿈치 인대'] : ['햄스트링', '손목', '발목 염좌', '허리 통증', '옆구리 근육', '손가락 골절', '종아리', '무릎'];
         p.inj = 1; p.injUntil = C.addDays(opt.date, days); p.injName = parts[Math.floor(rng.next() * parts.length)]; p.injDays = days;
         inj.push(p.id);
@@ -2811,6 +2853,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function scoutSync(S, date) {
     if (!date) return;
     if (G.OD.Amateur) G.OD.Amateur.tick(S, date);
+    if (G.OD.Dispatch) G.OD.Dispatch.tick(S, date);
+    if (G.OD.Facility) G.OD.Facility.tick(S, date);
     if (!S.scoutDate) { S.scoutDate = date; return; }
     const days = Math.round((Date.parse(date) - Date.parse(S.scoutDate)) / 864e5);
     if (days < 7) { if (days < 0) S.scoutDate = date; return; }
@@ -3154,6 +3198,334 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
 
   OD.Amateur = { TOURS, tick, schedule, play };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- dispatch.js ---- */
+// 유망주 파견: 시즌 중(미국·일본 훈련 시설) / 시즌 후(해외·국내 교육·윈터리그)
+// 효과는 잠재력까지 가는 속도만 당긴다(잠재력을 넘지 않음). 돌아올 때 능력치가 오르고 보고서를 보낸다.
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  const C = OD.Core, LG = OD.League;
+  const SE = () => OD.Season;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+  // cost: 1인당 만 원, wk: 시즌 중 기간(주), win: 시즌 후 고정 일정(월-일), cap: 동시에 보낼 수 있는 인원
+  // focus: 오르는 능력치(투수/타자), q: 효과 크기, inj: 부상 위험, play: 실전 경기(성장 계산에서 출전 기록으로 인정)
+  const PROGS = [
+    { k: 'dl', kind: 'in', name: '드라이브라인 베이스볼', place: '미국 애리조나', flag: '미국', who: 'both', wk: 6, cost: 5000, q: 1.0, inj: 0.02,
+      fp: ['velo', 'stf', 'mov'], fb: ['pow', 'gap', 'con'], note: '데이터로 동작을 뜯어고치는 곳. 투수는 구속·구위, 타자는 타구 속도(파워)가 오릅니다.' },
+    { k: 'tread', kind: 'in', name: '트레드 애슬레틱', place: '미국 샬럿', flag: '미국', who: 'pit', wk: 6, cost: 4500, q: 0.95, inj: 0.02,
+      fp: ['velo', 'stf', 'ctl'], fb: [], note: '투수 전문. 원격 코칭과 구종 설계로 구속과 새 무기를 다듬습니다.' },
+    { k: 'tbr', kind: 'in', name: '텍사스 베이스볼 랜치', place: '미국 텍사스', flag: '미국', who: 'pit', wk: 5, cost: 4000, q: 0.85, inj: 0.035,
+      fp: ['velo', 'sta', 'stf'], fb: [], note: '강도 높은 구속 프로그램. 효과가 크지만 어깨·팔꿈치에 무리가 갈 수 있습니다.' },
+    { k: 'nbl', kind: 'in', name: '넥스트베이스 애슬레틱 랩', place: '일본 지바현', flag: '일본', who: 'both', wk: 4, cost: 3000, q: 0.75, inj: 0.01,
+      fp: ['ctl', 'mov', 'stf'], fb: ['con', 'eye', 'avk'], note: '동작 분석 연구소. 투수는 제구·무브먼트, 타자는 컨택·선구안을 정밀하게 다듬습니다.' },
+    { k: 'ww', kind: 'in', name: '월드윙', place: '일본 돗토리', flag: '일본', who: 'both', wk: 4, cost: 2000, q: 0.55, inj: 0, safe: 1,
+      fp: ['sta', 'ctl'], fb: ['spd', 'fld', 'arm'], note: '초동부하 트레이닝으로 유연성과 몸 관리를 배웁니다. 능력치 상승은 작지만 부상이 잦은 선수에게 좋습니다.' },
+    { k: 'phx', kind: 'off', name: '미야자키 피닉스리그', place: '일본 미야자키', flag: '일본', who: 'both', win: ['10-05', '10-30'], open: '07-01', cost: 1500, cap: 8, q: 0.7, inj: 0.02, play: 1,
+      fp: ['ctl', 'mov', 'stf'], fb: ['con', 'eye', 'fld'], note: '일본 구단 2군·독립리그와 겨루는 10월 교육리그. 실전 경험을 쌓습니다.' },
+    { k: 'fall', kind: 'off', name: '울산 KBO 폴리그', place: '한국 울산', flag: '한국', who: 'both', win: ['10-10', '11-10'], open: '07-01', cost: 500, cap: 10, q: 0.5, inj: 0.015, play: 1,
+      fp: ['ctl', 'stf'], fb: ['con', 'eye'], note: 'KBO가 여는 가을 교육리그. 가깝고 싸지만 수준은 평범합니다.' },
+    { k: 'awb', kind: 'off', name: '아시아 윈터 베이스볼', place: '대만', flag: '대만', who: 'both', win: ['11-20', '12-15'], open: '07-01', cost: 1500, cap: 6, q: 0.65, inj: 0.02, play: 1,
+      fp: ['stf', 'mov', 'ctl'], fb: ['pow', 'con', 'spd'], note: '대만에서 열리는 아시아 윈터리그. 한·일·대만 유망주와 실전을 치릅니다.' },
+    { k: 'abl', kind: 'off', name: '호주 프로야구 ABL', place: '호주', flag: '호주', who: 'both', win: ['11-15', '01-20'], open: '07-01', cost: 2000, cap: 5, q: 0.9, inj: 0.04, play: 1,
+      fp: ['stf', 'ctl', 'sta'], fb: ['pow', 'con', 'eye'], note: '호주 프로리그에서 한 시즌을 뜁니다. 효과가 크지만 길고 몸에 부담이 큽니다.' }
+  ];
+  const IN_OPEN = ['04-01', '08-31']; // 시즌 중 파견을 보낼 수 있는 기간
+  const IN_CAP = 2;                 // 시즌 중 동시에 보낼 수 있는 인원
+  const MAX_AGE = 26;
+  const prog = (k) => PROGS.find((x) => x.k === k);
+  const KO = { velo: '구속', stf: '구위', ctl: '제구', mov: '무브먼트', sta: '체력', hold: '견제', con: '컨택', pow: '파워', gap: '갭파워', eye: '선구안', avk: '삼진 회피', spd: '주력', run: '주루', fld: '수비', arm: '송구' };
+
+  function st(S) { if (!S.disp) S.disp = { list: [] }; return S.disp; }
+  function md(date) { return date.slice(5); }
+  function yearOf(date) { return Number(date.slice(0, 4)); }
+  function addDays(date, n) { const d = new Date(date + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  // 시즌 후 프로그램의 올해 일정 (1월에 끝나면 다음 해)
+  function sched(p, year) {
+    const s = year + '-' + p.win[0];
+    const e = (p.win[1] < p.win[0] ? year + 1 : year) + '-' + p.win[1];
+    return [s, e];
+  }
+  // 지금 신청할 수 있는지 + 출발·귀국 날짜
+  function slotInfo(S, k, date) {
+    const p = prog(k), y = yearOf(date), D = st(S);
+    const active = D.list.filter((x) => x.prog === k && x.status !== 'done' && x.status !== 'cancel');
+    if (p.kind === 'in') {
+      const open = md(date) >= IN_OPEN[0] && md(date) <= IN_OPEN[1] && (S.phase === 'reg');
+      const busy = D.list.filter((x) => prog(x.prog).kind === 'in' && (x.status === 'away' || x.status === 'plan')).length;
+      return { open, start: addDays(date, 1), end: addDays(date, 1 + p.wk * 7), used: busy, cap: IN_CAP, why: open ? '' : '시즌 중 파견은 정규시즌 4월~8월에 보낼 수 있습니다.' };
+    }
+    let [s, e] = sched(p, y);
+    // 1월에는 지난해 시작한 일정(ABL)이 진행 중
+    if (md(date) < '03-01' && p.win[1] < p.win[0]) [s, e] = sched(p, y - 1);
+    const openDay = (Number(s.slice(0, 4))) + '-' + p.open;
+    const open = date >= openDay && date < s;
+    return { open, start: s, end: e, used: active.length, cap: p.cap, why: open ? '' : date >= s ? '올해 일정이 이미 시작했거나 끝났습니다.' : C.fmtDate(openDay) + '부터 신청할 수 있습니다.' };
+  }
+  function eligible(S, pl, k, date) {
+    const p = prog(k);
+    if (!pl || pl.team !== S.user) return '우리 구단 선수가 아닙니다.';
+    if (pl.foreign) return '외국인 선수는 보낼 수 없습니다.';
+    if (pl.age > MAX_AGE) return MAX_AGE + '세 이하 유망주만 보낼 수 있습니다.';
+    if (pl.inj) return '부상 중입니다.';
+    if (pl.serve || pl.mil) return '군 복무 중입니다.';
+    if (pl.away) return pl.disp ? '이미 파견 중입니다.' : '대표팀에 차출되어 있습니다.';
+    if (st(S).list.some((x) => x.pid === pl.id && (x.status === 'plan' || x.status === 'away'))) return '이미 파견이 잡혀 있습니다.';
+    if (p.who === 'pit' && !pl.pr) return '투수 전문 프로그램입니다.';
+    if (p.kind === 'in' && pl.ent) return '1군 엔트리 선수는 시즌 중에 보낼 수 없습니다(감독 권한).';
+    return '';
+  }
+  function cash(S) { return OD.Finance && OD.Finance.cash ? OD.Finance.cash(S, S.user) : 1e9; }
+  function send(S, pid, k, date) {
+    const pl = S.league.players[pid], p = prog(k);
+    const err = eligible(S, pl, k, date); if (err) return { ok: false, err };
+    const si = slotInfo(S, k, date);
+    if (!si.open) return { ok: false, err: si.why };
+    if (si.used >= si.cap) return { ok: false, err: '자리가 모두 찼습니다 (' + si.cap + '명).' };
+    if (cash(S) < p.cost) return { ok: false, err: '보유 현금이 부족합니다.' };
+    const f = S.fin && S.fin[S.user];
+    if (f) f.exp.dev = (f.exp.dev || 0) + p.cost;
+    st(S).list.push({ id: (st(S).seq = (st(S).seq || 0) + 1), pid, prog: k, start: si.start, end: si.end, status: 'plan', cost: p.cost, y: yearOf(si.start) });
+    return { ok: true };
+  }
+  function cancel(S, id) {
+    const x = st(S).list.find((d) => d.id === id);
+    if (!x || x.status !== 'plan') return false;
+    x.status = 'cancel';
+    const f = S.fin && S.fin[S.user];
+    if (f) f.exp.dev = Math.max(0, (f.exp.dev || 0) - Math.round(x.cost * 0.8)); // 취소 수수료 20%
+    return true;
+  }
+  function rngFor(S, x) { return new C.RNG(((x.pid * 2654435761) ^ (x.id * 40503) ^ (S.seed || 7)) >>> 0); }
+  // 돌아올 때: 프로그램이 다루는 능력치가 오름. 잠재력(pa)을 넘지 않게 조정
+  function finish(S, x, date) {
+    const P = S.league.players, pl = P[x.pid], p = prog(x.prog);
+    x.status = 'done';
+    if (!pl) return;
+    delete pl.away; delete pl.disp;
+    const rng = rngFor(S, x);
+    const work = (pl.h && pl.h.work) || 10, adapt = (pl.h && pl.h.adapt) || 10;
+    // 적응 실패: 성실성·적응력이 낮을수록
+    const fail = rng.chance(clamp(0.16 - (work - 10) * 0.012 - (adapt - 10) * 0.01, 0.03, 0.3));
+    const gap = Math.max(0, pl.pa - pl.ca);
+    const keys = pl.pr ? p.fp : p.fb;
+    const before = pl.ca, gains = [], v0 = pl.pr ? pl.pr.velo : 0;
+    if (!fail && gap > 0.05) {
+      // 잠재력과의 차이가 클수록, 어릴수록, 성실할수록 많이 오름
+      const pts = (p.q * (0.8 + Math.min(gap, 6) * 0.35) * (pl.age <= 21 ? 1.2 : pl.age <= 23 ? 1 : 0.8) * (0.85 + (work - 10) * 0.03)) * (0.75 + rng.next() * 0.5);
+      let n = Math.max(1, Math.round(pts));
+      for (let i = 0; i < n * 3 && n > 0; i++) {
+        const k = keys[Math.floor(rng.next() * keys.length)];
+        if (k === 'velo') { if (pl.pr.velo >= 158) continue; pl.pr.velo += 1 + (rng.chance(0.4) ? 1 : 0); gains.push(k); n--; continue; }
+        const o = pl.pr && pl.pr[k] != null ? pl.pr : pl.br && pl.br[k] != null ? pl.br : null;
+        if (!o || o[k] >= 20) continue;
+        o[k]++; gains.push(k); n--;
+      }
+      pl.ca = Math.round(LG.computeCA(pl) * 10) / 10;
+      if (pl.ca > pl.pa) pl.pa = pl.ca; // 드물게 넘으면 잠재력도 그만큼만
+    }
+    if (p.play) pl.dispPlay = 1; // 실전 리그: 올해 성장 계산에서 출전 기록으로 인정
+    if (p.safe && pl.h) pl.h.inj = Math.max(1, (pl.h.inj || 10) - 1); // 월드윙: 부상 위험 조금 줄어듦
+    // 부상
+    let injTxt = '';
+    if (!p.safe && rng.chance(p.inj * (pl.h && pl.h.inj ? 0.6 + pl.h.inj / 25 : 1))) {
+      const days = 10 + Math.floor(rng.next() * 30);
+      pl.inj = 1; pl.injName = pl.pr ? '팔꿈치 염증' : '햄스트링 통증'; pl.injUntil = addDays(date, days); pl.injDays = days;
+      injTxt = ' 다만 훈련 중 ' + pl.injName + '이 생겨 ' + days + '일쯤 쉬어야 합니다.';
+    }
+    const cnt = {}; for (const g of gains) cnt[g] = (cnt[g] || 0) + 1;
+    const gtxt = Object.keys(cnt).map((k) => k === 'velo' ? '구속 +' + (pl.pr.velo - v0) + 'km/h' : KO[k] + ' +' + cnt[k]).join(', ');
+    const velo = pl.pr && cnt.velo ? ' 최고 구속은 ' + pl.pr.velo + 'km/h가 됐습니다.' : '';
+    const body = fail ? p.name + '(' + p.place + ')에서 돌아왔지만 낯선 환경에 적응하지 못해 눈에 띄는 변화가 없었습니다.' + injTxt
+      : gap <= 0.05 ? p.name + '에서 돌아왔습니다. 이미 잠재력에 가까운 선수라 능력치는 그대로지만 좋은 경험이 됐습니다.' + injTxt
+      : p.name + '(' + p.place + ')에서 돌아왔습니다. 좋아진 부분: ' + gtxt + '.' + velo + (pl.ca > before ? ' 현재 능력이 한 단계 가까워졌습니다.' : '') + (p.play ? ' 실전 경험도 쌓았습니다.' : '') + injTxt;
+    SE().msg(S, date, '육성팀', pl.name + ' 파견 귀국 보고', body);
+    x.gains = cnt; x.fail = fail ? 1 : 0;
+  }
+  // 매일 호출: 출발·귀국 처리
+  function tick(S, date) {
+    if (!S.disp || !S.user) return;
+    const P = S.league.players;
+    for (const x of S.disp.list) {
+      if (x.status === 'plan' && date >= x.start) {
+        const pl = P[x.pid];
+        if (!pl || pl.team !== S.user || pl.inj || pl.serve) { x.status = 'cancel'; continue; }
+        x.status = 'away'; pl.away = x.end; pl.disp = x.prog;
+        if (pl.ent) { pl.ent = 0; const t = S.league.teams.find((q) => q.id === S.user); if (t && t.entry) t.entry = t.entry.filter((id) => id !== pl.id); }
+      }
+      if (x.status === 'away' && date >= x.end) finish(S, x, x.end);
+    }
+    // 오래된 기록 정리 (3년 지난 것)
+    const y = yearOf(date);
+    S.disp.list = S.disp.list.filter((x) => !(x.status === 'done' || x.status === 'cancel') || (x.y || y) >= y - 2);
+  }
+
+  OD.Dispatch = { PROGS, IN_CAP, MAX_AGE, prog, slotInfo, eligible, send, cancel, tick, KO };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- facility.js ---- */
+// 구장·시설: 1군 구장은 지자체 소유 → 보수는 '요청'하고 비용을 나눠 냄 / 2군 훈련시설은 구단 소유 → 직접 투자
+// 금액 단위: 만 원
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  const C = OD.Core;
+  const SE = () => OD.Season;
+  const FI = () => OD.Finance;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+  // 1군 구장 보수 요청 종류
+  const REQ = [
+    { k: 'fix', name: '그라운드·좌석 정비', total: 300000, gain: 15, base: 0.72, wait: 21, work: 30, open: ['01-01', '12-31'],
+      note: '잔디·흙·좌석·조명을 손봅니다. 금방 끝나고 승인도 잘 나는 편입니다.' },
+    { k: 'big', name: '대규모 리모델링', total: 1500000, gain: 35, base: 0.32, wait: 35, open: ['05-01', '10-31'],
+      note: '전광판·편의시설·선수단 시설을 새로 짓습니다. 비시즌에 공사해 다음 시즌 개막 전에 끝납니다. 예산이 커서 승인이 어렵습니다.' }
+  ];
+  const SHARES = [[30, 0], [50, 0.16], [70, 0.32]]; // 구단 부담률(%) → 승인 가능성 가산
+  // 2군 훈련시설 단계 (1~5) — 올리는 비용, 해마다 유지비
+  const FARM = [
+    null,
+    { name: '낡은 2군 구장', up: 0, keep: 10000 },
+    { name: '기본 2군 훈련장', up: 250000, keep: 15000 },
+    { name: '현대식 훈련 센터', up: 500000, keep: 25000 },
+    { name: '최신 육성 단지', up: 900000, keep: 35000 },
+    { name: '챔피언스파크급 종합 단지', up: 1500000, keep: 50000 }
+  ];
+  const BUILD_DAYS = 180;
+
+  function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rngOf(S, key) { return new C.RNG(hash(key + ':' + (S.seed || 7))); }
+  function team(S, id) { return S.league.teams.find((t) => t.id === id); }
+  function md(d) { return d.slice(5); }
+  function yr(d) { return Number(d.slice(0, 4)); }
+
+  // 처음 열 때 구단마다 구장 상태·2군 시설 단계를 정함 (구단 규모에 따라 차이)
+  function st(S) {
+    if (S.fac) return S.fac;
+    const F = { t: {}, req: [], log: [] };
+    for (const t of S.league.teams) {
+      const r = rngOf(S, 'fac' + t.id);
+      const farm = t.market === '대형' ? 3 + (r.chance(0.4) ? 1 : 0) : t.market === '중형' ? 2 + (r.chance(0.5) ? 1 : 0) : 2 + (r.chance(0.25) ? 1 : 0);
+      F.t[t.id] = { st: Math.round(55 + r.next() * 30), farm, build: null };
+    }
+    S.fac = F;
+    sync(S);
+    return F;
+  }
+  // 경기 엔진·관중 계산이 읽는 값을 구단 객체에 적어 둠
+  function sync(S) {
+    for (const t of S.league.teams) {
+      const f = S.fac.t[t.id]; if (!f) continue;
+      t.facInj = f.st < 40 ? 1 + (40 - f.st) * 0.006 : 1;          // 구장 상태가 나쁘면 부상 조금 늘어남
+      t.farmLv = f.farm;
+      t.farmRehab = 1 - (f.farm - 3) * 0.06;                         // 재활 기간 (3단계 기준 ±6%씩)
+    }
+  }
+  function stadMult(S, tid) { const f = S.fac && S.fac.t[tid]; return f ? 0.92 + f.st * 0.0016 : 1; } // 상태 50 → 1.0
+  function stadLabel(v) { return v >= 85 ? '최상' : v >= 70 ? '좋음' : v >= 50 ? '보통' : v >= 35 ? '낡음' : '심각'; }
+  function charge(S, tid, amt) { const f = S.fin && S.fin[tid]; if (f) f.exp.fac = (f.exp.fac || 0) + amt; }
+  function cash(S, tid) { return FI() && FI().cash ? FI().cash(S, tid) : 1e9; }
+
+  // ---- 1군 구장 보수 요청 ----
+  function approvalChance(S, tid, k, share) {
+    const q = REQ.find((x) => x.k === k), f = st(S).t[tid], t = team(S, tid);
+    const sh = SHARES.find((x) => x[0] === share) || SHARES[0];
+    let p = q.base + sh[1] + (60 - f.st) * 0.008 + (((t.fans && t.fans.mood) || 50) - 50) * 0.004;
+    if (tid === S.user && S.owner) p += (S.owner.trust - 50) * 0.002;
+    return clamp(p, 0.05, 0.95);
+  }
+  function canRequest(S, tid, k, date) {
+    const q = REQ.find((x) => x.k === k), F = st(S), y = yr(date);
+    if (md(date) < q.open[0] || md(date) > q.open[1]) return '대규모 리모델링은 5월~10월에만 요청할 수 있습니다 (비시즌 공사).';
+    if (F.req.some((r) => r.tid === tid && r.k === k && (r.y === y || r.status === 'wait' || r.status === 'work'))) return '올해는 이미 요청했습니다. 내년에 다시 요청할 수 있습니다.';
+    if (F.t[tid].st >= 95) return '구장 상태가 이미 최상입니다.';
+    return '';
+  }
+  function request(S, tid, k, share, date) {
+    const err = canRequest(S, tid, k, date); if (err) return { ok: false, err };
+    const q = REQ.find((x) => x.k === k);
+    const pay = Math.round(q.total * share / 100);
+    if (cash(S, tid) < pay) return { ok: false, err: '보유 현금이 부족합니다 (구단 부담 ' + C.money(pay) + ').' };
+    st(S).req.push({ id: (S.fac.seq = (S.fac.seq || 0) + 1), tid, k, share, pay, y: yr(date), date, decide: C.addDays(date, q.wait), status: 'wait', p: approvalChance(S, tid, k, share) });
+    return { ok: true };
+  }
+  function cityName(t) { return (t.city || '') + '시'; }
+  function decide(S, r, date) {
+    const q = REQ.find((x) => x.k === r.k), t = team(S, r.tid);
+    const ok = rngOf(S, 'req' + r.id + r.tid).next() < r.p;
+    if (!ok) {
+      r.status = 'no';
+      if (r.tid === S.user) SE().msg(S, r.decide, cityName(t) + ' 체육시설과', q.name + ' 요청 결과', '검토 끝에 올해 예산으로는 ' + q.name + '을(를) 진행하기 어렵다는 답이 왔습니다. 내년에 다시 요청할 수 있습니다. 구단 부담률을 높이면 승인 가능성이 올라갑니다.');
+      return;
+    }
+    charge(S, r.tid, r.pay);
+    r.status = 'work';
+    r.done = r.k === 'big' ? (md(r.decide) < '11-01' ? yr(r.decide) + 1 : yr(r.decide) + 1) + '-03-01' : C.addDays(r.decide, q.work);
+    if (r.tid === S.user) SE().msg(S, r.decide, cityName(t) + ' 체육시설과', q.name + ' 승인', q.name + ' 요청이 승인됐습니다. 구단 부담금 ' + C.money(r.pay) + '을(를) 냈고, 공사는 ' + C.fmtDate(r.done) + '에 끝납니다.' + (r.k === 'big' ? ' 시즌이 끝난 뒤 공사합니다.' : ''));
+  }
+  function complete(S, r) {
+    const q = REQ.find((x) => x.k === r.k), f = S.fac.t[r.tid], t = team(S, r.tid);
+    const before = f.st;
+    f.st = Math.min(100, f.st + q.gain);
+    r.status = 'done';
+    if (r.tid === S.user) SE().msg(S, r.done, '구단 운영팀', q.name + ' 완공', t.park + ' ' + q.name + ' 공사가 끝났습니다. 구장 상태 ' + before + ' → ' + f.st + ' (' + stadLabel(f.st) + '). 관중이 조금 늘고 선수 부상 걱정이 줄어듭니다.');
+  }
+
+  // ---- 2군 훈련시설 ----
+  function canUpgrade(S, tid, date) {
+    const f = st(S).t[tid];
+    if (f.build) return '공사 중입니다 (' + C.fmtDate(f.build.done) + ' 완공).';
+    if (f.farm >= 5) return '이미 최고 단계입니다.';
+    const cost = FARM[f.farm + 1].up;
+    if (cash(S, tid) < cost) return '보유 현금이 부족합니다 (' + C.money(cost) + ').';
+    return '';
+  }
+  function upgrade(S, tid, date) {
+    const err = canUpgrade(S, tid, date); if (err) return { ok: false, err };
+    const f = S.fac.t[tid], cost = FARM[f.farm + 1].up;
+    charge(S, tid, cost);
+    f.build = { lv: f.farm + 1, start: date, done: C.addDays(date, BUILD_DAYS), cost };
+    return { ok: true };
+  }
+
+  // ---- 매일 ----
+  function tick(S, date) {
+    if (!S.user || !S.fin) return;
+    const F = st(S), y = yr(date);
+    for (const r of F.req) {
+      if (r.status === 'wait' && date >= r.decide) decide(S, r, date);
+      if (r.status === 'work' && date >= r.done) complete(S, r);
+    }
+    for (const t of S.league.teams) {
+      const f = F.t[t.id];
+      if (f.build && date >= f.build.done) {
+        f.farm = f.build.lv; const b = f.build; f.build = null;
+        if (t.id === S.user) SE().msg(S, b.done, '구단 운영팀', '2군 훈련시설 완공', '2군 시설이 "' + FARM[f.farm].name + '"(' + f.farm + '단계)로 새로 문을 열었습니다. 유망주 성장과 부상 재활이 좋아집니다. 해마다 유지비 ' + C.money(FARM[f.farm].keep) + '이 듭니다.');
+      }
+    }
+    // 개막 무렵: 2군 시설 유지비
+    if (md(date) >= '03-01' && F.keepY !== y) {
+      F.keepY = y;
+      for (const t of S.league.teams) charge(S, t.id, FARM[F.t[t.id].farm].keep);
+    }
+    // 시즌 뒤: 구장이 낡음 + AI 구단의 보수 요청·시설 투자
+    if (md(date) >= '11-01' && F.ageY !== y) {
+      F.ageY = y;
+      const rng = rngOf(S, 'age' + y);
+      for (const t of S.league.teams) {
+        const f = F.t[t.id];
+        f.st = Math.max(5, f.st - (5 + Math.floor(rng.next() * 5)));
+        if (t.id === S.user) continue;
+        if (f.st < 50 && rng.chance(0.5)) { const k = f.st < 35 && rng.chance(0.5) ? 'big' : 'fix'; const q = REQ.find((x) => x.k === k); if (rng.next() < approvalChance(S, t.id, k, 50)) { charge(S, t.id, Math.round(q.total / 2)); f.st = Math.min(100, f.st + q.gain); } }
+        if (!f.build && f.farm < 5 && cash(S, t.id) > FARM[f.farm + 1].up * 2.2 && rng.chance(t.market === '대형' ? 0.3 : 0.18)) upgrade(S, t.id, date);
+      }
+    }
+    sync(S);
+  }
+
+  OD.Facility = { REQ, SHARES, FARM, BUILD_DAYS, st, sync, tick, stadMult, stadLabel, approvalChance, canRequest, request, canUpgrade, upgrade };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- military.js ---- */
@@ -3502,7 +3874,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     { key: 'med', name: '트레이닝 코치', eff: '부상 빈도·회복 기간' }
   ];
   const REV = [['gate', '입장 수입'], ['tv', '중계권'], ['spon', '스폰서·광고'], ['goods', '상품 판매'], ['support', '모기업 지원금'], ['post', '포스트시즌'], ['comp', 'FA 보상금 등'], ['mlb', '포스팅 이적료'], ['event', '은퇴식·영구결번'], ['bonus', '구단주 특별 지원']];
-  const EXP = [['sal', '선수 연봉'], ['staff', '감독·코치 연봉'], ['ops', '구장·운영비'], ['dead', '남은 연봉(방출·경질)'], ['fees', '이적료·계약금·보상금'], ['camp', '전지훈련'], ['cut', '구단주 예산 삭감'], ['tax', '경쟁균형세 기금']];
+  const EXP = [['sal', '선수 연봉'], ['staff', '감독·코치 연봉'], ['ops', '구장·운영비'], ['dead', '남은 연봉(방출·경질)'], ['fees', '이적료·계약금·보상금'], ['camp', '전지훈련'], ['dev', '유망주 파견'], ['fac', '구장·시설'], ['cut', '구단주 예산 삭감'], ['tax', '경쟁균형세 기금']];
 
   const team = (S, id) => S.league.teams.find((t) => t.id === id);
   const roster = (S, id) => LG.teamPlayers(S.league, id);
@@ -3585,7 +3957,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const star = roster(S, h).reduce((m, p) => Math.max(m, p.ent ? p.pop || 0 : 0), 0);
     if (star >= 80) mult += 0.05;
     const base = cap * MKT[H.market].fill;
-    return Math.round(clamp(base * mult * (1 + rng.normal(0, 0.06)), 3500, cap));
+    const fac = G.OD.Facility ? G.OD.Facility.stadMult(S, h) : 1; // 구장 상태
+    return Math.round(clamp(base * mult * fac * (1 + rng.normal(0, 0.06)), 3500, cap));
   }
 
   // ================= 하루 정산 =================
@@ -4324,12 +4697,13 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   const PIT_KEYS = ['stf', 'ctl', 'mov', 'sta', 'hold'];
   const PHYS = { spd: 1.5, sta: 1.3, stf: 1.3, arm: 1.2 };
   function sround(rng, x) { const f = Math.floor(x); return f + (rng.next() < x - f ? 1 : 0); }
-  function develop(p, rng, st) {
+  function develop(p, rng, st, farmLv) {
     const before = p.ca;
     const age = p.age;
     const s = p.st || {}, f = p.fst || {};
     const played1 = (s.pa || 0) >= 150 || (s.outs || 0) >= 120;
-    const played2 = (f.pa || 0) >= 150 || (f.outs || 0) >= 120;
+    const played2 = (f.pa || 0) >= 150 || (f.outs || 0) >= 120 || !!p.dispPlay; // 파견 실전 리그도 출전으로 인정
+    delete p.dispPlay;
     const work = ((p.h && p.h.work) || 10) - 10;
     let d;
     if (age <= 26) {
@@ -4339,6 +4713,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     } else if (age <= 30) d = rng.normal(0 + work * 0.01, 0.33);
     else d = -(0.1 + (age - 31) * 0.11) + work * 0.012 + rng.normal(0, 0.35);
     if (G.OD.Military) d += G.OD.Military.devPenalty(p);
+    if (farmLv && age <= 26 && !played1) d += (farmLv - 3) * 0.05; // 2군 훈련시설
     if (st && st.bat) d += ((p.pr ? st.pit.r : st.bat.r) - 10) * 0.012 + (p.age <= 24 ? (st.dev.r - 10) * 0.015 : 0);
     const apply = (obj, keys) => {
       for (const k of keys) {
@@ -4511,7 +4886,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       if (p.pool) continue; // 후보 풀은 새로 만듦
       const tm = team(S, p.team);
       const before = p.ca;
-      const d = develop(p, rng, tm && tm.staff);
+      const d = develop(p, rng, tm && tm.staff, tm && tm.farmLv);
       p.peak = Math.max(p.peak || 0, before, p.ca);
       if (p.team === S.user) dev.push({ id: p.id, d, b: before, a: p.ca });
     }
@@ -5715,6 +6090,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     for (const id in S.league.players) { const p = S.league.players[id]; if (p.pool === 'A' && p.nat === '대만') { delete S.league.players[id]; continue; } if (p.pool && (p.sk == null || !p.sreg)) { if (p.sk == null) p.sk = p.scouted ? 100 : p.pool === 'D' ? 30 : 0; delete p.scouted; if (p.lg) p.lg = p.lg.replace('일본 NPB 2군', 'NPB 2군').replace('메이저리그·트리플A', '메이저리그').replace(/^트리플A$/, '마이너리그 (트리플A)').replace(/^더블A$/, '마이너리그 (더블A)'); MK.scoutSeed(p, new C.RNG((p.id * 2654435761) >>> 0)); } }
     if (!S.scoutDate) S.scoutDate = SE.currentDate(S);
     if (MK.migrateScouts) MK.migrateScouts(S);
+    if (OD.Facility) { OD.Facility.st(S); OD.Facility.sync(S); }
     for (const t of S.league.teams) if (t.cash == null && FI && FI.START_CASH) t.cash = FI.START_CASH;
     // 아마추어 능력치 개편 전 드래프트 후보 → 새로 만들고, 지역·학교급별 스카우팅 진척은 이어받음
     if (S.dclass && S.dclass.v !== 2 && !(S.off && S.off.draft) && OF.makeDraftClass) {
@@ -5824,7 +6200,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   const MENU = [['lobby', '단장실'], ['team', '선수단'], ['trans', '이적 · 스카우트'], ['mgr', '감독·코치'], ['club', '구단'], ['league', '리그'], ['settings', '설정']];
   // 묶음 탭: 메뉴 하나 안에서 위쪽 갈래 버튼으로 나뉜다
   const GROUPS = {
-    team: [['squad', '1군'], ['fut', '퓨처스'], ['mil', '병역']],
+    team: [['squad', '1군'], ['lineup', '라인업'], ['fut', '퓨처스'], ['mil', '병역'], ['disp', '파견']],
     trans: [['mkt', '이적시장'], ['scout', '스카우트']],
     league: [['sched', '일정·결과'], ['stand', '순위'], ['rec', '기록']],
   };
@@ -5935,6 +6311,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (view === 'lobby') m.innerHTML = lobbyHTML();
     else if (view === 'inbox') m.innerHTML = inboxHTML();
     else if (view === 'squad') m.innerHTML = squadHTML();
+    else if (view === 'lineup') m.innerHTML = lineupHTML();
+    else if (view === 'disp') m.innerHTML = dispHTML();
     else if (view === 'fut') m.innerHTML = futHTML();
     else if (view === 'mkt') m.innerHTML = mktHTML();
     else if (view === 'off') m.innerHTML = offHTML();
@@ -6198,6 +6576,114 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       const c = typeof x === 'string' ? x.localeCompare(y, 'ko') : x - y;
       return c * st.d || a[2] - b[2];
     }).map((x) => x[0]);
+  }
+  // ---- 구장·시설 (구단 화면) ----
+  function facHTML() {
+    const FA = OD.Facility; if (!FA) return '';
+    const F = FA.st(S), me = F.t[S.user], t = team(S.user), date = SE.currentDate(S);
+    const share = [30, 50, 70].includes(ui.facShare) ? ui.facShare : 50;
+    const attPct = Math.round((FA.stadMult(S, S.user) - 1) * 100);
+    const myReq = F.req.filter((r) => r.tid === S.user).slice().reverse().slice(0, 6);
+    const stLab = { wait: '<span class="badge">검토 중</span>', no: '<span class="badge loss">거절</span>', work: '<span class="badge acc">공사 중</span>', done: '<span class="badge win">완공</span>' };
+    let a = '<section class="card"><div class="card-h"><h2>1군 구장</h2><span class="muted" style="font-size:12.5px">' + esc(t.park) + ' · ' + esc(t.city) + '시 소유</span></div>' +
+      gauge(me.st, '구장 상태 · ' + FA.stadLabel(me.st)) +
+      '<dl class="kv" style="margin-top:10px"><dt>관중 효과</dt><dd class="' + (attPct > 0 ? 'wi' : attPct < 0 ? 'lo' : '') + '">' + (attPct > 0 ? '+' : '') + attPct + '%</dd><dt>부상 위험</dt><dd class="' + (me.st < 40 ? 'lo' : '') + '">' + (me.st < 40 ? '+' + Math.round((t.facInj - 1) * 100) + '% (구장이 낡음)' : '영향 없음') + '</dd></dl>' +
+      '<p class="muted" style="font-size:12.5px;margin:8px 0 0">구장은 시청 소유라 구단이 직접 고칠 수 없고 보수를 요청해야 합니다. 시즌이 끝날 때마다 조금씩 낡습니다. 구단 부담률을 높이면 승인 가능성이 올라갑니다.</p>' +
+      '<div class="sect">구단 부담률</div><div class="tabs">' + [30, 50, 70].map((x) => '<button class="chip' + (share === x ? ' on' : '') + '" data-facshare="' + x + '">' + x + '%</button>').join('') + '</div>' +
+      '<div class="fac-reqs">' + FA.REQ.map((q) => {
+        const err = FA.canRequest(S, S.user, q.k, date), pay = Math.round(q.total * share / 100), pr = Math.round(FA.approvalChance(S, S.user, q.k, share) * 100);
+        return '<div class="fac-req"><div><b>' + esc(q.name) + '</b> <span class="muted">상태 +' + q.gain + '</span><p>' + esc(q.note) + '</p><small class="muted">총 ' + C.money(q.total) + ' 중 구단 부담 <b>' + C.money(pay) + '</b>(승인될 때 냄) · 승인 가능성 약 ' + pr + '%</small></div>' +
+          (err ? '<small class="muted fac-why">' + esc(err) + '</small>' : '<button class="btn sm" data-facreq="' + q.k + '">시청에 요청</button>') + '</div>';
+      }).join('') + '</div>' +
+      (myReq.length ? '<div class="sect">요청 기록</div><div class="news">' + myReq.map((r) => '<div class="nw"><span class="d num">' + C.fmtDate(r.date) + '</span><span>' + esc(FA.REQ.find((q) => q.k === r.k).name) + ' · 부담 ' + r.share + '% ' + (stLab[r.status] || '') + (r.status === 'work' ? ' <small class="muted">' + C.fmtDate(r.done) + ' 완공</small>' : '') + '</span></div>').join('') + '</div>' : '') + '</section>';
+    const nx = me.farm < 5 ? FA.FARM[me.farm + 1] : null, uerr = FA.canUpgrade(S, S.user, date);
+    let b = '<section class="card"><div class="card-h"><h2>2군 훈련시설</h2><span class="muted" style="font-size:12.5px">구단 소유</span></div>' +
+      '<div class="fac-lv">' + [1, 2, 3, 4, 5].map((i) => '<i class="' + (i <= me.farm ? 'on' : me.build && i === me.build.lv ? 'bld' : '') + '"></i>').join('') + '<b>' + me.farm + '단계</b><span>' + esc(FA.FARM[me.farm].name) + '</span></div>' +
+      '<dl class="kv" style="margin-top:10px"><dt>유망주 성장</dt><dd class="' + (me.farm > 3 ? 'wi' : me.farm < 3 ? 'lo' : '') + '">' + (me.farm === 3 ? '보통' : (me.farm > 3 ? '+' : '') + Math.round((me.farm - 3) * 0.05 * 100) / 100 + ' (해마다, 1군 주전이 아닌 26세 이하)') + '</dd><dt>부상 재활 기간</dt><dd class="' + (me.farm > 3 ? 'wi' : me.farm < 3 ? 'lo' : '') + '">' + (me.farm === 3 ? '보통' : (me.farm > 3 ? '-' : '+') + Math.abs(Math.round((me.farm - 3) * 6)) + '%') + '</dd><dt>유지비</dt><dd class="num">' + C.money(FA.FARM[me.farm].keep) + ' / 년</dd></dl>';
+    if (me.build) b += '<p class="fac-build">' + me.build.lv + '단계 "' + esc(FA.FARM[me.build.lv].name) + '" 공사 중 · ' + C.fmtDate(me.build.done) + ' 완공</p>';
+    else if (nx) b += '<div class="fac-req"><div><b>' + (me.farm + 1) + '단계로 올리기</b> <span class="muted">' + esc(nx.name) + '</span><p>공사 ' + Math.round(FA.BUILD_DAYS / 30) + '개월 · 비용 ' + C.money(nx.up) + '(바로 냄) · 완공 뒤 유지비 ' + C.money(nx.keep) + '/년</p></div>' + (uerr ? '<small class="muted fac-why">' + esc(uerr) + '</small>' : '<button class="btn sm" data-facup="1">공사 시작</button>') + '</div>';
+    else b += '<p class="muted" style="font-size:12.5px">최고 단계입니다.</p>';
+    b += '<p class="muted" style="font-size:12.5px;margin:8px 0 0">2군 시설은 구단이 직접 짓습니다. 유망주가 퓨처스에서 크는 속도와 1군 선수 부상 재활 기간에 영향을 줍니다.</p></section>';
+    // 리그 비교
+    const rows = S.league.teams.map((x) => ({ x, f: F.t[x.id] })).sort((p, q) => q.f.st - p.f.st);
+    const cmp = '<section class="card" style="margin-top:16px"><div class="card-h"><h2>리그 시설 비교</h2></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">구단</th><th class="l">구장</th><th>구장 상태</th><th class="l">2군 시설</th></tr></thead><tbody>' +
+      rows.map(({ x, f }) => '<tr class="' + (x.id === S.user ? 'me' : '') + '"><td class="l txt">' + patch(x, 18) + ' ' + esc(LG.teamName(x)) + '</td><td class="l txt muted">' + esc(x.park) + '</td><td><b>' + f.st + '</b> <small class="muted">' + FA.stadLabel(f.st) + '</small></td><td class="l txt">' + f.farm + '단계' + (f.build ? ' <small class="muted">(공사 중)</small>' : '') + '</td></tr>').join('') + '</tbody></table></div></section>';
+    return '<div class="grid2 even" style="margin-top:16px">' + a + b + '</div>' + cmp;
+  }
+  // ---- 유망주 파견 ----
+  function dispHTML() {
+    const DP = OD.Dispatch, P = S.league.players, date = SE.currentDate(S);
+    const D = S.disp || { list: [] };
+    const money = FI.cash ? C.moneyShort(Math.round(FI.cash(S, S.user))) : '-';
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>유망주 파견</h2><span class="muted" style="font-size:12.5px">보유 현금 ' + money + '</span></div>' +
+      '<p class="muted" style="font-size:12.5px;margin:0">' + DP.MAX_AGE + '세 이하 국내 선수를 해외·국내 훈련 프로그램에 보냅니다. 돌아오면 프로그램이 다루는 능력치가 오르지만 <b>잠재력을 넘지는 않습니다</b>(잠재력까지 가는 속도만 빨라짐). 성실성·적응력이 낮으면 적응에 실패할 수 있고, 강도 높은 곳은 부상 위험이 있습니다. 비용은 구단 현금(유망주 파견)에서 나가고, 출발 전에 취소하면 80%를 돌려받습니다.</p></section>';
+    // 진행 중·예정·최근 결과
+    const cur = D.list.filter((x) => x.status !== 'cancel').slice().sort((a, b) => (a.status === 'done') - (b.status === 'done') || (a.start < b.start ? 1 : -1)).slice(0, 14);
+    h += '<section class="card"><div class="card-h"><h2>파견 현황</h2><span class="muted" style="font-size:12.5px">시즌 중 동시 ' + DP.IN_CAP + '명까지</span></div>';
+    if (!cur.length) h += '<div class="empty">아직 보낸 선수가 없습니다.</div>';
+    else h += '<div class="tbl-wrap"><table class="t"><thead><tr><th class="l">선수</th><th class="l">프로그램</th><th class="l">기간</th><th class="l">상태</th><th class="l">결과</th><th></th></tr></thead><tbody>' + cur.map((x) => {
+      const p = P[x.pid], g = DP.prog(x.prog); if (!p) return '';
+      const stt = x.status === 'plan' ? '<span class="badge">출발 예정</span>' : x.status === 'away' ? '<span class="badge acc">파견 중</span>' : '<span class="badge win">귀국</span>';
+      const res = x.status !== 'done' ? '<span class="muted">-</span>' : x.fail ? '<span class="muted">적응 실패</span>' : x.gains && Object.keys(x.gains).length ? Object.keys(x.gains).map((k) => DP.KO[k] + (k === 'velo' ? '↑' : ' +' + x.gains[k])).join(', ') : '<span class="muted">변화 없음</span>';
+      return '<tr><td class="l txt"><button class="mv-p" data-player="' + p.id + '">' + esc(p.name) + '</button> <small class="muted">' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세</small></td><td class="l txt">' + esc(g.name) + '<small class="muted" style="display:block">' + esc(g.place) + '</small></td><td class="l txt">' + C.fmtDate(x.start) + ' ~ ' + C.fmtDate(x.end) + '</td><td class="l">' + stt + '</td><td class="l txt">' + res + '</td><td>' + (x.status === 'plan' ? '<button class="btn sm ghost" data-dcancel="' + x.id + '">취소</button>' : '') + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+    h += '</section>';
+    const card = (g) => {
+      const si = DP.slotInfo(S, g.k, date);
+      const full = si.used >= si.cap;
+      const when = g.kind === 'in' ? g.wk + '주 (보낸 다음 날 출발)' : C.fmtDate(si.start) + ' ~ ' + C.fmtDate(si.end);
+      const focusTxt = (g.who === 'pit' ? '투수 전용' : '투수·타자') + ' · ' + [g.fp.length ? '투수 ' + g.fp.map((k) => DP.KO[k]).join('·') : '', g.fb.length ? '타자 ' + g.fb.map((k) => DP.KO[k]).join('·') : ''].filter(Boolean).join(' / ');
+      let c = '<div class="dp-card' + (si.open && !full ? '' : ' off') + '"><div class="dp-h"><span class="dp-flag">' + esc(g.flag) + '</span><div><b>' + esc(g.name) + '</b><small>' + esc(g.place) + '</small></div><span class="dp-cost num">' + C.money(g.cost) + '<small>/인</small></span></div>' +
+        '<p class="dp-note">' + esc(g.note) + '</p><dl class="dp-kv"><dt>기간</dt><dd>' + when + '</dd><dt>대상</dt><dd>' + esc(focusTxt) + '</dd><dt>자리</dt><dd>' + (g.kind === 'in' ? '시즌 중 합계 ' : '') + si.used + ' / ' + si.cap + '명</dd>' + (g.safe ? '<dt>특징</dt><dd>부상 위험 없음, 부상 잦은 체질 조금 개선</dd>' : g.inj >= 0.035 ? '<dt>주의</dt><dd>부상 위험 높음</dd>' : '') + (g.play ? '<dt>실전</dt><dd>올해 성장 계산에서 출전 기록으로 인정</dd>' : '') + '</dl>';
+      if (!si.open) c += '<p class="dp-why">' + esc(si.why) + '</p>';
+      else if (full) c += '<p class="dp-why">자리가 모두 찼습니다.</p>';
+      else c += '<button class="btn sm" data-dpick="' + g.k + '">' + (ui.dpPick === g.k ? '선수 고르기 닫기' : '선수 고르기') + '</button>';
+      if (ui.dpPick === g.k && si.open && !full) {
+        const mine = LG.teamPlayers(S.league, S.user).concat(Object.values(P).filter((p) => p.serve && p.serve.orig === S.user && false));
+        const ok = mine.filter((p) => !DP.eligible(S, p, g.k, date)).sort((a, b) => (b.pa - b.ca) - (a.pa - a.ca) || a.age - b.age);
+        c += '<div class="dp-pick">' + (ok.length ? ok.slice(0, 30).map((p) => '<div class="dp-row"><button class="mv-p" data-player="' + p.id + '">' + esc(p.name) + '</button><span class="muted">' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · ' + (p.ent ? '1군' : '퓨처스') + '</span><span class="dp-g">' + starsHTML(p.ca) + '<i>→</i>' + starsHTML(p.pa) + '</span><button class="btn sm primary" data-dsend="' + g.k + ':' + p.id + '">보내기</button></div>').join('') : '<p class="muted" style="margin:0;font-size:12.5px">보낼 수 있는 선수가 없습니다. (' + DP.MAX_AGE + '세 이하 국내 선수' + (g.kind === 'in' ? ', 1군 엔트리 제외' : '') + (g.who === 'pit' ? ', 투수만' : '') + ')</p>') + '</div>';
+      }
+      return c + '</div>';
+    };
+    h += '<section class="card"><div class="card-h"><h2>시즌 중 파견</h2><span class="muted" style="font-size:12.5px">정규시즌 4~8월 · 1군 엔트리 제외 · 동시 ' + DP.IN_CAP + '명</span></div><div class="dp-grid">' + DP.PROGS.filter((g) => g.kind === 'in').map(card).join('') + '</div></section>';
+    h += '<section class="card"><div class="card-h"><h2>시즌 후 파견</h2><span class="muted" style="font-size:12.5px">7월 1일부터 신청 · 일정이 정해져 있음</span></div><div class="dp-grid">' + DP.PROGS.filter((g) => g.kind === 'off').map(card).join('') + '</div></section>';
+    return h + '</div>';
+  }
+  // ---- 라인업 (보기 전용): 감독 AI가 짜는 기본 라인업, 오늘 휴식 무작위는 뺌 ----
+  const LU_XY = { C: [150, 246], '1B': [228, 168], '2B': [196, 124], SS: [104, 124], '3B': [72, 168], LF: [58, 74], CF: [150, 38], RF: [242, 74] };
+  function lineupHTML() {
+    const tid = ui.sqTeam || S.user, t = team(tid), P = S.league.players;
+    const hand = ui.luHand === 'L' ? 'L' : 'R';
+    let h = '<div class="wrap"><section class="card">' + teamHeadHTML(tid, '라인업') +
+      '<div class="tabs" role="tablist">' + [['R', '우완 선발 상대'], ['L', '좌완 선발 상대']].map(([k, n]) => '<button class="chip' + (hand === k ? ' on' : '') + '" data-luhand="' + k + '" role="tab" aria-selected="' + (hand === k) + '">' + n + '</button>').join('') + '</div>' +
+      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">감독이 지금 1군 엔트리로 짜는 기본 라인업입니다. 실제 경기에서는 체력 안배로 쉬는 선수가 생기거나 상대 투수에 따라 조금씩 바뀝니다. 라인업은 감독 권한이라 단장은 볼 수만 있습니다.</p></section>';
+    if (!t.entry || !t.entry.length) return h + '<section class="card"><div class="empty">아직 1군 엔트리가 정해지지 않았습니다. 시즌이 가까워지면 감독이 엔트리를 짭니다.</div></section></div>';
+    const lu = SIM.makeLineup(S.league, t, { chance: () => false }, hand);
+    const inLu = new Set(lu.map((x) => x.id));
+    const sp = t.rot && t.rot.length ? P[t.rot[(t.rotIdx || 0) % t.rot.length]] : null;
+    const short = (n) => n.length > 4 ? n.slice(0, 4) : n;
+    const mark = (x, i) => {
+      const p = P[x.id], xy = LU_XY[x.pos]; if (!xy) return '';
+      return '<g class="lu-m" data-player="' + p.id + '" transform="translate(' + xy[0] + ' ' + xy[1] + ')"><rect x="-38" y="-12" width="76" height="24" rx="12" fill="rgba(6,16,10,.86)" stroke="var(--accent)" stroke-width="1.2"/>' +
+        '<circle cx="-26" cy="0" r="9" fill="var(--accent)"/><text x="-26" y="3.6" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1a1205">' + (i + 1) + '</text>' +
+        '<text x="-13" y="4" font-size="11" font-weight="600" fill="#eef6f0">' + esc(short(p.name)) + '</text></g>';
+    };
+    const field = '<svg class="lu-field" viewBox="0 0 300 272" role="img" aria-label="수비 위치와 타순"><defs><linearGradient id="luG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4a2e"/><stop offset="1" stop-color="#2a6340"/></linearGradient></defs>' +
+      '<path d="M150 262 L4 116 Q150 -30 296 116 Z" fill="url(#luG)" stroke="#3d7a54"/>' +
+      '<path d="M150 252 L208 192 Q150 118 92 192 Z" fill="#6b5236" opacity=".9"/><path d="M150 236 L188 196 L150 158 L112 196 Z" fill="#2a6340"/>' +
+      '<circle cx="150" cy="198" r="9" fill="#6b5236"/>' +
+      '<g fill="#f0efe6"><rect x="184" y="192" width="7" height="7" transform="rotate(45 187.5 195.5)"/><rect x="146.5" y="154.5" width="7" height="7" transform="rotate(45 150 158)"/><rect x="109" y="192" width="7" height="7" transform="rotate(45 112.5 195.5)"/><path d="M146 236 h8 v4 l-4 4 l-4 -4 z"/></g>' +
+      (sp ? '<g data-player="' + sp.id + '" class="lu-m" transform="translate(150 198)"><rect x="-34" y="-11" width="68" height="22" rx="11" fill="rgba(6,16,10,.8)" stroke="#9fd8b0" stroke-width="1" stroke-dasharray="3 2"/><text x="0" y="4" text-anchor="middle" font-size="10.5" fill="#cfe8d6">' + esc(short(sp.name)) + ' (선발)</text></g>' : '') +
+      lu.map(mark).join('') + '</svg>';
+    const s = (p) => p.st || LG.blankStats();
+    const row = (x, i) => { const p = P[x.id], st = s(p);
+      return '<tr class="click" data-player="' + p.id + '"><td><b class="lu-no">' + (i + 1) + '</b></td><td class="l txt"><span class="pname">' + esc(p.name) + '</span></td><td class="l">' + (x.pos === 'DH' ? '지명타자' : LG.POS_KO[x.pos]) + '</td><td class="muted">' + (p.bats === 'S' ? '양타' : p.bats === 'L' ? '좌타' : '우타') + '</td><td class="l">' + starsHTML(p.ca) + '</td><td>' + C.avg3(st.h, st.ab) + '</td><td>' + st.hr + '</td><td>' + (st.ab ? (SE.obp(st) + SE.slg(st)).toFixed(3).replace(/^0/, '') : '-') + '</td></tr>'; };
+    const dh = lu.find((x) => x.pos === 'DH');
+    h += '<div class="lu-grid"><section class="card"><div class="card-h"><h2>수비 위치</h2>' + (dh ? '<span class="muted" style="font-size:12.5px">지명타자 ' + (lu.indexOf(dh) + 1) + '번 ' + esc(P[dh.id].name) + '</span>' : '') + '</div>' + field + '</section>' +
+      '<section class="card"><div class="card-h"><h2>타순</h2><span class="muted" style="font-size:12.5px">' + (hand === 'R' ? '우완' : '좌완') + ' 선발 상대</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>타순</th><th class="l">선수</th><th class="l">포지션</th><th>타석</th><th class="l">현재</th><th>타율</th><th>홈런</th><th>OPS</th></tr></thead><tbody>' + lu.map(row).join('') + '</tbody></table></div>';
+    const bench = t.entry.map((id) => P[id]).filter((p) => p && !p.pr && !inLu.has(p.id));
+    h += '<h3 class="lu-bench-h">벤치 (' + bench.length + '명)</h3><div class="lu-bench">' + (bench.length ? bench.map((p) => '<button class="chip" data-player="' + p.id + '">' + LG.POS_SHORT[p.pos] + ' · ' + esc(p.name) + (p.inj ? ' <span class="badge loss">부상</span>' : '') + '</button>').join('') : '<span class="muted">없음</span>') + '</div></section></div>';
+    return h + '</div>';
   }
   function squadHTML() {
     const tid = ui.sqTeam || S.user;
@@ -6662,6 +7148,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     h += '<section class="card"><div class="card-h"><h2>팬</h2><span class="muted" style="font-size:12.5px">' + esc(t.park) + ' · ' + cap.toLocaleString('ko-KR') + '석</span></div>' + gauge(t.fans.mood, '팬 여론') +
       '<dl class="kv" style="margin-top:12px"><dt>평균 관중</dt><dd class="num">' + (attAvg ? attAvg.toLocaleString('ko-KR') + '명 (' + Math.round(attAvg / cap * 100) + '%, 리그 ' + myAttRank + '위)' : '아직 홈경기 없음') + '</dd></dl>' +
       '<div class="sect">팬 게시판</div>' + ((S.fan || []).length ? '<div class="news">' + S.fan.slice(0, 8).map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 반응이 없습니다.</div>') + '</section></div>';
+    h += facHTML();
     // 장부
     const row = (lab, v, neg) => '<tr><td class="l txt">' + lab + '</td><td class="' + (neg ? 'lo' : '') + '">' + (neg && v ? '-' : '') + eok(v) + '</td></tr>';
     h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>' + f.year + ' 재정</h2><span class="muted" style="font-size:12.5px">' + (S.phase === 'reg' ? '지금까지' : '') + '</span></div>' +
@@ -7292,7 +7779,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else {
       left += '<dt>연봉</dt><dd class="num">' + (p.mil ? '군 복무 중' : C.money(p.sal)) + '</dd><dt>남은 계약</dt><dd>' + (p.mil ? '-' : p.yrs > 0 ? p.yrs + '년' : '1년') + '</dd><dt>현재 위치</dt><dd>' + where + '</dd>';
       if (MI && p.army && p.army !== 'n/a') left += '<dt>병역</dt><dd>' + esc(MI.statusText(p)) + '</dd>';
-      if (p.away) left += '<dt>대표팀</dt><dd>아시안게임 차출 중</dd>';
+      if (p.away) left += p.disp ? '<dt>파견</dt><dd>' + esc(OD.Dispatch.prog(p.disp).name) + ' · ' + C.fmtDate(p.away) + ' 귀국</dd>' : '<dt>대표팀</dt><dd>아시안게임 차출 중</dd>';
     }
     if (p.faInfo) left += '<dt>FA 등급</dt><dd>' + p.faInfo.grade + '등급 · ' + p.faInfo.yrs + '년 연 ' + C.money(p.faInfo.aav) + ' 요구</dd>';
     left += '</dl></div>';
@@ -7325,7 +7812,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const rg = recentGames(p, 5);
     const avg = rg.length ? rg.reduce((a, x) => a + x.r, 0) / rg.length : null;
     const s = p.st || LG.blankStats();
-    const cond = p.inj ? '<b class="lo">부상</b><span>' + esc(p.injName || '부상') + ' · ' + C.fmtDate(p.injUntil) + '까지</span>' : p.serve ? '<b>군 복무</b><span>' + esc(MI.statusText(p)) + '</span>' : p.away ? '<b>대표팀</b><span>아시안게임 차출 중</span>' : pool ? '<b class="muted">-</b><span>계약 전 선수</span>' : '<b class="wi">정상</b><span>' + (p.ent ? '1군에서 뛰는 중' : '퓨처스에서 뛰는 중') + '</span>';
+    const cond = p.inj ? '<b class="lo">부상</b><span>' + esc(p.injName || '부상') + ' · ' + C.fmtDate(p.injUntil) + '까지</span>' : p.serve ? '<b>군 복무</b><span>' + esc(MI.statusText(p)) + '</span>' : p.away ? (p.disp ? '<b>파견</b><span>' + esc(OD.Dispatch.prog(p.disp).place + ' · ' + OD.Dispatch.prog(p.disp).name) + '</span>' : '<b>대표팀</b><span>아시안게임 차출 중</span>') : pool ? '<b class="muted">-</b><span>계약 전 선수</span>' : '<b class="wi">정상</b><span>' + (p.ent ? '1군에서 뛰는 중' : '퓨처스에서 뛰는 중') + '</span>';
     const pop = p.pop != null && !pool ? '<b>' + Math.round(p.pop) + '</b><span>' + popText(p) + '</span>' : '<b class="muted">-</b><span>알려지지 않음</span>';
     const perf = rg.length ? '<div class="fm-bars">' + rg.map((x) => '<button data-game="' + x.gid + '" title="' + C.fmtDate(x.date) + ' ' + x.r.toFixed(1) + '"><i style="height:' + Math.round((x.r - 2) / 8 * 100) + '%" class="' + (x.r >= 7.5 ? 'hi' : x.r < 6 ? 'lo' : '') + '"></i></button>').join('') + '</div><span>평균 평점 <b class="num">' + avg.toFixed(2) + '</b></span>'
       : '<span class="muted">상세 기록이 남은 경기가 없습니다 (우리 구단 경기·포스트시즌만 남습니다).</span>';
@@ -7623,7 +8110,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -7810,6 +8297,13 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       else ui.sorts[scope] = cur && cur.k === k ? { k, d: -cur.d } : { k, d: TEXT_KEYS[k] ? 1 : -1 };
       keepScroll(render); return;
     }
+    if (d.facshare) { ui.facShare = Number(d.facshare); keepScroll(render); return; }
+    if (d.facreq) { const sh = [30, 50, 70].includes(ui.facShare) ? ui.facShare : 50; const r = OD.Facility.request(S, S.user, d.facreq, sh, SE.currentDate(S)); toast(r.ok ? '시청에 요청서를 보냈습니다. 몇 주 안에 답이 옵니다.' : r.err); if (r.ok) save(); keepScroll(render); return; }
+    if (d.facup) { const r = OD.Facility.upgrade(S, S.user, SE.currentDate(S)); toast(r.ok ? '2군 훈련시설 공사를 시작했습니다.' : r.err); if (r.ok) save(); keepScroll(render); return; }
+    if (d.dpick) { ui.dpPick = ui.dpPick === d.dpick ? null : d.dpick; keepScroll(render); return; }
+    if (d.dsend) { const [k, id] = d.dsend.split(':'); const r = OD.Dispatch.send(S, Number(id), k, SE.currentDate(S)); if (r.ok) { const p = S.league.players[id]; toast(p.name + ' — ' + OD.Dispatch.prog(k).name + ' 파견을 잡았습니다.'); save(); } else toast(r.err); keepScroll(render); return; }
+    if (d.dcancel) { if (OD.Dispatch.cancel(S, Number(d.dcancel))) { toast('파견을 취소했습니다. 비용의 80%를 돌려받았습니다.'); save(); } keepScroll(render); return; }
+    if (d.luhand) { ui.luHand = d.luhand; keepScroll(render); return; }
     if (d.sqtab) { ui.sqTab = d.sqtab; render(); return; }
     if (d.month) { ui.schMonth = d.month; render(); return; }
     switch (d.act) {
