@@ -220,6 +220,14 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .readall.sm { min-height: 28px; padding: 0 6px; font-size: 11.5px; }
 .readall b { margin-left: 2px; font-family: var(--f-num); }
 .inbox-h { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+/* 트레이드 현금 */
+.tcash { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); }
+.tcash-l { font-weight: 700; font-size: 13px; }
+.tcash .tabs { margin: 0; }
+.tcash-in { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.tcash-in input { width: 84px; min-height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line2); background: var(--panel); color: var(--fg); font: inherit; font-family: var(--f-num); text-align: right; }
+.tcash-n { font-size: 12px; }
+.tchip.cash { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); color: var(--accent); }
 /* 구장·시설 */
 .fac-reqs { display: grid; gap: 8px; margin-top: 10px; }
 .fac-req { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; background: var(--panel2); border: 1px solid var(--line); margin-top: 8px; }
@@ -2285,12 +2293,19 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const P = S.league.players;
     const notes = [];
     const problems = [];
+    let reasonCash = '';
     const pkG = (pk && pk.give) || [], pkT = (pk && pk.get) || [];
+    const cash = Math.round((pk && pk.cash) || 0);
     if (!give.length && !get.length && !pkG.length && !pkT.length) problems.push('선수나 지명권을 골라 주세요');
     if (pkG.length > MAX_SIDE || pkT.length > MAX_SIDE) problems.push('지명권은 한쪽에서 최대 ' + MAX_SIDE + '장까지 주고받을 수 있습니다');
     for (const k of pkG) if (pickOwner(S, k) !== userId) problems.push(pickLabel(S, k, true) + ' 지명권은 우리 구단 것이 아닙니다');
     for (const k of pkT) if (pickOwner(S, k) !== aiId) problems.push(pickLabel(S, k, true) + ' 지명권은 상대 구단 것이 아닙니다');
     const yrs = pickYears(S); for (const k of pkG.concat(pkT)) if (!yrs.includes(pickParse(k).y)) problems.push('지금은 거래할 수 없는 지명권입니다');
+    if (Math.abs(cash) > MAX_CASH) problems.push('현금은 한 번에 최대 ' + C.money(MAX_CASH) + '까지 주고받을 수 있습니다');
+    if (cash && G.OD.Finance) {
+      if (cash > 0 && G.OD.Finance.cash(S, userId) < cash) problems.push('우리 구단 보유 현금이 부족합니다');
+      if (cash < 0 && G.OD.Finance.cash(S, aiId) < -cash) reasonCash = '현금이 그만큼 없습니다';
+    }
     if (give.length > MAX_SIDE || get.length > MAX_SIDE) problems.push('한쪽에서 최대 ' + MAX_SIDE + '명까지 주고받을 수 있습니다');
     if (!tradeOpen(S, date)) problems.push(S.phase === 'reg' ? '트레이드 마감(7월 31일)이 지났습니다' : '지금은 트레이드 기간이 아닙니다');
     for (const id of give) if (P[id].team !== userId) problems.push(P[id].name + ' 선수는 우리 구단 소속이 아닙니다');
@@ -2309,8 +2324,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 상대 입장 가치
     const mode = teamMode(S, aiId);
     const inVals = give.map((id) => valueFor(S, P[id], aiId, mode) * needFactor(S, P[id], aiId, get)).concat(pkG.map((k) => pickValue(S, k, aiId, mode))).sort((a, b) => b - a);
-    const inVal = inVals.reduce((a, v, i) => a + v * (i === 0 ? 1 : i === 1 ? 0.85 : 0.7), 0); // 여러 명을 받으면 뒤 선수는 덜 쳐줌
-    const outVal = get.reduce((a, id) => a + valueFor(S, P[id], aiId, mode) * coreFactor(S, P[id]), 0) + pkT.reduce((a, k) => a + pickValue(S, k, aiId, mode) * 1.05, 0);
+    // 현금: 가치 1 ≈ 2,000만 원 (리빌딩 구단은 조금 더, 우승 경쟁 구단은 조금 덜 쳐줌)
+    const cashV = Math.abs(cash) / CASH_PER_VAL * (mode === 'build' ? 1.1 : mode === 'win' ? 0.9 : 1);
+    const inVal = inVals.reduce((a, v, i) => a + v * (i === 0 ? 1 : i === 1 ? 0.85 : 0.7), 0) + (cash > 0 ? cashV : 0); // 여러 명을 받으면 뒤 선수는 덜 쳐줌
+    const outVal = get.reduce((a, id) => a + valueFor(S, P[id], aiId, mode) * coreFactor(S, P[id]), 0) + pkT.reduce((a, k) => a + pickValue(S, k, aiId, mode) * 1.05, 0) + (cash < 0 ? cashV * 1.05 : 0);
     const need = outVal * (1.06 + Math.max(0, give.length - get.length) * 0.03) * (userId === S.user ? C.diffOf(S).trade : 1);
     const ratio = need > 0 ? inVal / need : (inVal > 0 ? 2 : 0);
     let accept = !problems.length && !pa && ratio >= 1;
@@ -2318,6 +2335,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const T = team(S, aiId);
     if (problems.length) reply = '규정에 맞지 않아 제안할 수 없습니다.';
     else if (pa) { reply = '그렇게 하면 ' + pa.replace('적어집니다', '적어져서') + ' 곤란합니다.'; accept = false; }
+    else if (reasonCash) { reply = '좋은 얘기지만 우리 구단에 ' + reasonCash + '. 현금을 줄여 주세요.'; accept = false; }
     else if (accept) reply = ratio >= 1.3 ? '좋은 조건이네요. 바로 받겠습니다.' : '좋습니다. 이 조건이면 받겠습니다.';
     else if (ratio >= 0.8) reply = '조금만 더 얹어 주시면 생각해 보겠습니다.';
     else if (ratio >= 0.5) reply = '우리가 손해 보는 거래입니다. 차이가 꽤 큽니다.';
@@ -2326,7 +2344,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (mode === 'win') notes.push(T.name + '는 우승 경쟁 중이라 즉시 전력을 원하고, 지명권은 덜 쳐줍니다');
     const pay0 = LG.payroll(S.league, userId);
     const dPay = get.reduce((a, id) => a + (P[id].foreign ? 0 : P[id].sal), 0) - give.reduce((a, id) => a + (P[id].foreign ? 0 : P[id].sal), 0);
-    return { accept, ratio, reply, problems, notes, mode, payAfter: pay0 + dPay, dPay, rosterAfter: ua };
+    if (cash) notes.push('현금 ' + C.money(Math.abs(cash)) + ' ≈ 선수 가치 ' + cashV.toFixed(1) + (cash > 0 ? ' (우리가 줌)' : ' (상대가 줌)'));
+    return { accept, ratio, reply, problems, notes, mode, payAfter: pay0 + dPay, dPay, rosterAfter: ua, cash };
   }
 
   function freeNumber(S, tid, n) {
@@ -2356,17 +2375,27 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function names(S, ids) { return ids.map((id) => S.league.players[id].name).join(', ') || '없음'; }
 
+  // 현금: 받는 쪽 수입(comp), 내는 쪽 지출(fees)
+  function payCash(S, payer, payee, amt) {
+    // 장부에 바로 반영 (경기 없는 비시즌에도 즉시)
+    const fp = S.fin && S.fin[payer], fe = S.fin && S.fin[payee];
+    if (fp && fe) { fp.exp.fees = (fp.exp.fees || 0) + amt; fe.rev.comp = (fe.rev.comp || 0) + amt; return; }
+    S.income = S.income || {}; S.fees = S.fees || {}; S.income[payee] = (S.income[payee] || 0) + amt; S.fees[payer] = (S.fees[payer] || 0) + amt;
+  }
+  const MAX_CASH = 200000; // 한 트레이드 현금 최대 20억 (AI 제안과 같은 한도)
   function executeTrade(S, aId, bId, aGive, bGive, date, pk) {
     const P = S.league.players;
     const pA = (pk && pk.a) || [], pB = (pk && pk.b) || [];
     movePicks(S, pA, bId); movePicks(S, pB, aId);
+    const cash = (pk && pk.cash) || 0;
+    if (cash) payCash(S, cash > 0 ? aId : bId, cash > 0 ? bId : aId, Math.abs(cash));
     for (const id of aGive) moveTo(S, P[id], bId, date);
     for (const id of bGive) moveTo(S, P[id], aId, date);
     refreshEntries(S, todayCal(S));
     const A = team(S, aId), B = team(S, bId);
     if (G.OD.Finance) { if (aId === S.user) G.OD.Finance.onMove(S, aGive, bGive, aId, date, 'trade'); if (bId === S.user) G.OD.Finance.onMove(S, bGive, aGive, bId, date, 'trade'); }
-    const side = (ids, keys) => [ids.length ? names(S, ids) : '', keys.map((k) => pickLabel(S, k, true) + ' 지명권').join(', ')].filter(Boolean).join(', ') || '없음';
-    const text = A.name + '·' + B.name + ' 트레이드 — ' + A.name + ' 영입: ' + side(bGive, pB) + ' / ' + B.name + ' 영입: ' + side(aGive, pA);
+    const side = (ids, keys, c) => [ids.length ? names(S, ids) : '', keys.map((k) => pickLabel(S, k, true) + ' 지명권').join(', '), c > 0 ? '현금 ' + C.money(c) : ''].filter(Boolean).join(', ') || '없음';
+    const text = A.name + '·' + B.name + ' 트레이드 — ' + A.name + ' 영입: ' + side(bGive, pB, -cash) + ' / ' + B.name + ' 영입: ' + side(aGive, pA, cash);
     log(S, date, 'trade', text);
     if (aId === S.user || bId === S.user) SE().msg(S, date, '프런트', '트레이드 성사', text);
     // 지난 제안 중 무효가 된 것 정리
@@ -2463,7 +2492,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const ev = evaluate(S, S.user, o.from, o.get, o.give, date, { give: o.pkGet || [], get: o.pkGive || [] });
     if (ev.problems.length) return { ok: false, msg: ev.problems[0] };
     executeTrade(S, S.user, o.from, o.get, o.give, date, { a: o.pkGet || [], b: o.pkGive || [] });
-    if (o.cash) { S.income = S.income || {}; S.fees = S.fees || {}; const payee = o.cash > 0 ? S.user : o.from, payer = o.cash > 0 ? o.from : S.user; S.income[payee] = (S.income[payee] || 0) + Math.abs(o.cash); S.fees[payer] = (S.fees[payer] || 0) + Math.abs(o.cash); }
+    if (o.cash) payCash(S, o.cash > 0 ? o.from : S.user, o.cash > 0 ? S.user : o.from, Math.abs(o.cash));
     S.offers = S.offers.filter((x) => x.id !== oid);
     return { ok: true };
   }
@@ -3097,7 +3126,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
 
   G.OD.Market = { scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
-    acceptOffer, declineOffer, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
+    acceptOffer, declineOffer, MAX_CASH, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
     seasonLeft, refreshEntries, log, moveTo, makeCandidate, setupManagers, mgrRating, mgrText, hireManager, weekly, fairSalary,
     F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, regLabel, migrateScouts, FREG, DREG, HREG, UREG, SCOUT_H, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -6827,7 +6856,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     T.get = T.get.filter((id) => P[id].team === T.partner);
     T.pgive = (T.pgive || []).filter((k) => MK.pickOwner(S, k) === S.user && MK.pickYears(S).includes(MK.pickParse(k).y));
     T.pget = (T.pget || []).filter((k) => MK.pickOwner(S, k) === T.partner && MK.pickYears(S).includes(MK.pickParse(k).y));
-    const pk = { give: T.pgive, get: T.pget };
+    T.cash = Math.max(-MK.MAX_CASH, Math.min(MK.MAX_CASH, Math.round(T.cash || 0)));
+    const pk = { give: T.pgive, get: T.pget, cash: T.cash };
     const pt = team(T.partner);
     const dl = MK.deadline(S.league.year);
     const left = Math.round((Date.parse(dl) - Date.parse(date)) / 864e5);
@@ -6837,10 +6867,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 요약
     const chip = (id, side) => '<button class="tchip" data-tsel="' + side + ':' + id + '" aria-label="' + esc(P[id].name) + ' 빼기">' + esc(P[id].name) + ' <span class="muted">' + (P[id].pr ? roleOf(P[id]) : LG.POS_SHORT[P[id].pos]) + '</span> ✕</button>';
     const pchip = (k, side) => '<button class="tchip pk" data-tpk="' + side + ':' + k + '" aria-label="지명권 빼기">' + esc(MK.pickLabel(S, k, true)) + ' <span class="muted">지명권</span> ✕</button>';
-    const ev = (T.give.length || T.get.length || T.pgive.length || T.pget.length) ? MK.evaluate(S, S.user, T.partner, T.give, T.get, date, pk) : null;
+    const cchip = (side) => '<button class="tchip cash" data-tcash="0" aria-label="현금 빼기">현금 ' + C.money(Math.abs(T.cash)) + ' ✕</button>';
+    const ev = (T.give.length || T.get.length || T.pgive.length || T.pget.length || T.cash) ? MK.evaluate(S, S.user, T.partner, T.give, T.get, date, pk) : null;
     const cap = LG.capFor(S.league.year);
-    h += '<section class="card tsum"><div class="tcols"><div><div class="eyebrow">' + esc(team(S.user).name) + '이(가) 보냄</div><div class="tchips">' + (T.give.map((id) => chip(id, 'give')).concat(T.pgive.map((k) => pchip(k, 'pgive'))).join('') || '<span class="muted">아래에서 고르세요</span>') + '</div></div>' +
-      '<div><div class="eyebrow">' + esc(pt.name) + '에서 받음</div><div class="tchips">' + (T.get.map((id) => chip(id, 'get')).concat(T.pget.map((k) => pchip(k, 'pget'))).join('') || '<span class="muted">아래에서 고르세요</span>') + '</div></div></div>';
+    h += '<section class="card tsum"><div class="tcols"><div><div class="eyebrow">' + esc(team(S.user).name) + '이(가) 보냄</div><div class="tchips">' + (T.give.map((id) => chip(id, 'give')).concat(T.pgive.map((k) => pchip(k, 'pgive'))).concat(T.cash > 0 ? [cchip()] : []).join('') || '<span class="muted">아래에서 고르세요</span>') + '</div></div>' +
+      '<div><div class="eyebrow">' + esc(pt.name) + '에서 받음</div><div class="tchips">' + (T.get.map((id) => chip(id, 'get')).concat(T.pget.map((k) => pchip(k, 'pget'))).concat(T.cash < 0 ? [cchip()] : []).join('') || '<span class="muted">아래에서 고르세요</span>') + '</div></div></div>';
+    // 현금 얹기 (가치 1 ≈ 2,000만 원)
+    const cdir = T.cash < 0 ? 'get' : 'give', camt = Math.abs(T.cash) / 10000;
+    h += '<div class="tcash"><span class="tcash-l">현금</span><div class="tabs">' + [['give', '우리가 줌'], ['get', '상대에게 받음']].map(([k, n]) => '<button class="chip' + (cdir === k && T.cash ? ' on' : '') + '" data-tcdir="' + k + '">' + n + '</button>').join('') + '</div>' +
+      '<label class="tcash-in"><input type="number" id="tCash" min="0" max="' + MK.MAX_CASH / 10000 + '" step="0.5" inputmode="decimal" value="' + (camt || '') + '" placeholder="0" aria-label="현금 (억 원)"> 억</label>' +
+      '<span class="muted tcash-n">최대 ' + C.money(MK.MAX_CASH) + ' · 우리 보유 ' + C.moneyShort(Math.round(FI.cash(S, S.user))) + ' · 상대 보유 ' + C.moneyShort(Math.round(FI.cash(S, T.partner))) + '</span></div>';
     if (ev) {
       h += '<dl class="kv tinfo"><dt>연봉 변화</dt><dd class="num">' + (ev.dPay >= 0 ? '+' : '') + C.money(ev.dPay) + '</dd><dt>경쟁균형세 기준</dt><dd class="num' + (ev.payAfter > cap ? ' lo' : '') + '">' + C.money(ev.payAfter) + ' / 상한 ' + C.money(cap) + (ev.payAfter > cap ? ' · 초과분 30% 납부' : '') + '</dd><dt>선수 수</dt><dd class="num">' + ev.rosterAfter + '명</dd></dl>';
       if (ev.problems.length) h += '<ul class="probs">' + ev.problems.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
@@ -8118,7 +8154,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -8168,16 +8204,18 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       if (i >= 0) arr.splice(i, 1); else if (arr.length < MK.MAX_SIDE) arr.push(key); else toast('지명권은 한쪽에서 최대 ' + MK.MAX_SIDE + '장까지 고를 수 있습니다.');
       ui.trade.res = null; keepScroll(render); return;
     }
+    if (d.tcdir) { const T = ui.trade; const a = Math.abs(T.cash || 0) || 10000; T.cash = d.tcdir === 'get' ? -a : a; T.res = null; keepScroll(render); return; }
+    if (d.tcash != null && el.matches('[data-tcash]')) { ui.trade.cash = 0; ui.trade.res = null; keepScroll(render); return; }
     if (d.tact) {
       const T = ui.trade;
-      const pk = { give: T.pgive, get: T.pget };
-      if (d.tact === 'clear') { T.give = []; T.get = []; T.pgive = []; T.pget = []; T.res = null; render(); }
+      const pk = { give: T.pgive, get: T.pget, cash: T.cash || 0 };
+      if (d.tact === 'clear') { T.give = []; T.get = []; T.pgive = []; T.pget = []; T.cash = 0; T.res = null; render(); }
       else if (d.tact === 'propose') { T.res = MK.evaluate(S, S.user, T.partner, T.give, T.get, today(), pk); keepScroll(render); }
       else if (d.tact === 'confirm') {
         const ev = MK.evaluate(S, S.user, T.partner, T.give, T.get, today(), pk);
         if (!ev.accept) { T.res = ev; render(); return; }
-        MK.executeTrade(S, S.user, T.partner, T.give, T.get, today(), { a: T.pgive, b: T.pget });
-        T.give = []; T.get = []; T.pgive = []; T.pget = []; T.res = null; save(); toast('트레이드가 성사됐습니다.'); render();
+        MK.executeTrade(S, S.user, T.partner, T.give, T.get, today(), { a: T.pgive, b: T.pget, cash: T.cash || 0 });
+        T.give = []; T.get = []; T.pgive = []; T.pget = []; T.cash = 0; T.res = null; save(); toast('트레이드가 성사됐습니다.'); render();
       }
       return;
     }
@@ -8342,6 +8380,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   document.addEventListener('change', (e) => {
     if (e.target.id === 'sqTeam') { ui.sqTeam = e.target.value; render(); }
     if (e.target.id === 'tPartner') { ui.trade.partner = e.target.value; ui.trade.get = []; ui.trade.res = null; render(); }
+    if (e.target.id === 'tCash') { const T = ui.trade; const v = Math.max(0, Math.min(MK.MAX_CASH / 10000, Number(e.target.value) || 0)); const sign = (T.cash || 0) < 0 ? -1 : 1; T.cash = Math.round(v * 2) / 2 * 10000 * sign; T.res = null; keepScroll(render); }
     if (e.target.id === 'futTeam') { ui.futTeam = e.target.value; render(); }
     if (e.target.dataset && (e.target.dataset.sreg || e.target.dataset.slvl)) {
       const [k, i] = (e.target.dataset.sreg || e.target.dataset.slvl).split(':');
