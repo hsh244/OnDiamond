@@ -161,6 +161,11 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .top-team { display: flex; gap: 10px; align-items: center; min-width: 0; }
 .top-team b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top-date { margin-left: auto; text-align: right; font-size: 12.5px; color: var(--muted); line-height: 1.3; white-space: nowrap; }
+#setBtn { flex: none; display: grid; place-items: center; width: 40px; height: 40px; margin-left: 12px; border-radius: 10px; border: 1px solid var(--line2); background: var(--panel2); color: var(--muted); cursor: pointer; }
+#setBtn svg { width: 20px; height: 20px; }
+#setBtn:hover { color: var(--fg); border-color: var(--accent); }
+#setBtn.on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+@media (max-width: 760px) { #setBtn { width: 38px; height: 38px; margin-left: 8px; } .top-date { font-size: 11.5px; } }
 .top-date b { display: block; color: var(--fg); font-size: 14px; font-weight: 600; }
 #main {
   margin-left: var(--rail);
@@ -6183,6 +6188,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     squad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.8 13.6c2.3.1 4 1.6 4.7 4.4"/></svg>',
     sched: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
     stand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 20V11M12 20V5M19 20v-6"/><path d="M3 20h18"/></svg>',
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
     fut: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21v-9"/><path d="M12 12c0-4 2.6-6.5 7-6.5 0 4.2-2.7 6.5-7 6.5z"/><path d="M12 15c0-3-2.2-5-5.8-5 0 3.3 2.3 5 5.8 5z"/><path d="M7 21h10"/></svg>',
     rec: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
@@ -6197,7 +6203,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     x: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>',
     mini: '<svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><rect x="9" y="9" width="22" height="22" transform="rotate(45 20 20)" fill="none" stroke="#f0b64a" stroke-width="2"/><rect x="17" y="17" width="6" height="6" transform="rotate(45 20 20)" fill="#e8ece4"/></svg>'
   };
-  const MENU = [['lobby', '단장실'], ['team', '선수단'], ['trans', '이적 · 스카우트'], ['mgr', '감독·코치'], ['club', '구단'], ['league', '리그'], ['settings', '설정']];
+  const MENU = [['lobby', '단장실'], ['team', '선수단'], ['trans', '이적 · 스카우트'], ['mgr', '감독·코치'], ['club', '구단'], ['league', '리그']];
   // 묶음 탭: 메뉴 하나 안에서 위쪽 갈래 버튼으로 나뉜다
   const GROUPS = {
     team: [['squad', '1군'], ['lineup', '라인업'], ['fut', '퓨처스'], ['mil', '병역'], ['disp', '파견']],
@@ -6205,11 +6211,12 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     league: [['sched', '일정·결과'], ['stand', '순위'], ['rec', '기록']],
   };
   IC.team = IC.squad; IC.trans = IC.mkt; IC.league = IC.sched;
+  function activeOffers() { const d = SE.currentDate(S); return (S.offers || []).filter((o) => o.until >= d); }
   function groupOf(v) { for (const g in GROUPS) if (GROUPS[g].some((x) => x[0] === v)) return g; return v === 'inbox' ? 'lobby' : null; }
   function navTarget(k) { if (!GROUPS[k]) return k; const last = ui.sub && ui.sub[k]; return last || GROUPS[k][0][0]; }
   function subnavHTML(g) {
     return '<div class="wrap subnav"><div class="seg" role="tablist">' + GROUPS[g].map(([k, n]) => '<button class="seg-b' + (view === k ? ' on' : '') + '" data-nav="' + k + '" role="tab" aria-selected="' + (view === k) + '">' + n +
-      (k === 'mkt' && S.offers && S.offers.length ? '<i class="dot" aria-label="받은 제안"></i>' : '') + '</button>').join('') + '</div></div>';
+      (k === 'mkt' && activeOffers().length ? '<i class="dot" aria-label="받은 제안"></i>' : '') + '</button>').join('') + '</div></div>';
   }
 
   // ================= 시작 화면 =================
@@ -6335,14 +6342,15 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     $('#rail').innerHTML = '<div class="rail-logo">' + IC.mini + '</div>' + menu.map(([k, n]) =>
       '<button class="rail-btn' + (cur === k ? ' on' : '') + '" data-nav="' + k + '"' + (cur === k ? ' aria-current="page"' : '') + '>' + IC[k] + '<span>' + n + '</span>' +
       (k === 'lobby' && unread ? '<i class="dot" aria-label="읽지 않은 메시지"></i>' : '') +
-      (k === 'trans' && S.offers && S.offers.length ? '<i class="dot" aria-label="받은 제안"></i>' : '') + '</button>').join('');
+      (k === 'trans' && activeOffers().length ? '<i class="dot" aria-label="받은 제안"></i>' : '') + '</button>').join('');
   }
   function renderTop() {
     const t = team(S.user), r = t.rec;
     const phase = S.phase === 'pre' ? (S.pre && S.pre.stage === 'plan' ? '비시즌' : S.pre && S.pre.stage === 'exh' ? '시범경기' : '스프링캠프') : S.phase === 'reg' ? '정규시즌' : S.phase === 'post' ? '포스트시즌' : S.phase === 'off' ? '오프시즌' : '시즌 종료';
     $('#top').innerHTML = '<button id="menuBtn" data-act="menu" aria-label="메뉴 열기">' + IC.menu + '</button>' +
       '<div class="top-team">' + patch(t, 30) + '<b>' + esc(LG.teamName(t)) + '</b></div>' +
-      '<div class="top-date"><b class="num">' + C.fmtDate(SE.currentDate(S), true) + '</b>' + S.league.year + ' ' + phase + ' · <span class="num">' + r.w + '-' + r.l + '-' + r.t + '</span></div>';
+      '<div class="top-date"><b class="num">' + C.fmtDate(SE.currentDate(S), true) + '</b>' + S.league.year + ' ' + phase + ' · <span class="num">' + r.w + '-' + r.l + '-' + r.t + '</span></div>' +
+      '<button id="setBtn" class="' + (view === 'settings' ? 'on' : '') + '" data-act="settings-toggle" aria-label="' + (view === 'settings' ? '설정 닫고 돌아가기' : '설정') + '" aria-pressed="' + (view === 'settings') + '" title="' + (view === 'settings' ? '설정 닫기' : '설정') + '">' + (view === 'settings' ? IC.close : IC.settings) + '</button>';
   }
 
   // ================= 단장실 =================
@@ -6425,7 +6433,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const serving = Object.values(P).filter((p) => p.serve && p.serve.orig === S.user).length;
     T.push(tile('선수단', '<dl class="t-kv"><dt>1군 엔트리</dt><dd>' + ent + '명</dd><dt>전체 보유</dt><dd>' + mine.length + '명</dd><dt>부상</dt><dd class="' + (inj ? 'lo' : '') + '">' + inj + '명</dd>' + (MI && S.mil ? '<dt>군 복무</dt><dd>' + serving + '명</dd>' : '') + '</dl>', 'data-nav="team"'));
     // 7. 이적 · 스카우트
-    const offers = S.offers ? S.offers.length : 0;
+    const offers = activeOffers().length;
     const fc = MK.foreignCount(S, S.user);
     let sc = 0; try { const ss = MK.scoutStaff(S); sc = ss.F.concat(ss.D || []).filter((x) => x.reg).length; } catch (e) {}
     T.push(tile('이적 · 스카우트', '<dl class="t-kv"><dt>받은 제안</dt><dd class="' + (offers ? 'acc' : '') + '">' + offers + '건</dd><dt>외국인</dt><dd>' + fc.f + '/' + MK.F_MAX + '</dd><dt>아시아쿼터</dt><dd>' + fc.a + '/' + MK.A_MAX + '</dd><dt>파견 스카우트</dt><dd>' + sc + '명</dd></dl>', 'data-nav="trans"', { badge: offers ? '<i class="dot" aria-label="받은 제안"></i>' : '' }));
@@ -6840,7 +6848,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     h += '<div class="sim-row" style="margin-top:12px"><button class="btn primary" data-tact="propose"' + (ev && !ev.problems.length ? '' : ' disabled') + '>제안하기</button><button class="btn ghost" data-tact="clear">비우기</button></div>';
     if (T.res) {
       const r = T.res;
-      const pctv = Math.min(150, Math.round(r.ratio * 100));
+      const pctv = Math.min(150, Math.floor(r.ratio * 100 + 1e-9)); // 수락 기준(100%)과 맞추려고 내림
       h += '<div class="reply' + (r.accept ? ' ok' : '') + '"><div class="reply-h">' + patch(pt, 24) + '<b>' + esc(pt.name) + ' 단장</b></div><p>"' + esc(r.reply) + '"</p>' +
         '<div class="meter" aria-label="상대가 느끼는 매력도 ' + pctv + '%"><i style="width:' + (pctv / 1.5) + '%"></i><span class="mk" style="left:' + (100 / 1.5) + '%"></span></div><div class="muted" style="font-size:12px">상대가 느끼는 매력도 ' + pctv + '% (100% 이상이면 수락)</div>' +
         (r.notes.length ? '<div class="muted" style="font-size:12.5px;margin-top:6px">' + r.notes.map(esc).join(' · ') + '</div>' : '') +
@@ -8317,6 +8325,12 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       case 'new-no': ui.confirmNew = false; render(); break;
       case 'new-yes': ui.confirmNew = false; clearSave(); S = null; showPick(); break;
       case 'msgs-readall': { const n = S.msgs.filter((x) => !x.read).length; S.msgs.forEach((x) => { x.read = true; }); save(); keepScroll(render); if (n) toast('메시지 ' + n + '개를 모두 확인했습니다.'); break; }
+      case 'settings-toggle': {
+        document.body.classList.remove('menu-open'); closeSheet();
+        if (view === 'settings') { view = ui.prevView && ui.prevView !== 'settings' ? ui.prevView : 'lobby'; render(); window.scrollTo(0, ui.prevScroll || 0); }
+        else { ui.prevView = view; ui.prevScroll = window.scrollY; view = 'settings'; render(); window.scrollTo(0, 0); }
+        break;
+      }
       case 'export': exportSave(); break;
       case 'cloud-save': cloudPush(true).then((ok) => { if (ok) toast('계정에 저장했습니다.'); }); render(); break;
       case 'cloud-force': CL.conflict = null; cloudPush(true).then((ok) => { if (ok) toast('이 브라우저의 게임으로 계정 저장본을 바꿨습니다.'); }); break;
