@@ -706,6 +706,11 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .comp { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 .nextbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; position: sticky; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 5; border-color: var(--line2); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
 .prow.static { cursor: default; }
+.cut-box { max-height: 520px; overflow-y: auto; }
+.cut-t td, .cut-t th { white-space: nowrap; }
+.cut-t .linkish { background: none; border: 0; padding: 0; color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; }
+.cut-t .linkish:hover { text-decoration: underline; }
+@media (max-width: 560px) { .cut-t .c-sal { display: none; } .cut-t td, .cut-t th { padding-left: 6px; padding-right: 6px; } }
 .tp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: stretch; }
 .tp-row .tp-pf { align-self: center; padding: 6px 10px; font-size: 12px; }
 .prow .pr-g { grid-area: s; justify-self: end; align-self: center; display: inline-flex; align-items: center; gap: 4px; }
@@ -3309,7 +3314,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (S.frep) foreignWeekly(S, date, rng);
   }
 
-  G.OD.Market = { migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
+  G.OD.Market = { posCheck, migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
     acceptOffer, declineOffer, MAX_CASH, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
     seasonLeft, refreshEntries, log, moveTo, makeCandidate, setupManagers, mgrRating, mgrText, hireManager, weekly, fairSalary,
     F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, regLabel, migrateScouts, FREG, DREG, HREG, UREG, SCOUT_H, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
@@ -5587,6 +5592,35 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 선수단 정리 =================
   function rosterExcess(S, tid) { return Math.max(0, roster(S, tid).length - MAX_ROSTER); }
+  // 방출 명단: 단계를 넘길 때 명단에 든 선수를 모두 보류선수 명단에서 제외
+  const keepScore = (p) => p.ca + Math.max(0, p.pa - p.ca) * (p.age <= 21 ? 0.4 : p.age <= 24 ? 0.25 : 0);
+  function cutCheck(S, ids, pid) {
+    const p = S.league.players[pid];
+    if (!p || p.team !== S.user) return '우리 구단 선수가 아닙니다';
+    if (roster(S, S.user).length - ids.length - 1 < MK().MIN_ROSTER) return '선수가 너무 적어집니다';
+    return MK().posCheck(S, S.user, ids.concat([pid]), []) || '';
+  }
+  function cutList(S) {
+    const o = S.off;
+    if (!o.cut) { // 처음 열 때: 넘는 인원만큼 현재 능력·잠재력이 낮은 선수로 채워 둠
+      o.cut = [];
+      let ex = rosterExcess(S, S.user);
+      for (const p of roster(S, S.user).filter((x) => !x.foreign).sort((a, b) => keepScore(a) - keepScore(b))) {
+        if (ex <= 0) break;
+        if (!cutCheck(S, o.cut, p.id)) { o.cut.push(p.id); ex--; }
+      }
+    }
+    o.cut = o.cut.filter((id) => S.league.players[id] && S.league.players[id].team === S.user);
+    return o.cut;
+  }
+  function cutToggle(S, pid) {
+    const L = cutList(S), i = L.indexOf(pid);
+    if (i >= 0) { L.splice(i, 1); return { ok: true }; }
+    const err = cutCheck(S, L, pid);
+    if (err) return { ok: false, msg: err };
+    L.push(pid); return { ok: true };
+  }
+  function cutLeft(S) { return Math.max(0, roster(S, S.user).length - cutList(S).length - MAX_ROSTER); }
   function aiTrim(S) {
     for (const t of S.league.teams) {
       if (t.id === S.user) continue;
@@ -5616,7 +5650,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     if (o.step === 'foreign' && foreignPending(S)) return '외국인 선수마다 재계약 여부를 정해 주세요';
     if (o.step === 'draft' && !o.draft.done) return '신인 드래프트를 끝내 주세요';
-    if (o.step === 'roster' && rosterExcess(S, S.user)) return '선수가 ' + MAX_ROSTER + '명을 넘습니다. ' + rosterExcess(S, S.user) + '명을 정리해 주세요';
+    if (o.step === 'roster' && cutLeft(S)) return '방출 명단에 ' + cutLeft(S) + '명을 더 넣어 주세요 (' + MAX_ROSTER + '명 이하)';
     return null;
   }
   function advanceStep(S) {
@@ -5629,7 +5663,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (o.step === 'foreign') closeForeign(S);
     if (o.step === 'military' && G.OD.Military) G.OD.Military.closeStep(S, o.date);
     if (o.step === 'salary') closeSalary(S);
-    if (o.step === 'roster') { aiTrim(S); }
+    if (o.step === 'roster') { for (const id of cutList(S).slice()) MK().release(S, id, o.date); o.cut = []; aiTrim(S); }
     const nx = STEPS[i + 1];
     if (!nx) return { ok: false };
     o.step = nx.key;
@@ -5720,7 +5754,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   G.OD.Offseason = { STEPS, FA_ROUNDS, DRAFT_ROUNDS, MAX_ROSTER, startOffseason, advanceStep, canAdvance, develop, warLike,
     userOffer, cancelOffer, runFARound, compOptions, chooseComp, demandFor, budgetFor,
-    decideForeign, foreignPending, onClock, slotOf, protectToggle, protectSubmit, postingDecide, postingList, legendOf, peakOf, makeDraftClass, draftClass, draftPick, draftAdvance, setUserSalary, rosterExcess, perfScore };
+    decideForeign, foreignPending, onClock, slotOf, protectToggle, protectSubmit, postingDecide, postingList, legendOf, peakOf, makeDraftClass, draftClass, draftPick, draftAdvance, setUserSalary, rosterExcess, cutList, cutToggle, cutLeft, perfScore };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- season.js ---- */
@@ -7685,19 +7719,23 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return h + '</tbody></table></div></section>';
   }
   function offRoster() {
-    const n = LG.teamPlayers(S.league, S.user).length, ex = OF.rosterExcess(S, S.user);
-    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">선수단 정리</div><b class="disp" style="font-size:26px' + (ex ? ';color:var(--loss)' : '') + '">' + n + ' / ' + OF.MAX_ROSTER + '명</b><div class="muted" style="font-size:12.5px">' + (ex ? ex + '명을 정리해야 다음 시즌으로 넘어갈 수 있습니다' : '인원이 맞습니다') + '</div></div></div>' +
+    const all = LG.teamPlayers(S.league, S.user), L = OF.cutList(S), n = all.length, after = n - L.length, left = OF.cutLeft(S);
+    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">선수단 정리</div><b class="disp" style="font-size:26px' + (left ? ';color:var(--loss)' : '') + '">' + after + ' / ' + OF.MAX_ROSTER + '명</b><div class="muted" style="font-size:12.5px">지금 ' + n + '명 · 방출 명단 ' + L.length + '명' + (left ? ' · ' + left + '명 더 넣어야 합니다' : '') + '</div></div></div>' +
       '<p class="muted" style="font-size:12.5px;margin:12px 0 0">오프시즌에는 보류선수 명단에서 빼는 방식으로 정리합니다. 다년 계약이 남은 선수를 빼면 남은 연봉을 부담합니다. 다른 구단도 같은 방식으로 65명을 맞춥니다.</p></section>';
+    const row = (p, on) => '<tr><td class="l txt"><button class="linkish" data-player="' + p.id + '">' + esc(p.name) + '</button> <small class="muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[p.pos]) + (p.foreign ? ' · 외국인' : '') + '</small></td><td>' + p.age + '</td><td>' + starsHTML(p.ca) + '</td><td>' + starsHTML(p.pa) + '</td><td class="num c-sal">' + C.moneyShort(p.sal) + (p.yrs > 0 ? ' <small class="muted">· ' + p.yrs + '년</small>' : '') + '</td><td><button class="btn sm ' + (on ? 'ghost' : 'danger') + '" data-cut="' + p.id + '">' + (on ? '빼기' : '추가') + '</button></td></tr>';
+    const head = '<thead><tr><th class="l">이름</th><th>나이</th><th>현재 능력</th><th>잠재 능력</th><th class="c-sal">연봉</th><th></th></tr></thead>';
+    const inL = L.map((id) => S.league.players[id]);
+    h += '<section class="card"><div class="card-h"><h2>방출 명단</h2><span class="muted" style="font-size:12.5px">' + L.length + '명</span></div>' +
+      (inL.length ? '<div class="tbl-wrap"><table class="t cut-t">' + head + '<tbody>' + inL.map((p) => row(p, true)).join('') + '</tbody></table></div>' : '<div class="empty">방출 명단이 비어 있습니다.</div>') + '</section>';
+    const f = ui.cutF || 'all';
     const keep = (p) => p.ca + Math.max(0, p.pa - p.ca) * (p.age <= 21 ? 0.4 : p.age <= 24 ? 0.25 : 0);
-    const cands = LG.teamPlayers(S.league, S.user).filter((p) => !p.foreign).sort((a, b) => keep(a) - keep(b)).slice(0, 25);
-    h += '<section class="card"><div class="card-h"><h2>정리 후보</h2><span class="muted" style="font-size:12.5px">현재 능력과 잠재력이 낮은 순</span></div><div class="plist tall">';
-    for (const p of cands) {
-      const err = MK.releaseCheck(S, p.id);
-      const conf = ui.sheetConfirm === 'rel:' + p.id;
-      h += '<div class="wrow"><button class="prow" data-player="' + p.id + '"><span class="pr-n">' + esc(p.name) + '</span>' + starsHTML(p.ca) + '<span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · 잠재력 ' + p.pa.toFixed(1) + '</span><span class="pr-r"><span class="num">' + C.moneyShort(p.sal) + (p.yrs > 0 ? ' · 계약 ' + p.yrs + '년' : '') + '</span></span></button>' +
-        (conf ? '<span class="sim-row"><button class="btn sm danger" data-pact="relyes:' + p.id + '">제외</button><button class="btn sm ghost" data-pact="relno:' + p.id + '">취소</button></span>' : '<button class="btn sm ghost"' + (err ? ' disabled title="' + esc(err) + '"' : '') + ' data-roster="' + p.id + '">명단 제외</button>') + '</div>';
-    }
-    return h + '</div></section>';
+    let rest = all.filter((p) => !L.includes(p.id));
+    if (f === 'pit') rest = rest.filter((p) => p.pr); else if (f === 'bat') rest = rest.filter((p) => !p.pr);
+    rest.sort((a, b) => keep(a) - keep(b));
+    h += '<section class="card"><div class="card-h"><h2>선수 추가</h2><span class="muted" style="font-size:12.5px">' + rest.length + '명</span></div>' +
+      '<div class="tabs" style="margin-bottom:8px">' + [['all', '전체'], ['pit', '투수'], ['bat', '야수']].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-cutf="' + k + '">' + nm + '</button>').join('') + '</div>' +
+      '<div class="tbl-wrap cut-box"><table class="t cut-t">' + head + '<tbody>' + rest.map((p) => row(p, false)).join('') + '</tbody></table></div></section>';
+    return h;
   }
   function offHTML() {
     if (S.phase === 'done') return '<div class="wrap"><section class="card"><div class="card-h"><h2>오프시즌</h2></div><p class="muted" style="margin:0 0 12px">한국시리즈가 끝났습니다. 오프시즌을 시작할까요?</p><button class="btn primary" data-off="start">오프시즌 시작</button></section></div>';
@@ -8394,7 +8432,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -8543,6 +8581,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     if (d.mall) { const m = S.off && S.off.mil; const n = m ? MI.setPlanAll(S, d.mall, m.list) : 0; toast(n + '명의 병역 계획을 정했습니다.'); save(); keepScroll(render); return; }
     if (d.mplan) { const [k, id] = d.mplan.split(':'); const r = MI.setPlan(S, Number(id), k); if (!r.ok && r.msg) toast(r.msg); save(); keepScroll(render); return; }
+    if (d.cutf) { ui.cutF = d.cutf; keepScroll(render); return; }
+    if (d.cut) { const r = OF.cutToggle(S, Number(d.cut)); if (!r.ok) toast(r.msg); save(); keepScroll(render); return; }
     if (d.roster) { ui.sheetConfirm = 'rel:' + d.roster; keepScroll(render); return; }
     if (d.gomkt) { view = 'mkt'; ui.mktTab = d.gomkt; if (d.amlvlGo) { ui.amLvl = d.amlvlGo; ui.amReg = 'all'; } render(); window.scrollTo(0, 0); return; }
     if (d.ff) { ui.fFilter = d.ff; render(); return; }
