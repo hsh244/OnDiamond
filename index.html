@@ -220,6 +220,18 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .readall.sm { min-height: 28px; padding: 0 6px; font-size: 11.5px; }
 .readall b { margin-left: 2px; font-family: var(--f-num); }
 .inbox-h { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+/* 구장 크기 */
+.park-svg { width: 100%; max-width: 380px; display: block; margin: 4px auto 0; height: auto; }
+.park-n { font-size: 12px; margin: 4px 0 0; text-align: center; }
+.park-kv { margin-top: 8px; font-size: 12.5px; }
+/* 선호 플레이 */
+.fm-ppm { display: grid; gap: 6px; padding-top: 8px; border-top: 1px dashed var(--line2); }
+.fm-ppm p { margin: 0; font-size: 12.5px; }
+.ppm-list { display: grid; gap: 6px; }
+.ppm { display: grid; gap: 2px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 10%, var(--panel)); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.ppm b { font-size: 13px; color: var(--accent); }
+.ppm small { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.ppm-note { font-size: 11.5px !important; }
 /* 트레이드 현금 */
 .tcash { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); }
 .tcash-l { font-weight: 700; font-size: 13px; }
@@ -1070,16 +1082,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   const { RNG, clamp, r10 } = C;
 
   const TEAMS = [
-    { id: 'SGM', city: '서울', name: '제미니', market: '대형', color: '#2a5db0', color2: '#d9e3f4', park: '서울 종합운동장', hrf: 0.84 },
-    { id: 'SGR', city: '서울', name: '그리즐리스', market: '대형', color: '#6b4a2f', color2: '#ecdccb', park: '서울 종합운동장', hrf: 0.84 },
-    { id: 'SWR', city: '서울', name: '워리어스', market: '소형', color: '#8c2a3c', color2: '#f1d9de', park: '서울 서부 돔', hrf: 1.0 },
-    { id: 'ICS', city: '인천', name: '세틀러스', market: '중형', color: '#1b3a66', color2: '#d6deeb', park: '인천 해안 필드', hrf: 1.16 },
-    { id: 'SWM', city: '수원', name: '매직', market: '중형', color: '#5b2d91', color2: '#e5dcf1', park: '수원 성곽 파크', hrf: 1.03 },
-    { id: 'DJH', city: '대전', name: '호크스', market: '대형', color: '#e8641c', color2: '#fae0d0', park: '대전 신구장', hrf: 1.04 },
-    { id: 'DGL', city: '대구', name: '라이거스', market: '대형', color: '#d93d1a', color2: '#f8d9d0', park: '대구 하이랜드 파크', hrf: 1.2 },
-    { id: 'GJJ', city: '광주', name: '재규어스', market: '중형', color: '#d99a14', color2: '#f6ead0', park: '광주 무등 필드', hrf: 0.98 },
-    { id: 'BSM', city: '부산', name: '매리너스', market: '대형', color: '#3f86c4', color2: '#d9e8f5', park: '부산 항구 스타디움', hrf: 0.93 },
-    { id: 'CWR', city: '창원', name: '랩터스', market: '중형', color: '#1f7a3a', color2: '#d4ead9', park: '창원 바다 파크', hrf: 1.05 }
+    { id: 'SGM', city: '서울', name: '제미니', market: '대형', color: '#2a5db0', color2: '#d9e3f4', park: '서울 종합운동장', hrf: 0.84, dims: { l: 100, lc: 120, c: 125, rc: 120, r: 100, hl: 2.6, hc: 2.6, hr: 2.6, ref: '잠실' } },
+    { id: 'SGR', city: '서울', name: '그리즐리스', market: '대형', color: '#6b4a2f', color2: '#ecdccb', park: '서울 종합운동장', hrf: 0.84, dims: { l: 100, lc: 120, c: 125, rc: 120, r: 100, hl: 2.6, hc: 2.6, hr: 2.6, ref: '잠실' } },
+    { id: 'SWR', city: '서울', name: '워리어스', market: '소형', color: '#8c2a3c', color2: '#f1d9de', park: '서울 서부 돔', hrf: 1.0, dims: { l: 99, lc: 113, c: 122, rc: 113, r: 99, hl: 4, hc: 4, hr: 4, ref: '고척' } },
+    { id: 'ICS', city: '인천', name: '세틀러스', market: '중형', color: '#1b3a66', color2: '#d6deeb', park: '인천 해안 필드', hrf: 1.16, dims: { l: 95, lc: 115, c: 120, rc: 115, r: 95, hl: 2.4, hc: 2.4, hr: 2.4, ref: '문학' } },
+    { id: 'SWM', city: '수원', name: '매직', market: '중형', color: '#5b2d91', color2: '#e5dcf1', park: '수원 성곽 파크', hrf: 1.03, dims: { l: 98, lc: 113, c: 120, rc: 113, r: 98, hl: 3, hc: 3, hr: 3, ref: '수원' } },
+    { id: 'DJH', city: '대전', name: '호크스', market: '대형', color: '#e8641c', color2: '#fae0d0', park: '대전 신구장', hrf: 1.04, dims: { l: 99, lc: 115, c: 122, rc: 112, r: 95, hl: 2.4, hc: 2.4, hr: 8, ref: '대전 한화생명 볼파크', note: '우측 8m 몬스터 월' } },
+    { id: 'DGL', city: '대구', name: '라이거스', market: '대형', color: '#d93d1a', color2: '#f8d9d0', park: '대구 하이랜드 파크', hrf: 1.2, dims: { l: 99.5, lc: 107, c: 122.5, rc: 107, r: 99.5, hl: 3.6, hc: 3.6, hr: 3.6, ref: '대구 라이온즈파크' } },
+    { id: 'GJJ', city: '광주', name: '재규어스', market: '중형', color: '#d99a14', color2: '#f6ead0', park: '광주 무등 필드', hrf: 0.98, dims: { l: 99, lc: 115, c: 121, rc: 115, r: 99, hl: 3, hc: 3, hr: 3, ref: '광주 챔피언스필드' } },
+    { id: 'BSM', city: '부산', name: '매리너스', market: '대형', color: '#3f86c4', color2: '#d9e8f5', park: '부산 항구 스타디움', hrf: 0.93, dims: { l: 95.8, lc: 113, c: 120.5, rc: 113, r: 95.8, hl: 6, hc: 6, hr: 6, ref: '사직', note: '펜스 위 철망 구조물 포함 약 6m' } },
+    { id: 'CWR', city: '창원', name: '랩터스', market: '중형', color: '#1f7a3a', color2: '#d4ead9', park: '창원 바다 파크', hrf: 1.05, dims: { l: 101, lc: 116, c: 121.9, rc: 116, r: 101, hl: 3.3, hc: 3.3, hr: 3.3, ref: '창원 NC파크' } }
   ];
   const teamName = (t) => t.full || (t.city + ' ' + t.name);
 
@@ -1366,8 +1378,121 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return Math.round(1587294 * Math.pow(1.05, year - 2028));
   }
 
-  G.OD.League = { ageCurve, makePlayer, salaryFor, TEAMS, teamName, POS, POS_KO, POS_SHORT, POS_DEF, generateLeague, teamPlayers, payroll, totalSalary,
+  // 구장 좌·중·우 홈런 배율(평균 1)과 높은 담장에 막혀 2루타가 되는 비율
+  const PARK_CACHE = {};
+  function parkDir(tid) {
+    if (PARK_CACHE[tid]) return PARK_CACHE[tid];
+    const t = TEAMS.find((x) => x.id === tid), d = t && t.dims;
+    if (!d) return (PARK_CACHE[tid] = { L: 1, C: 1, R: 1, wL: 0, wC: 0, wR: 0 });
+    const side = (dist, ref) => Math.exp(-0.06 * (dist - ref));
+    const L = side((d.l + d.lc) / 2, 108), Cc = side(d.c, 122), R = side((d.r + d.rc) / 2, 108);
+    const m = (L + Cc + R) / 3;
+    const wall = (h) => Math.max(0, Math.min(0.45, (h - 3.2) * 0.075));
+    const wL = wall(d.hl), wC = wall(d.hc), wR = wall(d.hr);
+    // 담장에 막히는 몫만큼 넘길 힘을 키워, 구장 전체 홈런 수는 원래 값(hrf)을 유지
+    const kept = ((L / m) * (1 - wL) + (Cc / m) * (1 - wC) + (R / m) * (1 - wR)) / 3;
+    const n = 1 / kept;
+    return (PARK_CACHE[tid] = { L: L / m * n, C: Cc / m * n, R: R / m * n, wL, wC, wR });
+  }
+  G.OD.League = { parkDir, ageCurve, makePlayer, salaryFor, TEAMS, teamName, POS, POS_KO, POS_SHORT, POS_DEF, generateLeague, teamPlayers, payroll, totalSalary,
     capFor, batValue, posRating, fieldValue, pitchValue, computeCA, stars, GRADES, grade, gradeKey, blankStats };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- ppm.js ---- */
+// 선호 플레이 (FM의 Player Traits처럼): 선수마다 0~3개, 능력치와 어울리게 생기고
+// 해마다 코치와 훈련하며 새로 익히거나 버림. 단장은 직접 붙이거나 떼지 않음.
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  const C = OD.Core;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+  // w(p): 생길 가능성 가중치. ex: 같이 가질 수 없는 반대 성향. d: 설명(효과)
+  const B = (k) => (p) => (p.br ? p.br[k] : 10);
+  const BAT = [
+    { k: 'pull', n: '당겨치기 선호', ex: 'oppo', w: (p) => B('pow')(p) - 8, d: '타구가 당기는 쪽으로 많이 갑니다. 홈런이 늘고 인플레이 타율은 조금 낮아집니다.' },
+    { k: 'oppo', n: '밀어치기 선호', ex: 'pull', w: (p) => B('con')(p) - B('pow')(p) * 0.5 - 3, d: '반대쪽으로 밀어 칩니다. 안타가 조금 늘고 홈런은 줄어듭니다.' },
+    { k: 'first', n: '초구 타격 선호', ex: 'patient', w: (p) => 10.5 - B('eye')(p), d: '초구부터 적극적으로 칩니다. 삼진·볼넷이 줄고 상대 투구 수도 줄어듭니다.' },
+    { k: 'patient', n: '공을 오래 보는 편', ex: 'first', w: (p) => B('eye')(p) - 8, d: '볼카운트를 길게 끌고 갑니다. 볼넷이 늘고 삼진도 조금 늘며, 상대 투구 수가 많아집니다.' },
+    { k: 'bigs', n: '큰 스윙 선호', ex: 'short', w: (p) => B('pow')(p) - B('avk')(p), d: '크게 휘두릅니다. 홈런과 삼진이 함께 늘어납니다.' },
+    { k: 'short', n: '짧게 끊어치기', ex: 'bigs', w: (p) => B('avk')(p) + B('con')(p) - B('pow')(p) - 10, d: '짧게 맞힙니다. 삼진이 줄고 홈런도 줄어듭니다.' },
+    { k: 'steal', n: '도루 선호', ex: 'nosteal', w: (p) => B('spd')(p) - 11, d: '틈만 나면 뜁니다. 도루 시도가 크게 늘어납니다(성공률은 주력·주루 그대로).' },
+    { k: 'nosteal', n: '도루 자제', ex: 'steal', w: (p) => 10 - B('spd')(p), d: '웬만해선 도루하지 않습니다.' },
+    { k: 'aggr', n: '적극적 주루', ex: 'cons', w: (p) => (B('spd')(p) + B('run')(p)) / 2 - 9, d: '안타 때 한 베이스 더 가려고 합니다(1루→3루, 2루→홈).' },
+    { k: 'cons', n: '소극적 주루', ex: 'aggr', w: (p) => 10 - B('run')(p), d: '무리하지 않고 안전하게 한 베이스씩 갑니다.' }
+  ];
+  const R = (k) => (p) => (p.pr ? p.pr[k] : 10);
+  const PIT = [
+    { k: 'contact', n: '맞혀 잡기 선호', ex: 'strikeout', w: (p) => R('ctl')(p) - R('stf')(p) + 1, d: '빠르게 승부합니다. 삼진·볼넷이 줄고 투구 수가 적어 오래 던집니다.' },
+    { k: 'strikeout', n: '삼진 욕심', ex: 'contact', w: (p) => R('stf')(p) - 9 + ((p.pr ? p.pr.velo : 140) - 145) / 3, d: '삼진을 노립니다. 삼진이 늘지만 투구 수도 많아집니다.' },
+    { k: 'chase', n: '유인구 위주', w: (p) => R('stf')(p) + R('mov')(p) - R('ctl')(p) - 8, d: '존 밖으로 유인합니다. 삼진과 볼넷이 함께 늘어납니다.' },
+    { k: 'inside', n: '몸쪽 승부 선호', w: (p) => R('ctl')(p) - 9, d: '몸쪽을 과감하게 찌릅니다. 삼진이 조금 늘고 홈런은 조금 줄지만 몸에 맞는 공이 늘어납니다.' },
+    { k: 'gball', n: '땅볼 유도', ex: 'fball', w: (p) => R('mov')(p) - 8 + (p.gb ? 5 : 0), d: '낮게 깔아 땅볼을 만듭니다. 땅볼이 늘고 홈런이 줄어듭니다.' },
+    { k: 'fball', n: '뜬공 유도', ex: 'gball', w: (p) => R('stf')(p) - R('mov')(p) - (p.gb ? 5 : 0), d: '높은 공으로 뜬공을 만듭니다. 뜬공 아웃이 늘어 인플레이 타율이 낮아지지만 홈런은 조금 늘어납니다.' },
+    { k: 'fastball', n: '직구 위주', w: (p) => ((p.pr ? p.pr.velo : 140) - 143) / 2, d: '포심·커터·투심 같은 빠른 공으로 밀어붙입니다. 구속이 빠를수록 삼진이 늘고, 느리면 장타를 맞기 쉽습니다.' },
+    { k: 'holder', n: '견제 자주', ex: 'focus', w: (p) => R('hold')(p) - 9, d: '주자를 자주 견제합니다. 이 투수 상대로는 도루 시도가 줄어듭니다.' },
+    { k: 'focus', n: '타자 집중', ex: 'holder', w: (p) => 10 - R('hold')(p), d: '주자는 크게 신경 쓰지 않고 타자와 승부합니다. 주자가 있을 때 공이 좋아지지만 도루를 더 쉽게 허용합니다.' }
+  ];
+  const ALL = BAT.concat(PIT);
+  const BY = {}; for (const t of ALL) BY[t.k] = t;
+  const MAX = 4;
+
+  function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function listFor(p) { return p.pr ? PIT : BAT; }
+  function pickOne(p, rng) {
+    const have = p.ppm || [];
+    const cand = listFor(p).filter((t) => !have.includes(t.k) && !(t.ex && have.includes(t.ex)));
+    if (!cand.length) return null;
+    return rng.weighted(cand.map((t) => [t, clamp(t.w(p), 0.25, 9)])).k;
+  }
+  // 처음 생길 때: 0개 25% · 1개 40% · 2개 25% · 3개 10%
+  function generate(p, seed) {
+    const rng = new C.RNG((hash('ppm' + p.id) ^ (seed || 7)) >>> 0);
+    const n = rng.weighted([[0, 25], [1, 40], [2, 25], [3, 10]]);
+    p.ppm = [];
+    for (let i = 0; i < n; i++) { const k = pickOne(p, rng); if (k) p.ppm.push(k); }
+    return p.ppm;
+  }
+  function ensure(S, p) { if (!p.ppm) generate(p, S && S.seed); return p.ppm; }
+  function ensureAll(S) { const P = S.league.players; for (const id in P) if (!P[id].ppm) generate(P[id], S.seed); }
+  function has(p, k) { return !!(p && p.ppm && p.ppm.includes(k)); }
+
+  // 해마다(연말 성장 때): 코치와 훈련하며 하나를 익히거나, 드물게 버림
+  function yearly(S, year) {
+    const P = S.league.players, rng = new C.RNG((hash('ppmY' + year) ^ (S.seed || 7)) >>> 0);
+    const changes = [];
+    for (const id in P) {
+      const p = P[id];
+      if (!p.team || p.pool || p.retired) continue;
+      ensure(S, p);
+      const t = S.league.teams.find((x) => x.id === p.team);
+      const coach = t && t.staff && t.staff[p.pr ? 'pit' : 'bat'];
+      const cr = (coach && coach.r) || 10;
+      const work = (p.h && p.h.work) || 10;
+      const gain = clamp(0.08 + (cr - 10) * 0.012 + (work - 10) * 0.008 + (p.age <= 25 ? 0.05 : p.age >= 32 ? -0.04 : 0), 0.02, 0.3);
+      if (p.ppm.length < MAX && rng.chance(gain)) {
+        const k = pickOne(p, rng);
+        if (k) { p.ppm.push(k); if (p.team === S.user) changes.push([p, k, true]); continue; }
+      }
+      if (p.ppm.length && rng.chance(p.age >= 31 ? 0.07 : 0.035)) {
+        const k = p.ppm.splice(Math.floor(rng.next() * p.ppm.length), 1)[0];
+        if (p.team === S.user) changes.push([p, k, false]);
+      }
+    }
+    return changes;
+  }
+  // 스카우트 후보: 파악 56%부터 하나씩 차례로 공개 (n개면 56% ~ 100% 사이를 고르게 나눔)
+  function shownCount(p) {
+    const n = (p.ppm || []).length;
+    if (!p.pool || !n) return n;
+    const sk = p.sk || 0;
+    if (sk >= 100) return n;
+    if (sk < 56) return 0;
+    let c = 0; for (let i = 0; i < n; i++) if (sk >= 56 + i * (44 / n)) c++;
+    return c;
+  }
+
+  OD.PPM = { BAT, PIT, ALL, BY, MAX, generate, ensure, ensureAll, has, yearly, shownCount };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- sim.js ---- */
@@ -1545,6 +1670,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const T = (id) => L.teams.find((t) => t.id === id);
     const home = opt.home || T(homeId), away = opt.away || T(awayId);
     const hrf = home.hrf || 1;
+    const park = G.OD.League.parkDir(home.id);
+    const has = (p, k) => !!(p.ppm && p.ppm.includes(k));
+    let lastDir = 'C', lastWall = false; // 마지막 타구 방향(L/C/R 필드), 담장 직격 여부
     if (SK !== 'st') for (const t of [home, away]) for (const id of t.entry) if (!P[id][SK]) P[id][SK] = LG.blankStats();
 
     function makeSide(t, opp) {
@@ -1696,17 +1824,21 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         // 도루 시도
         if (bases[0] && !bases[1] && outs < 2) {
           const r = P[bases[0].id];
-          const want = Math.min(0.26, Math.max(0, r.br.spd - 8) * TUNE.sbTry * (1 + (r.br.run - 10) * 0.05));
+          const pt = P[def.pitcher];
+          // 선호 플레이: 주자(도루 선호/자제), 투수(견제 자주/타자 집중)
+          const tw = (has(r, 'steal') ? 1.6 : has(r, 'nosteal') ? 0.45 : 1) * (has(pt, 'holder') ? 0.6 : has(pt, 'focus') ? 1.5 : 1);
+          const want = Math.min(0.34, Math.max(0, r.br.spd - 8) * TUNE.sbTry * (1 + (r.br.run - 10) * 0.05) * tw);
           if (rng.chance(want)) {
             const cat = def.catcher;
-            const ok = clamp(0.67 + (r.br.run - 10) * 0.025 + (r.br.spd - 12) * 0.015 - ((cat.br.cs || 8) - 10) * 0.025, 0.35, 0.9);
+            const ok = clamp(0.67 + (r.br.run - 10) * 0.025 + (r.br.spd - 12) * 0.015 - ((cat.br.cs || 8) - 10) * 0.025 + (has(pt, 'focus') ? 0.06 : has(pt, 'holder') ? -0.03 : 0), 0.35, 0.92);
             if (rng.chance(ok)) { bases[1] = bases[0]; bases[0] = null; bl(r.id).sb++; r[SK].sb++; sync(); ev('sb', r.name + ' 2루 도루 성공'); }
             else { bases[0] = null; bl(r.id).cs++; r[SK].cs++; outRec(1); sync(); ev('cs', r.name + ' 2루 도루 실패, 아웃'); if (outs >= 3) break; }
           }
         }
-        const res = plateAppearance(b, p, def, off === H);
+        const res = plateAppearance(b, p, def, off === H, !!(bases[0] || bases[1] || bases[2]));
         // 투구 수
         let np = res === 'K' ? 4.8 : res === 'BB' ? 5.7 : res === 'HBP' ? 2.9 : 3.5;
+        np += (has(b, 'first') ? -0.9 : has(b, 'patient') ? 0.8 : 0) + (has(p, 'contact') ? -0.6 : has(p, 'strikeout') ? 0.6 : 0);
         np = Math.max(1, Math.round(np + rng.normal(0, 1.4)));
         def.pc += np;
         const pp = pline(def.pitcher); pp.np += np; pp.bf++;
@@ -1736,7 +1868,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
             for (let i = 2; i >= 0; i--) if (bases[i]) { score(bases[i], b.id, true); bases[i] = null; }
             score(runner, b.id, true);
             hrs.push(b.id);
-            if (LOG) { const n = scorers.length; desc = tp(['좌측', '좌중간', '가운데', '우중간', '우측']) + ' 담장 넘기는 ' + (n === 4 ? '만루 홈런' : n === 1 ? '솔로 홈런' : n + '점 홈런') + ' (시즌 ' + bs.hr + '호)'; kind = 'hr'; }
+            if (LOG) { const n = scorers.length; desc = (lastDir === 'L' ? tp(['좌측', '좌측', '좌중간']) : lastDir === 'R' ? tp(['우측', '우측', '우중간']) : tp(['가운데', '좌중간', '우중간'])) + ' 담장 넘기는 ' + (n === 4 ? '만루 홈런' : n === 1 ? '솔로 홈런' : n + '점 홈런') + ' (시즌 ' + bs.hr + '호)'; kind = 'hr'; }
             break;
           }
           case '1B': case '2B': case '3B': {
@@ -1745,13 +1877,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
             const sp = (r) => r10(P[r.id].br.spd);
             if (res === '1B') {
               if (bases[2]) { score(bases[2], b.id, true); bases[2] = null; }
-              if (bases[1]) { if (rng.chance(clamp(0.6 + 0.2 * sp(bases[1]) - (outs === 2 ? -0.15 : 0), 0.3, 0.92))) score(bases[1], b.id, true); else bases[2] = bases[1]; bases[1] = null; }
-              if (bases[0]) { if (!bases[2] && rng.chance(clamp(0.27 + 0.13 * sp(bases[0]), 0.08, 0.5))) bases[2] = bases[0]; else bases[1] = bases[0]; bases[0] = null; }
+              // 주루 성향 + 타구 방향(우익수 앞이면 1루 주자가 3루까지 가기 쉬움)
+              const ag = (r) => has(P[r.id], 'aggr') ? 0.1 : has(P[r.id], 'cons') ? -0.1 : 0;
+              const dirB = lastDir === 'R' ? 0.12 : lastDir === 'L' ? -0.06 : 0;
+              if (bases[1]) { if (rng.chance(clamp(0.6 + 0.2 * sp(bases[1]) - (outs === 2 ? -0.15 : 0) + ag(bases[1]), 0.3, 0.95))) score(bases[1], b.id, true); else bases[2] = bases[1]; bases[1] = null; }
+              if (bases[0]) { if (!bases[2] && rng.chance(clamp(0.27 + 0.13 * sp(bases[0]) + dirB + ag(bases[0]), 0.05, 0.65))) bases[2] = bases[0]; else bases[1] = bases[0]; bases[0] = null; }
               bases[0] = runner;
             } else if (res === '2B') {
               if (bases[2]) { score(bases[2], b.id, true); bases[2] = null; }
               if (bases[1]) { score(bases[1], b.id, true); bases[1] = null; }
-              if (bases[0]) { if (rng.chance(clamp(0.42 + 0.2 * sp(bases[0]) + (outs === 2 ? 0.15 : 0), 0.15, 0.85))) score(bases[0], b.id, true); else bases[2] = bases[0]; bases[0] = null; }
+              if (bases[0]) { const a2 = has(P[bases[0].id], 'aggr') ? 0.08 : has(P[bases[0].id], 'cons') ? -0.08 : 0; if (rng.chance(clamp(0.42 + 0.2 * sp(bases[0]) + (outs === 2 ? 0.15 : 0) + a2 - (lastWall ? 0.12 : 0), 0.12, 0.9))) score(bases[0], b.id, true); else bases[2] = bases[0]; bases[0] = null; }
               bases[1] = runner;
             } else {
               for (let i = 2; i >= 0; i--) if (bases[i]) { score(bases[i], b.id, true); bases[i] = null; }
@@ -1759,9 +1894,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
             }
             if (LOG) {
               kind = 'hit';
-              if (res === '1B') desc = tp(['좌전', '중전', '우전', '좌전', '우전', '중전', '유격수 쪽 내야', '3루수 쪽 내야']) + ' 안타';
-              else if (res === '2B') desc = tp(['좌중간', '우중간', '좌익선상', '우익선상', '중견수 키 넘기는']) + ' 2루타';
-              else desc = tp(['우중간', '좌중간', '우익선상']) + ' 3루타';
+              if (res === '1B') desc = (lastDir === 'L' ? tp(['좌전', '좌전', '유격수 쪽 내야', '3루수 쪽 내야']) : lastDir === 'R' ? tp(['우전', '우전', '1·2루 사이 빠지는']) : tp(['중전', '중전', '투수 옆 빠지는'])) + ' 안타';
+              else if (res === '2B') desc = lastWall ? (lastDir === 'R' ? '우측' : lastDir === 'L' ? '좌측' : '가운데') + ' 높은 담장 맞히는 2루타' : (lastDir === 'L' ? tp(['좌중간', '좌익선상']) : lastDir === 'R' ? tp(['우중간', '우익선상']) : tp(['중견수 키 넘기는', '좌중간', '우중간'])) + ' 2루타';
+              else desc = (lastDir === 'L' ? tp(['좌중간', '좌익선상']) : lastDir === 'R' ? tp(['우중간', '우익선상']) : '가운데 펜스까지 굴러가는') + ' 3루타';
             }
             break;
           }
@@ -1829,14 +1964,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       return half;
     }
 
-    function plateAppearance(b, p, def, isHome) {
+    function plateAppearance(b, p, def, isHome, onBase) {
       const br = b.br, pr = p.pr;
+      lastDir = 'C'; lastWall = false;
       const r10 = (x) => C.r10(x) * TUNE.spread;
       // 피로
       const lim = def.app.limit, pc = def.pc;
       const fat = Math.max(0, (pc - lim * 0.85) / (lim * 0.35));
       const pen = Math.min(0.55, fat * 0.4);
-      const stf = r10(pr.stf) - pen, ctl = r10(pr.ctl) - pen * 0.8, mov = r10(pr.mov) - pen * 0.6;
+      const fb = onBase && has(p, 'focus') ? 0.06 : 0; // 타자 집중: 주자가 있을 때 공이 좋아짐
+      const stf = r10(pr.stf) - pen + fb, ctl = r10(pr.ctl) - pen * 0.8 + fb, mov = r10(pr.mov) - pen * 0.6;
       const same = b.bats !== 'S' && b.bats === p.throws;
       const plat = same ? 1 : 0;
       const off = def === H ? A : H;
@@ -1847,19 +1984,37 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       const he = (isHome ? TUNE.homeEdge : -TUNE.homeEdge) + tacD + hc;
       const velo = (pr.velo - 140) / 12;
 
-      const pK = TUNE.k * Math.exp(0.5 * stf + 0.12 * velo - 0.55 * r10(br.avk) + 0.1 * plat - he);
-      const pBB = TUNE.bb * Math.exp(-0.6 * ctl + 0.48 * r10(br.eye) - 0.05 * plat + he);
-      const pHBP = TUNE.hbp * Math.exp(-0.3 * ctl);
+      // 선호 플레이 배율
+      const fbl = has(p, 'fastball');
+      const kM = (has(b, 'first') ? 0.88 : has(b, 'patient') ? 1.07 : 1) * (has(b, 'bigs') ? 1.12 : has(b, 'short') ? 0.88 : 1) *
+        (has(p, 'contact') ? 0.9 : has(p, 'strikeout') ? 1.1 : 1) * (has(p, 'chase') ? 1.06 : 1) * (has(p, 'inside') ? 1.02 : 1);
+      const bbM = (has(b, 'first') ? 0.78 : has(b, 'patient') ? 1.15 : 1) * (has(p, 'contact') ? 0.87 : 1) * (has(p, 'chase') ? 1.12 : 1);
+      const pK = TUNE.k * kM * Math.exp(0.5 * stf + (fbl ? 0.22 : 0.12) * velo - 0.55 * r10(br.avk) + 0.1 * plat - he);
+      const pBB = TUNE.bb * bbM * Math.exp(-0.6 * ctl + 0.48 * r10(br.eye) - 0.05 * plat + he);
+      const pHBP = TUNE.hbp * (has(p, 'inside') ? 1.8 : 1) * Math.exp(-0.3 * ctl);
       let x = rng.next();
       if (x < pK) return 'K';
       x -= pK;
       if (x < pBB) return 'BB';
       x -= pBB;
       if (x < pHBP) return 'HBP';
-      // 인플레이 (홈런 포함)
-      const pHR = TUNE.hr * Math.exp(1.6 * r10(br.pow) - 0.42 * stf - 0.38 * mov - 0.12 * plat + he * 2) * hrf * (p.gb ? 0.9 : 1);
-      if (rng.next() < pHR) return 'HR';
-      const babip = TUNE.babip + 0.055 * r10(br.con) + 0.012 * r10(br.spd) - 0.03 * stf - 0.018 * mov - 0.03 * def.def - 0.012 * plat + he;
+      // 인플레이 (홈런 포함): 타구 방향 — 당김/가운데/밀어 → 좌·우 타석에 따라 좌측/우측 필드
+      const side = b.bats === 'S' ? (p.throws === 'R' ? 'L' : 'R') : b.bats;
+      const sp3 = has(b, 'pull') ? [0.55, 0.27, 0.18] : has(b, 'oppo') ? [0.27, 0.33, 0.40] : [0.40, 0.33, 0.27];
+      const u = rng.next(), kind = u < sp3[0] ? 0 : u < sp3[0] + sp3[1] ? 1 : 2; // 0 당김 1 가운데 2 밀어
+      lastDir = kind === 1 ? 'C' : (kind === 0) === (side === 'R') ? 'L' : 'R';
+      const dirHR = (kind === 0 ? 1.15 : kind === 2 ? 0.8 : 1) * park[lastDir];
+      const hrM = 1.05 * (has(b, 'bigs') ? 1.12 : has(b, 'short') ? 0.9 : 1) * (has(p, 'gball') ? 0.95 : has(p, 'fball') ? 1.06 : 1) * (has(p, 'inside') ? 0.99 : 1) *
+        (fbl && pr.velo < 145 ? 1 + (145 - pr.velo) * 0.012 : 1);
+      const pHR = TUNE.hr * hrM * dirHR * Math.exp(1.6 * r10(br.pow) - 0.42 * stf - 0.38 * mov - 0.12 * plat + he * 2) * hrf * (p.gb ? 0.9 : 1);
+      if (rng.next() < pHR) {
+        // 높은 담장(대전 우측 몬스터 월, 사직 등)에 막히면 담장 직격 2루타
+        const w = park['w' + lastDir];
+        if (w && rng.next() < w) { lastWall = true; return '2B'; }
+        return 'HR';
+      }
+      const babip = TUNE.babip + 0.055 * r10(br.con) + 0.012 * r10(br.spd) - 0.03 * stf - 0.018 * mov - 0.03 * def.def - 0.012 * plat + he +
+        (has(b, 'pull') ? -0.006 : has(b, 'oppo') ? 0.006 : 0) + (has(b, 'bigs') ? -0.004 : has(b, 'short') ? 0.004 : 0) + (has(p, 'fball') ? -0.006 : 0);
       if (rng.next() < babip) {
         const d2 = TUNE.d2 + 0.07 * r10(br.gap) + 0.02 * r10(br.pow);
         const d3 = TUNE.d3 * Math.exp(0.9 * r10(br.spd));
@@ -1868,7 +2023,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         if (y < d3 + d2) return '2B';
         return '1B';
       }
-      const gb = TUNE.gb + 0.09 * mov - 0.07 * r10(br.pow) + (p.gb ? 0.05 : 0);
+      const gb = TUNE.gb + 0.09 * mov - 0.07 * r10(br.pow) + (p.gb ? 0.05 : 0) + (has(p, 'gball') ? 0.05 : has(p, 'fball') ? -0.05 : 0);
       const y = rng.next();
       if (y < gb) { if (rng.next() < TUNE.err * (1 - 0.6 * def.def)) return 'E'; return 'GB'; }
       if (y < gb + TUNE.ld) return 'LD';
@@ -2892,6 +3047,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (!S.scoutDate) { S.scoutDate = date; return; }
     const days = Math.round((Date.parse(date) - Date.parse(S.scoutDate)) / 864e5);
     if (days < 7) { if (days < 0) S.scoutDate = date; return; }
+    if (G.OD.PPM) G.OD.PPM.ensureAll(S); // 새로 생긴 선수(드래프트·외국인 후보 등)에 선호 플레이 부여
     const wk = Math.floor(days / 7);
     S.scoutDate = C.addDays(S.scoutDate, wk * 7);
     const P = S.league.players;
@@ -4926,6 +5082,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     dev.sort((a, b) => b.d - a.d);
     S.off.dev = dev;
+    // 선호 플레이: 코치와 훈련하며 새로 익히거나 버림
+    if (G.OD.PPM) {
+      const chg = G.OD.PPM.yearly(S, L.year);
+      if (chg.length) SE().msg(S, S.off.date, '코치진', '선호 플레이 변화 보고', chg.map(([pl, k, gained]) => pl.name + (gained ? ' — "' + G.OD.PPM.BY[k].n + '"을(를) 익혔습니다' : ' — "' + G.OD.PPM.BY[k].n + '" 습관을 버렸습니다')).join(' / ') + '.');
+    }
     saveRng(S, rng);
     const ch = dev.filter((x) => LG.gradeKey(x.b) !== LG.gradeKey(x.a));
     if (ch.length) SE().msg(S, S.off.date, '프런트', '연말 선수단 성장·노쇠화 보고서', ch.slice(0, 8).map((x) => { const p = P[x.id]; const gb = LG.grade(x.b), ga = LG.grade(x.a); return p.name + ': ' + gb.k + ' → ' + ga.k + (ga.i <= gb.i - 2 ? ' (스텝업!)' : ga.i > gb.i && p.age >= 31 ? ' (에이징 커브)' : ''); }).join(' / ') + (ch.length > 8 ? ' 외 ' + (ch.length - 8) + '명' : ''));
@@ -6124,6 +6285,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     for (const id in S.league.players) { const p = S.league.players[id]; if (p.pool === 'A' && p.nat === '대만') { delete S.league.players[id]; continue; } if (p.pool && (p.sk == null || !p.sreg)) { if (p.sk == null) p.sk = p.scouted ? 100 : p.pool === 'D' ? 30 : 0; delete p.scouted; if (p.lg) p.lg = p.lg.replace('일본 NPB 2군', 'NPB 2군').replace('메이저리그·트리플A', '메이저리그').replace(/^트리플A$/, '마이너리그 (트리플A)').replace(/^더블A$/, '마이너리그 (더블A)'); MK.scoutSeed(p, new C.RNG((p.id * 2654435761) >>> 0)); } }
     if (!S.scoutDate) S.scoutDate = SE.currentDate(S);
     if (MK.migrateScouts) MK.migrateScouts(S);
+    if (OD.PPM) OD.PPM.ensureAll(S);
     if (OD.Facility) { OD.Facility.st(S); OD.Facility.sync(S); }
     for (const t of S.league.teams) if (t.cash == null && FI && FI.START_CASH) t.cash = FI.START_CASH;
     // 아마추어 능력치 개편 전 드래프트 후보 → 새로 만들고, 지역·학교급별 스카우팅 진척은 이어받음
@@ -6614,6 +6776,27 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       return c * st.d || a[2] - b[2];
     }).map((x) => x[0]);
   }
+  // 구장 모양: 실제 구장 크기(m) 비율대로 외야 펜스, 담장이 높을수록 굵게
+  function parkSVG(tid) {
+    const base = LG.TEAMS.find((x) => x.id === tid), d = base && base.dims; if (!d) return '';
+    const K = 1.28, hx = 160, hy = 214;
+    const pt = (deg, m) => { const a = deg * Math.PI / 180; return [hx + Math.cos(a) * m * K, hy - Math.sin(a) * m * K]; };
+    const P = [[135, d.l, d.hl], [112.5, d.lc, (d.hl + d.hc) / 2], [90, d.c, d.hc], [67.5, d.rc, (d.hc + d.hr) / 2], [45, d.r, d.hr]].map(([a, m, h]) => ({ a, m, h, xy: pt(a, m) }));
+    const fence = 'M' + P.map((q) => q.xy.map((v) => v.toFixed(1)).join(' ')).join(' L');
+    const seg = P.slice(0, -1).map((q, i) => { const r = P[i + 1], h = (q.h + r.h) / 2, tall = h >= 4;
+      return '<line x1="' + q.xy[0].toFixed(1) + '" y1="' + q.xy[1].toFixed(1) + '" x2="' + r.xy[0].toFixed(1) + '" y2="' + r.xy[1].toFixed(1) + '" stroke="' + (tall ? 'var(--accent)' : '#cfe8d6') + '" stroke-width="' + (1.5 + h * 0.9).toFixed(1) + '" stroke-linecap="round"/>'; }).join('');
+    const lab = P.map((q) => { const o = pt(q.a, q.m + 9); return '<text x="' + o[0].toFixed(1) + '" y="' + (o[1] + 4).toFixed(1) + '" text-anchor="middle" font-size="10.5" fill="var(--fg)" font-weight="600">' + q.m + 'm</text>'; }).join('');
+    const L0 = pt(135, d.l), R0 = pt(45, d.r), dia = 27.4 * K;
+    const pd = LG.parkDir(tid), idx = (v) => Math.round(v * (base.hrf || 1) * 100);
+    const field = '<svg class="park-svg" viewBox="0 0 320 236" role="img" aria-label="' + esc(base.park) + ' 구장 크기"><path d="M' + hx + ' ' + hy + ' L' + L0.join(' ') + ' ' + fence.replace('M', 'L') + ' L' + hx + ' ' + hy + ' Z" fill="#245a37"/>' +
+      '<path d="M' + hx + ' ' + hy + ' l' + (-dia * 0.707).toFixed(1) + ' ' + (-dia * 0.707).toFixed(1) + ' l' + (dia * 0.707).toFixed(1) + ' ' + (-dia * 0.707).toFixed(1) + ' l' + (dia * 0.707).toFixed(1) + ' ' + (dia * 0.707).toFixed(1) + ' Z" fill="#6b5236" opacity=".85"/>' +
+      '<line x1="' + hx + '" y1="' + hy + '" x2="' + L0[0].toFixed(1) + '" y2="' + L0[1].toFixed(1) + '" stroke="#f0efe6" stroke-width="1"/><line x1="' + hx + '" y1="' + hy + '" x2="' + R0[0].toFixed(1) + '" y2="' + R0[1].toFixed(1) + '" stroke="#f0efe6" stroke-width="1"/>' + seg + lab + '</svg>';
+    const hs = [d.hl, d.hc, d.hr]; const hTxt = hs[0] === hs[1] && hs[1] === hs[2] ? '담장 높이 ' + d.hl + 'm' : '담장 높이 좌 ' + d.hl + 'm · 중앙 ' + d.hc + 'm · 우 ' + d.hr + 'm';
+    return '<div class="park"><div class="sect" style="margin-top:12px">구장 크기 <small class="muted">(' + esc(d.ref) + ' 기준)</small></div>' + field +
+      '<p class="muted park-n">' + hTxt + (d.note ? ' · ' + esc(d.note) : '') + '</p>' +
+      '<dl class="kv park-kv"><dt>홈런 지수 (리그 평균 100)</dt><dd>좌측 <b>' + idx(pd.L * (1 - pd.wL)) + '</b> · 가운데 <b>' + idx(pd.C * (1 - pd.wC)) + '</b> · 우측 <b>' + idx(pd.R * (1 - pd.wR)) + '</b></dd>' + (pd.wL + pd.wC + pd.wR > 0.1 ? '<dt>담장 직격</dt><dd>높은 담장에 막혀 홈런 대신 2루타가 되는 타구가 나옵니다</dd>' : '') +
+      '<dt>유리한 타자</dt><dd>' + (Math.abs(pd.L * (1 - pd.wL) - pd.R * (1 - pd.wR)) < 0.05 ? '좌우 대칭이라 차이 없음' : (pd.R * (1 - pd.wR) > pd.L * (1 - pd.wL) ? '우측이 유리 → 당겨치는 좌타자 · 밀어치는 우타자' : '좌측이 유리 → 당겨치는 우타자 · 밀어치는 좌타자')) + '</dd></dl></div>';
+  }
   // ---- 구장·시설 (구단 화면) ----
   function facHTML() {
     const FA = OD.Facility; if (!FA) return '';
@@ -6625,6 +6808,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     let a = '<section class="card"><div class="card-h"><h2>1군 구장</h2><span class="muted" style="font-size:12.5px">' + esc(t.park) + ' · ' + esc(t.city) + '시 소유</span></div>' +
       gauge(me.st, '구장 상태 · ' + FA.stadLabel(me.st)) +
       '<dl class="kv" style="margin-top:10px"><dt>관중 효과</dt><dd class="' + (attPct > 0 ? 'wi' : attPct < 0 ? 'lo' : '') + '">' + (attPct > 0 ? '+' : '') + attPct + '%</dd><dt>부상 위험</dt><dd class="' + (me.st < 40 ? 'lo' : '') + '">' + (me.st < 40 ? '+' + Math.round((t.facInj - 1) * 100) + '% (구장이 낡음)' : '영향 없음') + '</dd></dl>' +
+      parkSVG(S.user) +
       '<p class="muted" style="font-size:12.5px;margin:8px 0 0">구장은 시청 소유라 구단이 직접 고칠 수 없고 보수를 요청해야 합니다. 시즌이 끝날 때마다 조금씩 낡습니다. 구단 부담률을 높이면 승인 가능성이 올라갑니다.</p>' +
       '<div class="sect">구단 부담률</div><div class="tabs">' + [30, 50, 70].map((x) => '<button class="chip' + (share === x ? ' on' : '') + '" data-facshare="' + x + '">' + x + '%</button>').join('') + '</div>' +
       '<div class="fac-reqs">' + FA.REQ.map((q) => {
@@ -7791,6 +7975,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     return out.reverse();
   }
+  // 선호 플레이: 스카우트 후보는 파악 56%부터 하나씩 차례로 공개
+  function ppmHTML(p) {
+    if (!OD.PPM) return '';
+    const all = OD.PPM.ensure(S, p), n = OD.PPM.shownCount(p), list = all.slice(0, n);
+    const hidden = p.pool && n < all.length;
+    let body = list.length ? '<div class="ppm-list">' + list.map((k) => { const t = OD.PPM.BY[k]; return '<span class="ppm" tabindex="0" title="' + esc(t.d) + '"><b>' + esc(t.n) + '</b><small>' + esc(t.d) + '</small></span>'; }).join('') + '</div>' : '';
+    if (!list.length) body = '<p class="muted">' + (p.pool && (p.sk || 0) < 56 ? '스카우팅 파악 56%부터 하나씩 드러납니다.' : '뚜렷한 선호 플레이가 없습니다.') + '</p>';
+    else if (hidden) body += '<p class="muted" style="margin-top:4px">더 파악하면 다른 선호 플레이가 드러날 수 있습니다.</p>';
+    return '<section class="fm-ppm"><h3 class="rep">선호 플레이</h3>' + body + (!p.pool && p.team === S.user ? '<p class="muted ppm-note">코치진과 훈련하며 해마다 새로 익히거나 버립니다.</p>' : '') + '</section>';
+  }
   function playerSheet(id) {
     const p = S.league.players[id];
     const t = p.team ? (team(p.team) || fteamOf(p.team)) : null;
@@ -7846,7 +8040,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       : [['컨택', V.con], ['파워', V.pow], ['갭파워', V.gap], ['선구안', V.eye], ['삼진 회피', V.avk], ['주력', V.spd], ['수비', V.fld], ['송구', V.arm]];
     const [good, bad] = fmTraits(p, V, pool);
     let mid = '<div class="fm-anal"><div class="fm-rad"><h3>능력치 그래프</h3>' + fmRadar(axes) + '</div><div class="fm-traits"><h3 class="rep">장단점 보고서</h3><div><h3 class="good">장점</h3>' + (good.length ? '<ul>' + good.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '<p class="muted">' + (pool && lvN < 2 ? '더 지켜봐야 알 수 있습니다.' : '눈에 띄는 장점이 없습니다.') + '</p>') + '</div>' +
-      '<div><h3 class="bad">단점</h3>' + (bad.length ? '<ul>' + bad.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '<p class="muted">' + (pool && lvN < 2 ? '더 지켜봐야 알 수 있습니다.' : '눈에 띄는 약점이 없습니다.') + '</p>') + '</div></div></div>';
+      '<div><h3 class="bad">단점</h3>' + (bad.length ? '<ul>' + bad.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '<p class="muted">' + (pool && lvN < 2 ? '더 지켜봐야 알 수 있습니다.' : '눈에 띄는 약점이 없습니다.') + '</p>') + '</div>' + ppmHTML(p) + '</div></div>';
     // ---------- 오른쪽: 역할 적합도·포지션 ----------
     const roles = fmRoles(p, V), cur = curRoleKey(p, roles);
     let right = '<div class="fm-col fm-right">' + (p.pr ? '' : posFieldHTML(p, true)) + '<div class="fm-roles"><h3>역할 적합도</h3>' + roles.map(([k, n, v]) => '<div class="fm-role' + (k === cur ? ' on' : '') + '"><i class="rb" aria-hidden="true"></i><span>' + n + '</span>' + (v == null ? '<span class="qstar">?</span>' : starsHTML(v)) + '</div>').join('') +
