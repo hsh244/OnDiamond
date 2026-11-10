@@ -6831,6 +6831,20 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       rows.map(({ x, f }) => '<tr class="' + (x.id === S.user ? 'me' : '') + '"><td class="l txt">' + patch(x, 18) + ' ' + esc(LG.teamName(x)) + '</td><td class="l txt muted">' + esc(x.park) + '</td><td><b>' + f.st + '</b> <small class="muted">' + FA.stadLabel(f.st) + '</small></td><td class="l txt">' + f.farm + '단계' + (f.build ? ' <small class="muted">(공사 중)</small>' : '') + '</td></tr>').join('') + '</tbody></table></div></section>';
     return '<div class="grid2 even" style="margin-top:16px">' + a + b + '</div>' + cmp;
   }
+  // ---- 다른 구단 1군 구장 보기 (구단 화면) ----
+  function parksHTML() {
+    const FA = OD.Facility, F = FA ? FA.st(S) : null;
+    const others = S.league.teams.filter((x) => x.id !== S.user);
+    const sel = others.find((x) => x.id === ui.parkT) || others[0]; if (!sel) return '';
+    const f = F && F.t[sel.id], cap = FI.CAPACITY[sel.id];
+    const share = S.league.teams.filter((x) => x.id !== sel.id && x.park === sel.park).map((x) => LG.teamName(x));
+    return '<section class="card" style="margin-top:16px"><div class="card-h"><h2>다른 구단 1군 구장</h2></div>' +
+      '<div class="tabs park-tabs">' + others.map((x) => '<button class="chip' + (x.id === sel.id ? ' on' : '') + '" data-parkt="' + x.id + '">' + esc(x.name) + '</button>').join('') + '</div>' +
+      '<div class="park-other"><dl class="kv" style="margin-top:12px"><dt>구단</dt><dd>' + patch(sel, 18) + ' ' + esc(LG.teamName(sel)) + '</dd><dt>구장</dt><dd>' + esc(sel.park) + ' · ' + esc(sel.city) + '시 소유' + (share.length ? ' <small class="muted">(' + share.map(esc).join(', ') + '와 함께 씀)</small>' : '') + '</dd>' +
+      (cap ? '<dt>좌석</dt><dd class="num">' + cap.toLocaleString('ko-KR') + '석</dd>' : '') +
+      (f ? '<dt>구장 상태</dt><dd><b>' + f.st + '</b> <small class="muted">' + FA.stadLabel(f.st) + '</small></dd><dt>2군 시설</dt><dd>' + f.farm + '단계 · ' + esc(FA.FARM[f.farm].name) + (f.build ? ' <small class="muted">(공사 중)</small>' : '') + '</dd>' : '') +
+      '</dl>' + parkSVG(sel.id) + '</div></section>';
+  }
   // ---- 유망주 파견 ----
   function dispHTML() {
     const DP = OD.Dispatch, P = S.league.players, date = SE.currentDate(S);
@@ -7377,6 +7391,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       '<dl class="kv" style="margin-top:12px"><dt>평균 관중</dt><dd class="num">' + (attAvg ? attAvg.toLocaleString('ko-KR') + '명 (' + Math.round(attAvg / cap * 100) + '%, 리그 ' + myAttRank + '위)' : '아직 홈경기 없음') + '</dd></dl>' +
       '<div class="sect">팬 게시판</div>' + ((S.fan || []).length ? '<div class="news">' + S.fan.slice(0, 8).map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 반응이 없습니다.</div>') + '</section></div>';
     h += facHTML();
+    h += parksHTML();
     // 장부
     const row = (lab, v, neg) => '<tr><td class="l txt">' + lab + '</td><td class="' + (neg ? 'lo' : '') + '">' + (neg && v ? '-' : '') + eok(v) + '</td></tr>';
     h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>' + f.year + ' 재정</h2><span class="muted" style="font-size:12.5px">' + (S.phase === 'reg' ? '지금까지' : '') + '</span></div>' +
@@ -8348,7 +8363,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -8537,6 +8552,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       else ui.sorts[scope] = cur && cur.k === k ? { k, d: -cur.d } : { k, d: TEXT_KEYS[k] ? 1 : -1 };
       keepScroll(render); return;
     }
+    if (d.parkt) { ui.parkT = d.parkt; keepScroll(render); return; }
     if (d.facshare) { ui.facShare = Number(d.facshare); keepScroll(render); return; }
     if (d.facreq) { const sh = [30, 50, 70].includes(ui.facShare) ? ui.facShare : 50; const r = OD.Facility.request(S, S.user, d.facreq, sh, SE.currentDate(S)); toast(r.ok ? '시청에 요청서를 보냈습니다. 몇 주 안에 답이 옵니다.' : r.err); if (r.ok) save(); keepScroll(render); return; }
     if (d.facup) { const r = OD.Facility.upgrade(S, S.user, SE.currentDate(S)); toast(r.ok ? '2군 훈련시설 공사를 시작했습니다.' : r.err); if (r.ok) save(); keepScroll(render); return; }
