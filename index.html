@@ -2505,6 +2505,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   function freeNumber(S, tid, n) {
     const used = new Set(roster(S, tid).map((p) => p.num));
+    if (typeof n !== 'number' || !(n >= 0 && n <= 99)) n = 1 + Math.floor(Math.random() * 98);
     if (!used.has(n)) return n;
     for (let k = 1; k < 100; k++) { const x = (n + k) % 100; if (!used.has(x)) return x; }
     return n;
@@ -2709,6 +2710,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       return { ok: true, owed: owedOff };
     }
     const owed = Math.round(p.sal * seasonLeft(S) + p.sal * Math.max(0, p.yrs - 1));
+    noteOut(S, from, p);
     p.team = null; p.ent = 0;
     p.waiver = { from, until: C.addDays(date, 7), owed };
     S.waivers = S.waivers || [];
@@ -3122,12 +3124,29 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     S.league.players[p.id] = p;
     return p;
   }
+  // 예전 저장: 교체 횟수를 '내보낸 외국인 수' 기준으로 다시 셈
+  function migrateForeign(S) {
+    if (!S.frep || S.fout) return;
+    S.fout = {};
+    const P = Object.values(S.league.players), yr = String(S.league.year);
+    for (const t of S.league.teams) {
+      if (t.id !== S.user) { S.fout[t.id] = S.frep[t.id] || 0; continue; }
+      let n = 0;
+      for (const e of (S.trans || [])) {
+        if (e.kind !== 'release' || !e.date || e.date.slice(0, 4) !== yr || e.date.slice(5) < '03-01' || e.text.indexOf(t.name + ', ') !== 0) continue;
+        const nm = e.text.slice(t.name.length + 2).replace(/ (웨이버 공시|보류선수 명단 제외)$/, '');
+        if (P.some((x) => x.foreign && x.name === nm)) n++;
+      }
+      S.fout[t.id] = n;
+      S.frep[t.id] = Math.min(S.frep[t.id] || 0, n);
+    }
+  }
   function setupForeign(S, rng) {
     for (let i = 0; i < 27; i++) makeCandidate(S, rng, 'F', true);
     for (let i = 0; i < 19; i++) makeCandidate(S, rng, 'F', false);
     for (let i = 0; i < 10; i++) makeCandidate(S, rng, 'A', true);
     for (let i = 0; i < 9; i++) makeCandidate(S, rng, 'A', false);
-    S.frep = {};
+    S.frep = {}; S.fout = {};
     S.fStarted = false;
   }
   function pool(S, kind) { const out = []; const P = S.league.players; for (const id in P) if (P[id].pool === kind) out.push(P[id]); return out; }
@@ -3186,6 +3205,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (r.ok) SE().msg(S, date, '스카우트팀', '외국인 영입 경쟁', p.name + '은(는) ' + team(S, h.tid).name + '와 ' + h.amt + '만 달러에 계약했습니다.');
     return { ok: true, msg: p.name + '을(를) ' + team(S, h.tid).name + '에 내줬습니다.' };
   }
+  // 시즌 중 영입이 '교체'인지: 개막 뒤 외국인을 내보내 생긴 빈자리를 채울 때만 교체로 셈 (원래 빈 자리 채우기는 아님)
+  function isReplace(S, tid) { return !!S.fStarted && ((S.fout && S.fout[tid]) || 0) > ((S.frep && S.frep[tid]) || 0); }
+  function noteOut(S, tid, p) { if (S.fStarted && p && p.foreign) { S.fout = S.fout || {}; S.fout[tid] = (S.fout[tid] || 0) + 1; } }
   function signCheck(S, tid, p, date, amt) {
     if (!p || !p.pool) return '영입할 수 없는 선수입니다';
     if (S.phase === 'off') return '새 시즌 개막 전에 영입할 수 있습니다 (오프시즌이 끝난 뒤)';
@@ -3199,7 +3221,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (p.pool === 'F' && !p.pr && c.fb >= F_SAME) return '외국인 타자 ' + F_SAME + '명이 이미 있습니다';
     const fc = foreignCheck(S, tid, [], [p.id]);
     if (fc) return fc;
-    if (S.fStarted && (S.frep[tid] || 0) >= F_REPLACE) return '올해 외국인 교체 ' + F_REPLACE + '번을 모두 썼습니다';
+    if (isReplace(S, tid) && (S.frep[tid] || 0) >= F_REPLACE) return '올해 외국인 교체 ' + F_REPLACE + '번을 모두 썼습니다';
     if (p.pool === 'F' && fTotal(S, tid) + (amt != null ? amt : p.ask) * WON_PER_MANUSD > F_TOTAL_CAP) return '외국인 3명 연봉 합계 상한(40억)을 넘습니다 (지금 ' + C.money(fTotal(S, tid)) + ')';
     return null;
   }
@@ -3207,11 +3229,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const p = S.league.players[pid];
     const err = signCheck(S, tid, p, date);
     if (err) return { ok: false, msg: err };
-    const kind = p.pool;
+    const kind = p.pool, rep = isReplace(S, tid);
     p.pool = null; p.sal = salaryOf(p); p.yrs = 1;
     p.num = Math.floor(hashN(p.id, 7) * 99);
     moveTo(S, p, tid, date);
-    if (S.fStarted) S.frep[tid] = (S.frep[tid] || 0) + 1;
+    if (rep) S.frep[tid] = (S.frep[tid] || 0) + 1;
     if (!quiet) refreshEntries(S, todayCal(S));
     const T = team(S, tid);
     log(S, date, 'foreign', T.name + ', ' + (kind === 'A' ? '아시아쿼터 ' : '외국인 ') + p.name + ' 영입 (' + p.ask + '만 달러, ' + p.nat + ')');
@@ -3256,6 +3278,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         const kind = p.foreign === 1 ? 'F' : 'A';
         const cands = pool(S, kind).filter((c) => !!c.pr === !!p.pr).sort((a, b) => b.aiEst - a.aiEst);
         if (!cands.length || cands[0].aiEst < p.ca) continue;
+        noteOut(S, t.id, p);
         p.team = null; p.ent = 0; p.fa = 1;
         S.dead = S.dead || {}; S.dead[t.id] = (S.dead[t.id] || 0) + Math.round(p.sal * seasonLeft(S));
         log(S, date, 'release', t.name + ', ' + (p.foreign === 2 ? '아시아쿼터 ' : '외국인 ') + p.name + ' 방출');
@@ -3281,7 +3304,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (S.frep) foreignWeekly(S, date, rng);
   }
 
-  G.OD.Market = { scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
+  G.OD.Market = { migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
     acceptOffer, declineOffer, MAX_CASH, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
     seasonLeft, refreshEntries, log, moveTo, makeCandidate, setupManagers, mgrRating, mgrText, hireManager, weekly, fairSalary,
     F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, regLabel, migrateScouts, FREG, DREG, HREG, UREG, SCOUT_H, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
@@ -5675,7 +5698,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     Object.assign(S, { dayIdx: 0, phase: 'reg', results: {}, boxes: {}, logs: {}, logOrder: [], fres: [], moves: [], offers: [], waivers: [], claims: {}, post: null, fpost: null, final: null, off: null });
     // 외국인 후보 새로
-    S.frep = {}; S.fStarted = false; S.poolMonth = null;
+    S.frep = {}; S.fout = {}; S.fStarted = false; S.poolMonth = null;
     for (let i = 0; i < 24; i++) MK().makeCandidate(S, rng, 'F', true);
     for (let i = 0; i < 17; i++) MK().makeCandidate(S, rng, 'F', false);
     for (let i = 0; i < 9; i++) MK().makeCandidate(S, rng, 'A', true);
@@ -6285,8 +6308,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     for (const id in S.league.players) { const p = S.league.players[id]; if (p.pool === 'A' && p.nat === '대만') { delete S.league.players[id]; continue; } if (p.pool && (p.sk == null || !p.sreg)) { if (p.sk == null) p.sk = p.scouted ? 100 : p.pool === 'D' ? 30 : 0; delete p.scouted; if (p.lg) p.lg = p.lg.replace('일본 NPB 2군', 'NPB 2군').replace('메이저리그·트리플A', '메이저리그').replace(/^트리플A$/, '마이너리그 (트리플A)').replace(/^더블A$/, '마이너리그 (더블A)'); MK.scoutSeed(p, new C.RNG((p.id * 2654435761) >>> 0)); } }
     if (!S.scoutDate) S.scoutDate = SE.currentDate(S);
     if (MK.migrateScouts) MK.migrateScouts(S);
+    if (MK.migrateForeign) MK.migrateForeign(S);
+    for (const t of S.league.teams) { const R = Object.values(S.league.players).filter((x) => x.team === t.id); const used = new Set(R.map((x) => x.num)); for (const x of R) if (typeof x.num !== 'number' || isNaN(x.num)) { let n = 1 + Math.floor(Math.random() * 98); while (used.has(n)) n = (n + 1) % 100; used.add(n); x.num = n; } }
     if (OD.PPM) OD.PPM.ensureAll(S);
     if (OD.Facility) { OD.Facility.st(S); OD.Facility.sync(S); }
+    save(); // 고친 내용을 바로 저장
     for (const t of S.league.teams) if (t.cash == null && FI && FI.START_CASH) t.cash = FI.START_CASH;
     // 아마추어 능력치 개편 전 드래프트 후보 → 새로 만들고, 지역·학교급별 스카우팅 진척은 이어받음
     if (S.dclass && S.dclass.v !== 2 && !(S.off && S.off.draft) && OF.makeDraftClass) {
@@ -7115,7 +7141,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const dl = MK.fDeadline(S.league.year);
     let h = hijackCard() + '<section class="card"><div class="fstat">' +
       '<div><div class="eyebrow">' + (isF ? '외국인 선수' : '아시아쿼터') + '</div><b class="disp" style="font-size:26px">' + (isF ? c.f + ' / ' + MK.F_MAX + '명' : c.a + ' / ' + MK.A_MAX + '명') + '</b>' + (isF ? '<div class="muted" style="font-size:12.5px">투수 ' + c.fp + ' · 타자 ' + c.fb + ' (같은 유형 최대 ' + MK.F_SAME + '명)</div>' : '<div class="muted" style="font-size:12.5px">아시아 국적·호주, 아시아 리그 출신</div>') + '</div>' +
-      '<dl class="kv"><dt>신규 계약 상한</dt><dd class="num">' + (isF ? MK.F_CAP : MK.A_CAP) + '만 달러</dd>' + (isF ? '<dt>연봉 합계</dt><dd class="num' + (MK.fTotal(S, S.user) > MK.F_TOTAL_CAP * 0.85 ? ' lo' : '') + '">' + C.money(MK.fTotal(S, S.user)) + ' / 40억</dd>' : '') + '<dt>영입 마감</dt><dd>' + C.fmtDate(dl) + '</dd><dt>시즌 중 교체</dt><dd>' + (S.fStarted ? (MK.F_REPLACE - used) + '번 남음 (외국인·아시아쿼터 합산)' : '개막 전 영입은 교체로 치지 않음') + '</dd></dl></div>';
+      '<dl class="kv"><dt>신규 계약 상한</dt><dd class="num">' + (isF ? MK.F_CAP : MK.A_CAP) + '만 달러</dd>' + (isF ? '<dt>연봉 합계</dt><dd class="num' + (MK.fTotal(S, S.user) > MK.F_TOTAL_CAP * 0.85 ? ' lo' : '') + '">' + C.money(MK.fTotal(S, S.user)) + ' / 40억</dd>' : '') + '<dt>영입 마감</dt><dd>' + C.fmtDate(dl) + '</dd><dt>시즌 중 교체</dt><dd>' + (S.fStarted ? (MK.F_REPLACE - used) + '번 남음 (외국인·아시아쿼터 합산)<br><small class="muted">' + (MK.isReplace(S, S.user) ? '지금 영입하면 교체 1번을 씁니다' : '빈 자리를 채우는 영입은 교체로 치지 않음') + '</small>' : '개막 전 영입은 교체로 치지 않음') + '</dd></dl></div>';
     if (!S.fStarted) h += '<div class="scout-note" style="margin-top:12px">' + (S.phase === 'pre' ? '2월 1일 스프링캠프가 출발하면 다른 9개 구단이 남은 후보로 영입을 마칩니다. 1월에는 \'1주 진행\'으로 스카우트 정보를 모으면서 고를 수 있습니다.' : '개막 전입니다. 지금 먼저 고르세요. 첫 경기를 진행하면 다른 9개 구단이 남은 후보로 영입을 마칩니다.') + '</div>';
     h += '</section>';
     // 우리 선수
