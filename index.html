@@ -706,6 +706,11 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .comp { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 .nextbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; position: sticky; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 5; border-color: var(--line2); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
 .prow.static { cursor: default; }
+.tp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: stretch; }
+.tp-row .tp-pf { align-self: center; padding: 6px 10px; font-size: 12px; }
+.prow .pr-g { grid-area: s; justify-self: end; align-self: center; display: inline-flex; align-items: center; gap: 4px; }
+.prow .pr-g small { font-size: 10.5px; color: var(--muted); }
+.prow .pr-g small + .grade { margin-right: 2px; }
 .prow.static:hover { border-color: transparent; }
 .pm { display: inline-flex; gap: 4px; }
 .pm .btn { min-width: 34px; padding: 0; }
@@ -7049,10 +7054,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이적시장 =================
   function today() { return SE.currentDate(S); }
-  function pRow(p, sel, attr) {
+  function pRow(p, sel, attr, both) {
     const t = team(p.team);
     const where = p.ent ? '<span class="badge">1군</span>' : '<span class="badge dimb">2군</span>';
-    return '<button class="prow' + (sel ? ' sel' : '') + '" ' + attr + ' aria-pressed="' + sel + '"><span class="pr-n">' + esc(p.name) + '</span><span class="pr-m muted">' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세</span>' + starsHTML(p.ca) + '<span class="pr-r">' + where + '<span class="num">' + C.moneyShort(p.sal) + '</span></span></button>';
+    return '<button class="prow' + (sel ? ' sel' : '') + '" ' + attr + ' aria-pressed="' + sel + '"><span class="pr-n">' + esc(p.name) + '</span><span class="pr-m muted">' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세</span>' + (both ? '<span class="pr-g"><small>현재</small>' + starsHTML(p.ca) + '<small>잠재</small>' + starsHTML(p.pa) + '</span>' : starsHTML(p.ca)) + '<span class="pr-r">' + where + '<span class="num">' + C.moneyShort(p.sal) + '</span></span></button>';
   }
   function tradeSideList(tid, side, filter) {
     const T = ui.trade;
@@ -7068,7 +7073,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (filter === 'pit') ps = ps.filter((p) => p.pr); else if (filter === 'bat') ps = ps.filter((p) => !p.pr);
     ps.sort((a, b) => b.ca - a.ca);
     return tabs +
-      '<div class="plist">' + ps.map((p) => pRow(p, sel.includes(p.id), 'data-tsel="' + side + ':' + p.id + '"')).join('') + '</div>';
+      '<div class="plist">' + ps.map((p) => '<div class="tp-row">' + pRow(p, sel.includes(p.id), 'data-tsel="' + side + ':' + p.id + '"', true) + '<button class="btn sm tp-pf" data-player="' + p.id + '" aria-label="' + esc(p.name) + ' 프로필 보기">프로필</button></div>').join('') + '</div>';
   }
   function tradeHTML() {
     const T = ui.trade, P = S.league.players;
