@@ -1082,16 +1082,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   const { RNG, clamp, r10 } = C;
 
   const TEAMS = [
-    { id: 'SGM', city: '서울', name: '제미니', market: '대형', color: '#2a5db0', color2: '#d9e3f4', park: '서울 종합운동장', hrf: 0.84, dims: { l: 100, lc: 120, c: 125, rc: 120, r: 100, hl: 2.6, hc: 2.6, hr: 2.6, ref: '잠실' } },
-    { id: 'SGR', city: '서울', name: '그리즐리스', market: '대형', color: '#6b4a2f', color2: '#ecdccb', park: '서울 종합운동장', hrf: 0.84, dims: { l: 100, lc: 120, c: 125, rc: 120, r: 100, hl: 2.6, hc: 2.6, hr: 2.6, ref: '잠실' } },
-    { id: 'SWR', city: '서울', name: '워리어스', market: '소형', color: '#8c2a3c', color2: '#f1d9de', park: '서울 서부 돔', hrf: 1.0, dims: { l: 99, lc: 113, c: 122, rc: 113, r: 99, hl: 4, hc: 4, hr: 4, ref: '고척' } },
-    { id: 'ICS', city: '인천', name: '세틀러스', market: '중형', color: '#1b3a66', color2: '#d6deeb', park: '인천 해안 필드', hrf: 1.16, dims: { l: 95, lc: 115, c: 120, rc: 115, r: 95, hl: 2.4, hc: 2.4, hr: 2.4, ref: '문학' } },
-    { id: 'SWM', city: '수원', name: '매직', market: '중형', color: '#5b2d91', color2: '#e5dcf1', park: '수원 성곽 파크', hrf: 1.03, dims: { l: 98, lc: 113, c: 120, rc: 113, r: 98, hl: 3, hc: 3, hr: 3, ref: '수원' } },
-    { id: 'DJH', city: '대전', name: '호크스', market: '대형', color: '#e8641c', color2: '#fae0d0', park: '대전 신구장', hrf: 1.04, dims: { l: 99, lc: 115, c: 122, rc: 112, r: 95, hl: 2.4, hc: 2.4, hr: 8, ref: '대전 한화생명 볼파크', note: '우측 8m 몬스터 월' } },
-    { id: 'DGL', city: '대구', name: '라이거스', market: '대형', color: '#d93d1a', color2: '#f8d9d0', park: '대구 하이랜드 파크', hrf: 1.2, dims: { l: 99.5, lc: 107, c: 122.5, rc: 107, r: 99.5, hl: 3.6, hc: 3.6, hr: 3.6, ref: '대구 라이온즈파크' } },
-    { id: 'GJJ', city: '광주', name: '재규어스', market: '중형', color: '#d99a14', color2: '#f6ead0', park: '광주 무등 필드', hrf: 0.98, dims: { l: 99, lc: 115, c: 121, rc: 115, r: 99, hl: 3, hc: 3, hr: 3, ref: '광주 챔피언스필드' } },
-    { id: 'BSM', city: '부산', name: '매리너스', market: '대형', color: '#3f86c4', color2: '#d9e8f5', park: '부산 항구 스타디움', hrf: 0.93, dims: { l: 95.8, lc: 113, c: 120.5, rc: 113, r: 95.8, hl: 6, hc: 6, hr: 6, ref: '사직', note: '펜스 위 철망 구조물 포함 약 6m' } },
-    { id: 'CWR', city: '창원', name: '랩터스', market: '중형', color: '#1f7a3a', color2: '#d4ead9', park: '창원 바다 파크', hrf: 1.05, dims: { l: 101, lc: 116, c: 121.9, rc: 116, r: 101, hl: 3.3, hc: 3.3, hr: 3.3, ref: '창원 NC파크' } }
+    { id: 'SGM', city: '서울', name: '제미니', market: '대형', color: '#c40037', color2: '#f6d6df', park: '서울 종합운동장', hrf: 0.84, dims: { l: 100, lc: 120, c: 125, rc: 120, r: 100, hl: 2.6, hc: 2.6, hr: 2.6, ref: '잠실' } },
+    { id: 'SGR', city: '서울', name: '그리즐리스', market: '대형', color: '#1a1748', color2: '#dadae2', park: '서울 종합운동장', hrf: 0.84, dims: { l: 100, lc: 120, c: 125, rc: 120, r: 100, hl: 2.6, hc: 2.6, hr: 2.6, ref: '잠실' } },
+    { id: 'SWR', city: '서울', name: '워리어스', market: '소형', color: '#570514', color2: '#e4d7d9', park: '서울 서부 돔', hrf: 1.0, dims: { l: 99, lc: 113, c: 122, rc: 113, r: 99, hl: 4, hc: 4, hr: 4, ref: '고척' } },
+    { id: 'ICS', city: '인천', name: '세틀러스', market: '중형', color: '#ce0e2d', color2: '#f7d8dd', park: '인천 해안 필드', hrf: 1.16, dims: { l: 95, lc: 115, c: 120, rc: 115, r: 95, hl: 2.4, hc: 2.4, hr: 2.4, ref: '문학' } },
+    { id: 'SWM', city: '수원', name: '매직', market: '중형', color: '#000000', color2: '#d6d6d6', park: '수원 성곽 파크', hrf: 1.03, dims: { l: 98, lc: 113, c: 120, rc: 113, r: 98, hl: 3, hc: 3, hr: 3, ref: '수원' } },
+    { id: 'DJH', city: '대전', name: '호크스', market: '대형', color: '#fc4e00', color2: '#ffe3d6', park: '대전 신구장', hrf: 1.04, dims: { l: 99, lc: 115, c: 122, rc: 112, r: 95, hl: 2.4, hc: 2.4, hr: 8, ref: '대전 한화생명 볼파크', note: '우측 8m 몬스터 월' } },
+    { id: 'DGL', city: '대구', name: '라이거스', market: '대형', color: '#074ca1', color2: '#d7e2f0', park: '대구 하이랜드 파크', hrf: 1.2, dims: { l: 99.5, lc: 107, c: 122.5, rc: 107, r: 99.5, hl: 3.6, hc: 3.6, hr: 3.6, ref: '대구 라이온즈파크' } },
+    { id: 'GJJ', city: '광주', name: '재규어스', market: '중형', color: '#ea0029', color2: '#fcd6dd', park: '광주 무등 필드', hrf: 0.98, dims: { l: 99, lc: 115, c: 121, rc: 115, r: 99, hl: 3, hc: 3, hr: 3, ref: '광주 챔피언스필드' } },
+    { id: 'BSM', city: '부산', name: '매리너스', market: '대형', color: '#041e42', color2: '#d7dbe1', park: '부산 항구 스타디움', hrf: 0.93, dims: { l: 95.8, lc: 113, c: 120.5, rc: 113, r: 95.8, hl: 6, hc: 6, hr: 6, ref: '사직', note: '펜스 위 철망 구조물 포함 약 6m' } },
+    { id: 'CWR', city: '창원', name: '랩터스', market: '중형', color: '#315288', color2: '#dee3ec', park: '창원 바다 파크', hrf: 1.05, dims: { l: 101, lc: 116, c: 121.9, rc: 116, r: 101, hl: 3.3, hc: 3.3, hr: 3.3, ref: '창원 NC파크' } }
   ];
   const teamName = (t) => t.full || (t.city + ' ' + t.name);
 
