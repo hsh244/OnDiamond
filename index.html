@@ -1435,11 +1435,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   const PIT = [
     { k: 'contact', n: '맞혀 잡기 선호', ex: 'strikeout', w: (p) => R('ctl')(p) - R('stf')(p) + 1, d: '빠르게 승부합니다. 삼진·볼넷이 줄고 투구 수가 적어 오래 던집니다.' },
     { k: 'strikeout', n: '삼진 욕심', ex: 'contact', w: (p) => R('stf')(p) - 9 + ((p.pr ? p.pr.velo : 140) - 145) / 3, d: '삼진을 노립니다. 삼진이 늘지만 투구 수도 많아집니다.' },
-    { k: 'chase', n: '유인구 위주', w: (p) => R('stf')(p) + R('mov')(p) - R('ctl')(p) - 8, d: '존 밖으로 유인합니다. 삼진과 볼넷이 함께 늘어납니다.' },
+    { k: 'chase', n: '유인구 위주', ex: 'fastball', w: (p) => R('stf')(p) + R('mov')(p) - R('ctl')(p) - 8, d: '존 밖으로 유인합니다. 삼진과 볼넷이 함께 늘어납니다.' },
     { k: 'inside', n: '몸쪽 승부 선호', w: (p) => R('ctl')(p) - 9, d: '몸쪽을 과감하게 찌릅니다. 삼진이 조금 늘고 홈런은 조금 줄지만 몸에 맞는 공이 늘어납니다.' },
     { k: 'gball', n: '땅볼 유도', ex: 'fball', w: (p) => R('mov')(p) - 8 + (p.gb ? 5 : 0), d: '낮게 깔아 땅볼을 만듭니다. 땅볼이 늘고 홈런이 줄어듭니다.' },
     { k: 'fball', n: '뜬공 유도', ex: 'gball', w: (p) => R('stf')(p) - R('mov')(p) - (p.gb ? 5 : 0), d: '높은 공으로 뜬공을 만듭니다. 뜬공 아웃이 늘어 인플레이 타율이 낮아지지만 홈런은 조금 늘어납니다.' },
-    { k: 'fastball', n: '직구 위주', w: (p) => ((p.pr ? p.pr.velo : 140) - 143) / 2, d: '포심·커터·투심 같은 빠른 공으로 밀어붙입니다. 구속이 빠를수록 삼진이 늘고, 느리면 장타를 맞기 쉽습니다.' },
+    { k: 'fastball', n: '직구 위주', ex: 'chase', w: (p) => ((p.pr ? p.pr.velo : 140) - 143) / 2, d: '포심·커터·투심 같은 빠른 공으로 밀어붙입니다. 구속이 빠를수록 삼진이 늘고, 느리면 장타를 맞기 쉽습니다.' },
     { k: 'holder', n: '견제 자주', ex: 'focus', w: (p) => R('hold')(p) - 9, d: '주자를 자주 견제합니다. 이 투수 상대로는 도루 시도가 줄어듭니다.' },
     { k: 'focus', n: '타자 집중', ex: 'holder', w: (p) => 10 - R('hold')(p), d: '주자는 크게 신경 쓰지 않고 타자와 승부합니다. 주자가 있을 때 공이 좋아지지만 도루를 더 쉽게 허용합니다.' }
   ];
@@ -1464,7 +1464,14 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return p.ppm;
   }
   function ensure(S, p) { if (!p.ppm) generate(p, S && S.seed); return p.ppm; }
-  function ensureAll(S) { const P = S.league.players; for (const id in P) if (!P[id].ppm) generate(P[id], S.seed); }
+  // 같이 가질 수 없는 성향이 함께 있으면(예전 저장) 나중에 생긴 쪽을 버림
+  function fixPairs(p) {
+    if (!p.ppm || p.ppm.length < 2) return;
+    const keep = [];
+    for (const k of p.ppm) { const t = BY[k]; if (t && t.ex && keep.includes(t.ex)) continue; keep.push(k); }
+    if (keep.length !== p.ppm.length) p.ppm = keep;
+  }
+  function ensureAll(S) { const P = S.league.players; for (const id in P) { if (!P[id].ppm) generate(P[id], S.seed); else fixPairs(P[id]); } }
   function has(p, k) { return !!(p && p.ppm && p.ppm.includes(k)); }
 
   // 해마다(연말 성장 때): 코치와 훈련하며 하나를 익히거나, 드물게 버림
@@ -1502,7 +1509,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return c;
   }
 
-  OD.PPM = { BAT, PIT, ALL, BY, MAX, generate, ensure, ensureAll, has, yearly, shownCount };
+  OD.PPM = { BAT, PIT, ALL, BY, MAX, generate, ensure, ensureAll, fixPairs, has, yearly, shownCount };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- sim.js ---- */
