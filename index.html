@@ -433,6 +433,16 @@ button.gm:hover { border-color: var(--line2); }
 .po-next.me { border-color: var(--accent); }
 .po-vs { display: flex; align-items: center; gap: 8px; margin: 6px 0 4px; flex-wrap: wrap; font-size: 16px; }
 .bracket.lob { margin-top: 12px; }
+.po-sc .po-w { color: var(--win); font-weight: 700; }
+.po-sc .po-l { color: var(--loss); }
+.po-sc .po-d { color: var(--muted); }
+.po-tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 0 5px; border-radius: 4px; line-height: 16px; vertical-align: 1px; }
+.po-tag-w { background: color-mix(in srgb, var(--win) 22%, transparent); color: var(--win); }
+.po-tag-l { background: color-mix(in srgb, var(--loss) 22%, transparent); color: var(--loss); }
+.po-tag-d { background: rgba(255,255,255,.08); color: var(--muted); }
+.po-sc2 { display: grid; gap: 3px; width: 100%; }
+.po-ln { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px; align-items: center; }
+.po-ln .po-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .br-col.live h3 { color: var(--fg); }
 .br-t.me { outline: 1px solid var(--accent); }
 .br-col h3 .badge { margin-left: 4px; font-size: 10.5px; }
@@ -7013,17 +7023,23 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const tr = (id, w, win) => id ? '<div class="br-t' + (win ? ' win' : '') + (id === S.user ? ' me' : '') + '">' + patch(team(id), 20) + esc(team(id).name) + '<span class="s">' + w + '</span></div>' : '<div class="br-t tbd">미정</div>';
     return '<div class="br-col' + (live ? ' live' : '') + '"><h3>' + esc(rd.name) + (live ? ' <span class="badge acc">진행 중</span>' : rd.winner ? ' <span class="badge">종료</span>' : '') + '</h3><div class="br-m">' + tr(rd.hi, rd.wHi, rd.winner && rd.winner === rd.hi) + tr(rd.lo, rd.wLo, rd.winner && rd.winner === rd.lo) + '</div>' +
       (rd.key === 'wc' ? '<span class="dim" style="font-size:11.5px">4위가 1승 안고 시작</span>' : '') +
-      (rd.games.length ? '<div class="br-g">' + rd.games.map((gid, i) => { const r = S.results[gid]; if (!r) return ''; const mine = r.h === S.user || r.a === S.user; return '<button class="br-gb' + (mine ? ' me' : '') + '" data-game="' + gid + '" aria-label="' + esc(rd.name) + ' ' + (i + 1) + '차전 경기 기록"><span class="muted">' + (i + 1) + '차전 · ' + C.fmtDate(r.date) + '</span><span class="num">' + esc(team(r.a).name) + ' ' + r.as + ':' + r.hs + ' ' + esc(team(r.h).name) + '</span></button>'; }).join('') + '</div>' : '') + '</div>';
+      (rd.games.length ? '<div class="br-g">' + rd.games.map((gid, i) => { const r = S.results[gid]; if (!r) return ''; const mine = r.h === S.user || r.a === S.user; return '<button class="br-gb' + (mine ? ' me' : '') + '" data-game="' + gid + '" aria-label="' + esc(rd.name) + ' ' + (i + 1) + '차전 경기 기록"><span class="muted">' + (i + 1) + '차전 · ' + C.fmtDate(r.date) + '</span>' + poScore(r) + '</button>'; }).join('') + '</div>' : '') + '</div>';
+  }
+  // 포스트시즌 경기 결과 한 줄: 이긴 팀·진 팀 구분 (PO_RES: 'color' = 팀 이름 색 / 'label' = 승·패 표시)
+  const PO_RES = 'label';
+  function poScore(r) {
+    const res = (me, op) => r.tie || me === op ? 'd' : me > op ? 'w' : 'l';
+    const ra = res(r.as, r.hs), rh = res(r.hs, r.as), KO = { w: '승', l: '패', d: '무' };
+    if (PO_RES === 'label') {
+      const ln = (id, k, sc) => '<span class="po-ln"><span class="po-tag po-tag-' + k + '">' + KO[k] + '</span><span class="po-nm">' + esc(team(id).name) + '</span><b class="num">' + sc + '</b></span>';
+      return '<span class="po-sc2">' + ln(r.a, ra, r.as) + ln(r.h, rh, r.hs) + '</span>';
+    }
+    const nm = (id, k) => '<span class="po-' + k + '">' + esc(team(id).name) + '</span>';
+    return '<span class="num po-sc">' + nm(r.a, ra) + ' <b>' + r.as + ':' + r.hs + '</b> ' + nm(r.h, rh) + '</span>';
   }
   function bracketHTML() {
     const po = S.post;
-    const col = (rd) => {
-      const tr = (id, w, win) => id ? '<div class="br-t' + (win ? ' win' : '') + '">' + patch(team(id), 20) + esc(team(id).name) + '<span class="s">' + w + '</span></div>' : '<div class="br-t tbd">미정</div>';
-      return '<div class="br-col"><h3>' + esc(rd.name) + '</h3><div class="br-m">' + tr(rd.hi, rd.wHi, rd.winner && rd.winner === rd.hi) + tr(rd.lo, rd.wLo, rd.winner && rd.winner === rd.lo) + '</div>' +
-        (rd.key === 'wc' ? '<span class="dim" style="font-size:11.5px">4위가 1승 안고 시작</span>' : '') +
-        (rd.games.length ? '<div class="br-g">' + rd.games.map((gid, i) => { const r = S.results[gid]; if (!r) return ''; const mine = r.h === S.user || r.a === S.user; return '<button class="br-gb' + (mine ? ' me' : '') + '" data-game="' + gid + '" aria-label="' + esc(rd.name) + ' ' + (i + 1) + '차전 경기 기록"><span class="muted">' + (i + 1) + '차전</span><span class="num">' + esc(team(r.a).name) + ' ' + r.as + ':' + r.hs + ' ' + esc(team(r.h).name) + '</span></button>'; }).join('') + '</div>' : '') + '</div>';
-    };
-    return '<section class="card"><div class="card-h"><h2>포스트시즌</h2></div><div class="bracket">' + po.rounds.map(col).join('') + '</div></section>';
+    return '<section class="card"><div class="card-h"><h2>포스트시즌</h2></div><div class="bracket">' + po.rounds.map((rd, i) => bracketCol(rd, i === po.ri && S.phase === 'post')).join('') + '</div></section>';
   }
   function standHTML() {
     let h = '<div class="wrap">';
