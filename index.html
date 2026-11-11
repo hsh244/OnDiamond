@@ -49,6 +49,7 @@ button:focus-visible, [tabindex]:focus-visible, select:focus-visible, input:focu
 h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .disp { font-family: var(--f-display); letter-spacing: 0.01em; }
 
+b, strong { font-weight: 600; }
 /* ---------- 버튼 ---------- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -61,6 +62,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .btn.ghost { background: transparent; }
 .btn.danger { border-color: var(--loss); color: var(--loss); background: transparent; }
 .btn:disabled { opacity: 0.45; cursor: default; }
+.btn.primary:disabled { opacity: 1; background: var(--panel2); border-color: var(--line2); color: var(--dim); }
 .btn.sm { min-height: 34px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
 
 /* 시작 화면 제목 글꼴: Russo One (SIL Open Font License), 라틴 글자만 내장 */
@@ -84,11 +86,11 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .g-ball { flex: none; width: .74em; height: .74em; margin-bottom: .02em; transform: rotate(-24deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(255,255,255,.18)); }
 .g-ball svg { width: 100%; height: 100%; display: block; }
 .gate-btns { display: grid; gap: 10px; width: min(360px, 100%); }
-.gate-btns .btn { min-height: 50px; font-size: 16px; letter-spacing: .04em; border-radius: 10px; }
+.gate-btns .btn { min-height: 50px; font-size: 16px; letter-spacing: 0; border-radius: 10px; }
 #gate .btn.primary { background: linear-gradient(180deg, #f6c868, var(--accent)); border-color: #f6c868; color: var(--accent-ink); box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 22px rgba(240,182,74,.25); }
 #gate .btn:not(.primary) { background: rgba(8,18,12,.72); border-color: rgba(200,230,210,.28); color: #e8f2ea; backdrop-filter: blur(4px); }
 #gate .btn:hover { filter: brightness(1.08); }
-.gate-note { font-size: 12.5px; color: #b8cfbf; min-height: 1.5em; text-shadow: 0 1px 2px #000; }
+.gate-note { font-size: 13px; color: #b8cfbf; min-height: 1.5em; text-shadow: 0 1px 2px #000; }
 .g-logos { position: relative; display: grid; grid-template-columns: repeat(5, auto); justify-content: center; gap: 10px clamp(14px, 3.4vw, 38px); padding-top: 14px; }
 .g-logos img { width: clamp(40px, 6vw, 62px); height: clamp(40px, 6vw, 62px); object-fit: contain; filter: drop-shadow(0 3px 6px rgba(0,0,0,.6)); }
 @media (max-width: 700px) {
@@ -100,7 +102,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 #pick { padding-block: 24px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .pick-in { max-width: 980px; margin: 0 auto; display: grid; gap: 18px; }
 .pick-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; justify-content: space-between; }
-.pick-head h1 { font-family: var(--f-display); font-size: 30px; }
+.pick-head h1 { font-family: var(--f-display); font-size: 28px; }
 .pick-head p { margin: 4px 0 0; color: var(--muted); }
 .league-no { font-family: var(--f-num); color: var(--accent); }
 .pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
@@ -111,8 +113,8 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .tcard:hover { border-color: var(--line2); }
 .tcard.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
 .tcard-top { display: flex; gap: 12px; align-items: center; }
-.tcard-name { font-size: 17px; font-weight: 700; line-height: 1.25; }
-.tcard-meta { font-size: 12.5px; color: var(--muted); }
+.tcard-name { font-size: 18px; font-weight: 600; line-height: 1.25; }
+.tcard-meta { font-size: 13px; color: var(--muted); }
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
 .kv dt { color: var(--muted); }
 .kv dd { margin: 0; min-width: 0; }
@@ -123,11 +125,11 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
   display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;
   backdrop-filter: blur(6px);
 }
-.pick-bar .sel-name { font-weight: 600; }
+.pick-bar .sel-name { font-weight: 500; }
 
 /* ---------- 팀 패치 ---------- */
 .patch { flex: none; display: inline-block; object-fit: contain; vertical-align: middle; filter: drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
-.badge { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 5px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em; border: 1px solid var(--line2); color: var(--muted); white-space: nowrap; }
+.badge { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 5px; font-size: 12px; font-weight: 500; letter-spacing: 0.02em; border: 1px solid var(--line2); color: var(--muted); white-space: nowrap; }
 .badge.acc { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 .badge.win { color: var(--win); border-color: color-mix(in srgb, var(--win) 45%, transparent); }
 .badge.loss { color: var(--loss); border-color: color-mix(in srgb, var(--loss) 45%, transparent); }
@@ -143,7 +145,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .rail-logo { display: grid; place-items: center; height: 52px; margin-bottom: 8px; }
 .rail-btn {
   position: relative; display: grid; justify-items: center; gap: 3px; padding: 10px 4px; margin: 0 8px;
-  border: 0; background: transparent; color: var(--muted); border-radius: 10px; cursor: pointer; font-size: 11.5px;
+  border: 0; background: transparent; color: var(--muted); border-radius: 10px; cursor: pointer; font-size: 12px;
 }
 .rail-btn svg { width: 22px; height: 22px; }
 .rail-btn:hover { color: var(--fg); background: var(--panel2); }
@@ -159,14 +161,14 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 #menuBtn { display: none; width: 40px; height: 40px; border-radius: 9px; border: 1px solid var(--line2); background: var(--panel2); cursor: pointer; place-items: center; }
 #menuBtn svg { width: 20px; height: 20px; }
 .top-team { display: flex; gap: 10px; align-items: center; min-width: 0; }
-.top-team b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.top-date { margin-left: auto; text-align: right; font-size: 12.5px; color: var(--muted); line-height: 1.3; white-space: nowrap; }
+.top-team b { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-date { margin-left: auto; text-align: right; font-size: 13px; color: var(--muted); line-height: 1.3; white-space: nowrap; }
 #setBtn { flex: none; display: grid; place-items: center; width: 40px; height: 40px; margin-left: 12px; border-radius: 10px; border: 1px solid var(--line2); background: var(--panel2); color: var(--muted); cursor: pointer; }
 #setBtn svg { width: 20px; height: 20px; }
 #setBtn:hover { color: var(--fg); border-color: var(--accent); }
 #setBtn.on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
-@media (max-width: 760px) { #setBtn { width: 38px; height: 38px; margin-left: 8px; } .top-date { font-size: 11.5px; } }
-.top-date b { display: block; color: var(--fg); font-size: 14px; font-weight: 600; }
+@media (max-width: 760px) { #setBtn { width: 38px; height: 38px; margin-left: 8px; } .top-date { font-size: 12px; } }
+.top-date b { display: block; color: var(--fg); font-size: 14px; font-weight: 500; }
 #main {
   margin-left: var(--rail);
   padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
@@ -190,13 +192,13 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
 .card-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .card-h h2 { font-family: var(--f-display); font-size: 20px; }
-.card-h .more { font-size: 12.5px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px 0; }
+.card-h .more { font-size: 13px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px 0; }
 .card-h .more:hover { color: var(--fg); }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .stack { display: grid; gap: 16px; min-width: 0; }
 .grid2.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 @media (max-width: 900px) { .grid2, .grid2.even { grid-template-columns: minmax(0, 1fr); } }
-.eyebrow { font-size: 11.5px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+.eyebrow { font-size: 12px; letter-spacing: 0; color: var(--muted);  }
 
 /* ---------- 단장실 ---------- */
 .hero { display: grid; gap: 14px; }
@@ -209,32 +211,32 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .matchup .side { display: grid; justify-items: center; gap: 6px; min-width: 0; }
 .matchup .side b { font-size: 14px; }
 .matchup .vs { font-family: var(--f-display); font-size: 20px; color: var(--muted); }
-.probable { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px; }
+.probable { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
 .probable div { background: var(--panel2); border-radius: 8px; padding: 8px 10px; min-width: 0; }
-.probable .who { font-weight: 600; font-size: 13.5px; }
+.probable .who { font-weight: 600; font-size: 14px; }
 
-.cloud-st { font-weight: 600; color: var(--fg) !important; } .cloud-st.warn { color: var(--loss) !important; }
-.readall { flex: none; min-height: 32px; padding: 0 10px; border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.cloud-st { font-weight: 500; color: var(--fg) !important; } .cloud-st.warn { color: var(--loss) !important; }
+.readall { flex: none; min-height: 32px; padding: 0 10px; border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
 .readall:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .readall:disabled { opacity: .45; cursor: default; }
-.readall.sm { min-height: 28px; padding: 0 6px; font-size: 11.5px; }
+.readall.sm { min-height: 28px; padding: 0 6px; font-size: 12px; }
 .readall b { margin-left: 2px; font-family: var(--f-num); }
-.inbox-h { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+.inbox-h { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 /* 구장 크기 */
 .park-svg { width: 100%; max-width: 380px; display: block; margin: 4px auto 0; height: auto; }
 .park-n { font-size: 12px; margin: 4px 0 0; text-align: center; }
-.park-kv { margin-top: 8px; font-size: 12.5px; }
+.park-kv { margin-top: 8px; font-size: 13px; }
 /* 선호 플레이 */
 .fm-ppm { display: grid; gap: 6px; padding-top: 8px; border-top: 1px dashed var(--line2); }
-.fm-ppm p { margin: 0; font-size: 12.5px; }
+.fm-ppm p { margin: 0; font-size: 13px; }
 .ppm-list { display: grid; gap: 6px; }
 .ppm { display: grid; gap: 2px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 10%, var(--panel)); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); }
 .ppm b { font-size: 13px; color: var(--accent); }
 .ppm small { font-size: 12px; color: var(--muted); line-height: 1.4; }
-.ppm-note { font-size: 11.5px !important; }
+.ppm-note { font-size: 12px !important; }
 /* 트레이드 현금 */
 .tcash { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); }
-.tcash-l { font-weight: 700; font-size: 13px; }
+.tcash-l { font-weight: 600; font-size: 13px; }
 .tcash .tabs { margin: 0; }
 .tcash-in { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
 .tcash-in input { width: 84px; min-height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line2); background: var(--panel); color: var(--fg); font: inherit; font-family: var(--f-num); text-align: right; }
@@ -243,7 +245,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 /* 구장·시설 */
 .fac-reqs { display: grid; gap: 8px; margin-top: 10px; }
 .fac-req { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; background: var(--panel2); border: 1px solid var(--line); margin-top: 8px; }
-.fac-req p { margin: 4px 0; font-size: 12.5px; line-height: 1.4; }
+.fac-req p { margin: 4px 0; font-size: 13px; line-height: 1.4; }
 .fac-req small { font-size: 12px; }
 .fac-why { max-width: 160px; text-align: right; }
 @media (max-width: 520px) { .fac-req { grid-template-columns: minmax(0, 1fr); } .fac-why { text-align: left; max-width: none; } .fac-req .btn { justify-self: start; } }
@@ -251,8 +253,8 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 .fac-lv i { width: 26px; height: 10px; border-radius: 3px; background: var(--panel2); border: 1px solid var(--line2); }
 .fac-lv i.on { background: var(--accent); border-color: var(--accent); }
 .fac-lv i.bld { background: repeating-linear-gradient(45deg, var(--accent) 0 3px, transparent 3px 6px); }
-.fac-lv b { margin-left: 8px; } .fac-lv span { color: var(--muted); font-size: 12.5px; }
-.fac-build { margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); font-size: 12.5px; }
+.fac-lv b { margin-left: 8px; } .fac-lv span { color: var(--muted); font-size: 13px; }
+.fac-build { margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); font-size: 13px; }
 table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 /* 유망주 파견 */
 .dp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
@@ -260,16 +262,16 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 .dp-card { display: grid; gap: 8px; align-content: start; padding: 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); min-width: 0; }
 .dp-card.off { opacity: .72; }
 .dp-h { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
-.dp-h b { display: block; font-size: 14.5px; } .dp-h small { color: var(--muted); font-size: 12px; }
-.dp-flag { font-size: 11.5px; font-weight: 700; padding: 3px 7px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line2); color: var(--accent); }
-.dp-cost { font-weight: 700; white-space: nowrap; } .dp-cost small { font-weight: 400; color: var(--muted); font-size: 11px; }
-.dp-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--fg); }
-.dp-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; font-size: 12.5px; }
+.dp-h b { display: block; font-size: 14px; } .dp-h small { color: var(--muted); font-size: 12px; }
+.dp-flag { font-size: 12px; font-weight: 600; padding: 3px 7px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line2); color: var(--accent); }
+.dp-cost { font-weight: 600; white-space: nowrap; } .dp-cost small { font-weight: 400; color: var(--muted); font-size: 11px; }
+.dp-note { margin: 0; font-size: 13px; line-height: 1.45; color: var(--fg); }
+.dp-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; font-size: 13px; }
 .dp-kv dt { color: var(--muted); } .dp-kv dd { margin: 0; }
 .dp-why { margin: 0; font-size: 12px; color: var(--muted); }
 .dp-card .btn { justify-self: start; }
 .dp-pick { display: grid; gap: 4px; max-height: 300px; overflow: auto; padding: 6px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); }
-.dp-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 12.5px; padding: 3px 2px; }
+.dp-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 13px; padding: 3px 2px; }
 .dp-row .muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dp-g { display: inline-flex; align-items: center; gap: 3px; } .dp-g i { font-style: normal; color: var(--muted); font-size: 11px; }
 @media (max-width: 420px) { .dp-row { grid-template-columns: minmax(0, 1fr) auto; } .dp-row .muted { grid-column: 1; } .dp-g { grid-column: 2; grid-row: 1; } .dp-row .btn { grid-column: 2; } }
@@ -280,56 +282,56 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 .lu-m { cursor: pointer; }
 .lu-m:hover rect { stroke-width: 2; }
 .lu-no { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 12px; }
-.lu-bench-h { font-size: 12.5px; color: var(--muted); margin: 14px 0 8px; font-weight: 600; }
+.lu-bench-h { font-size: 13px; color: var(--muted); margin: 14px 0 8px; font-weight: 500; }
 .lu-bench { display: flex; flex-wrap: wrap; gap: 6px; }
 /* 단장실 요약 타일 */
 .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 @media (min-width: 900px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
 .tile { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 150px; padding: 12px 12px 40px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
 .tile.todo { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
-.t-goal { font-weight: 600; font-size: 13.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.t-goal { font-weight: 600; font-size: 14px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .tile-h { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; }
-.tile-h h2 { font-family: var(--f-display); font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile-h h2 { font-family: var(--f-display); font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile-h .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
 .tile-b { min-width: 0; font-size: 13px; display: grid; gap: 6px; align-content: start; }
-.tile-more { position: absolute; right: 6px; bottom: 6px; min-height: 30px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--accent); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.tile-more { position: absolute; right: 6px; bottom: 6px; min-height: 30px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--accent); font-size: 13px; font-weight: 500; cursor: pointer; }
 .tile-more:hover { background: var(--panel2); }
 .t-sub { font-size: 12px; line-height: 1.4; }
 .t-vs { display: flex; gap: 8px; align-items: center; min-width: 0; }
 .t-vs > div { display: grid; min-width: 0; }
 .t-vs b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .t-vs .muted { font-size: 12px; }
-.t-score { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4px; text-align: center; font-size: 12.5px; }
+.t-score { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4px; text-align: center; font-size: 13px; }
 .t-score span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.t-score b { font-family: var(--f-display); font-size: 22px; color: var(--accent); }
+.t-score b { font-family: var(--f-display); font-size: 24px; color: var(--accent); }
 .t-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
-.t-list li { display: grid; grid-template-columns: 18px 16px minmax(0, 1fr) auto; gap: 6px; align-items: center; font-size: 12.5px; padding: 1px 2px; border-radius: 5px; }
+.t-list li { display: grid; grid-template-columns: 18px 16px minmax(0, 1fr) auto; gap: 6px; align-items: center; font-size: 13px; padding: 1px 2px; border-radius: 5px; }
 .t-list li.me { background: var(--panel2); color: var(--accent); font-weight: 600; }
 .t-list .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.t-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 8px; margin: 0; font-size: 12.5px; }
+.t-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 8px; margin: 0; font-size: 13px; }
 .t-kv dt { color: var(--muted); white-space: nowrap; }
-.t-kv dd { margin: 0; text-align: right; font-weight: 600; font-family: var(--f-num); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-kv dd { margin: 0; text-align: right; font-weight: 500; font-family: var(--f-num); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .t-kv dd.wi { color: var(--win); } .t-kv dd.lo { color: var(--loss); } .t-kv dd.acc { color: var(--accent); }
 .t-ldr dd { font-family: var(--f-body); font-weight: 400; }
 .t-ldr dd b { font-family: var(--f-num); }
 .t-msgs { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.t-msgs button { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 7px; align-items: center; width: 100%; padding: 4px 2px; border: 0; background: transparent; color: var(--muted); font-size: 12.5px; text-align: left; cursor: pointer; border-radius: 6px; }
-.t-msgs button.unread { color: var(--fg); font-weight: 600; }
+.t-msgs button { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 7px; align-items: center; width: 100%; padding: 4px 2px; border: 0; background: transparent; color: var(--muted); font-size: 13px; text-align: left; cursor: pointer; border-radius: 6px; }
+.t-msgs button.unread { color: var(--fg); font-weight: 500; }
 .t-msgs button:hover { background: var(--panel2); }
 .t-msgs span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .t-msgs .bul { width: 7px; height: 7px; border-radius: 50%; background: var(--line2); }
 .t-msgs .unread .bul { background: var(--accent); }
 @media (max-width: 760px) {
-  .hero-rec .big { font-size: 26px; }
+  .hero-rec .big { font-size: 28px; }
   .hero { gap: 10px; }
-  .sim-row .btn { flex: 1 1 calc(50% - 4px); min-height: 42px; padding: 0 10px; font-size: 13.5px; }
+  .sim-row .btn { flex: 1 1 calc(50% - 4px); min-height: 42px; padding: 0 10px; font-size: 14px; }
 }
 /* 묶음 탭의 갈래 버튼 */
 .subnav { margin-bottom: 14px; }
 .seg { display: flex; gap: 4px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
 .seg-b { position: relative; flex: 1 1 0; min-height: 40px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; white-space: nowrap; }
 .seg-b:hover { color: var(--fg); }
-.seg-b.on { background: var(--panel2); color: var(--accent); font-weight: 700; box-shadow: inset 0 0 0 1px var(--line2); }
+.seg-b.on { background: var(--panel2); color: var(--accent); font-weight: 500; box-shadow: inset 0 0 0 1px var(--line2); }
 .seg-b .dot { position: absolute; top: 8px; right: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .rail-btn span { text-align: center; line-height: 1.25; word-break: keep-all; }
 @media (max-width: 760px) { .rail-btn span { text-align: left; } }
@@ -339,7 +341,7 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 .board table { border-collapse: collapse; width: 100%; font-family: var(--f-num); font-variant-numeric: tabular-nums; }
 .board th, .board td { padding: 7px 3px; text-align: center; font-size: 13px; }
 @media (max-width: 480px) { .board th, .board td { font-size: 12px; padding: 7px 2px; } .board td.tn { padding-left: 8px; max-width: 64px; overflow: hidden; text-overflow: ellipsis; } }
-.board th { color: var(--dim); font-weight: 500; font-size: 11.5px; }
+.board th { color: var(--dim); font-weight: 500; font-size: 12px; }
 .board td { color: var(--accent); }
 .board td.tn { text-align: left; color: var(--fg); font-family: var(--f-body); font-weight: 600; padding-left: 12px; white-space: nowrap; }
 .board td.rhe { color: var(--fg); font-weight: 600; }
@@ -354,7 +356,7 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 .msg:hover { background: var(--panel2); }
 .msg .bul { width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; background: var(--line2); }
 .msg.unread .bul { background: var(--accent); }
-.msg-t { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 13.5px; }
+.msg-t { display: flex; justify-content: space-between; gap: 8px; font-weight: 500; font-size: 14px; }
 .msg-t small { color: var(--muted); font-weight: 400; white-space: nowrap; }
 .msg-b { color: var(--muted); font-size: 13px; margin-top: 2px; }
 .msg:not(.open) .msg-b { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
@@ -362,8 +364,8 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 /* ---------- 표 ---------- */
 .tbl-wrap { overflow-x: auto; margin: 0 -4px; }
 table.t { border-collapse: collapse; width: 100%; font-size: 13px; }
-table.t th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 6px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-table.t td { text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--f-num); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+table.t th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 6px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.t td { text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--f-num); font-variant-numeric: tabular-nums; font-size: 13px; }
 table.t th.l, table.t td.l { text-align: left; }
 table.t th.srt { padding: 0; }
 table.t th.srt button { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; gap: 3px; width: 100%; min-height: 32px; padding: 6px 6px; cursor: pointer; color: inherit; font: inherit; border-radius: 4px; }
@@ -371,10 +373,10 @@ table.t th.srt.l button { justify-content: flex-start; }
 table.t th.srt button:hover { color: var(--fg); background: var(--panel2); }
 table.t th.srt button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 table.t th.srt.on { color: var(--accent); }
-table.t th.srt i { font-style: normal; font-size: 9px; min-width: 8px; }
+table.t th.srt i { font-style: normal; font-size: 11px; min-width: 8px; }
 .ftbl td.fc { font-family: var(--f-num); white-space: nowrap; }
 .ftbl td.fc.rng { font-size: 12px; }
-.ftbl .fnat { display: block; font-size: 11.5px; white-space: nowrap; }
+.ftbl .fnat { display: block; font-size: 12px; white-space: nowrap; }
 .ftbl .fprev { font-size: 12px; min-width: 120px; max-width: 170px; white-space: normal; line-height: 1.35; }
 .ftbl .fm-v.hid { display: inline-block; vertical-align: middle; }
 .ftbl th:first-child, .ftbl td:first-child { position: sticky; left: 0; z-index: 1; background: var(--panel); }
@@ -392,13 +394,13 @@ table.t tr.cut td { border-bottom: 1px dashed var(--accent); }
 .pname { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .pname .n { font-family: var(--f-num); color: var(--dim); width: 22px; text-align: right; font-size: 12px; }
 .tn-cell { display: flex; align-items: center; gap: 8px; }
-.sect { font-family: var(--f-display); font-size: 17px; margin: 14px 0 6px; color: var(--muted); }
+.sect { font-family: var(--f-display); font-size: 18px; margin: 14px 0 6px; color: var(--muted); }
 .sect:first-child { margin-top: 0; }
 
 /* 탭·칩 */
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { min-height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid var(--line2); background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; white-space: nowrap; }
-.chip.on { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 600; }
+.chip.on { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 500; }
 .chips-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
 .bar-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 select.sel {
@@ -419,7 +421,7 @@ select.sel {
 .gm { display: grid; grid-template-columns: 74px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 1px solid transparent; color: var(--fg); text-align: left; width: 100%; }
 button.gm { cursor: pointer; }
 button.gm:hover { border-color: var(--line2); }
-.gm .d { font-size: 12.5px; color: var(--muted); line-height: 1.3; }
+.gm .d { font-size: 13px; color: var(--muted); line-height: 1.3; }
 .gm .opp { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .gm .opp span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gm .res { font-family: var(--f-num); font-weight: 600; font-size: 13px; text-align: right; }
@@ -428,15 +430,15 @@ button.gm:hover { border-color: var(--line2); }
 /* 포스트시즌 */
 .bracket { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; }
 .br-col { display: grid; gap: 6px; align-content: start; }
-.br-col h3 { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.br-col h3 { font-size: 13px; color: var(--muted); font-weight: 500; }
 .po-next { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin-top: 4px; }
 .po-next.me { border-color: var(--accent); }
 .po-vs { display: flex; align-items: center; gap: 8px; margin: 6px 0 4px; flex-wrap: wrap; font-size: 16px; }
 .bracket.lob { margin-top: 12px; }
-.po-sc .po-w { color: var(--win); font-weight: 700; }
+.po-sc .po-w { color: var(--win); font-weight: 600; }
 .po-sc .po-l { color: var(--loss); }
 .po-sc .po-d { color: var(--muted); }
-.po-tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 0 5px; border-radius: 4px; line-height: 16px; vertical-align: 1px; }
+.po-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 5px; border-radius: 4px; line-height: 16px; vertical-align: 1px; }
 .po-tag-w { background: color-mix(in srgb, var(--win) 22%, transparent); color: var(--win); }
 .po-tag-l { background: color-mix(in srgb, var(--loss) 22%, transparent); color: var(--loss); }
 .po-tag-d { background: rgba(255,255,255,.08); color: var(--muted); }
@@ -445,7 +447,7 @@ button.gm:hover { border-color: var(--line2); }
 .po-ln .po-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .br-col.live h3 { color: var(--fg); }
 .br-t.me { outline: 1px solid var(--accent); }
-.br-col h3 .badge { margin-left: 4px; font-size: 10.5px; }
+.br-col h3 .badge { margin-left: 4px; font-size: 11px; }
 @media (max-width: 560px) { .bracket.lob { grid-template-columns: repeat(2, minmax(0, 1fr)); overflow-x: visible; } }
 .br-m { border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
 .br-t { display: flex; align-items: center; gap: 8px; padding: 7px 10px; font-size: 13px; }
@@ -477,19 +479,19 @@ button.gm:hover { border-color: var(--line2); }
 .pf-sub { color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin-top: 4px; }
 .pf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
 .pf-box { background: var(--panel2); border-radius: 10px; padding: 14px; display: grid; gap: 8px; align-content: start; }
-.pf-box h3 { font-size: 12px; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+.pf-box h3 { font-size: 12px; letter-spacing: 0; color: var(--muted); font-weight: 500; }
 .pf-attrs { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
 .pf-attrs .pf-box { gap: 0; padding: 12px 12px 8px; }
 .pf-attrs .pf-box h3 { margin-bottom: 6px; }
 .attr { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 14px; padding: 5px 2px; border-bottom: 1px solid var(--line); }
 .attr:last-child { border-bottom: 0; }
-.attr .v { font-family: var(--f-num); font-weight: 700; font-size: 15px; min-width: 24px; text-align: right; }
+.attr .v { font-family: var(--f-num); font-weight: 600; font-size: 16px; min-width: 24px; text-align: right; }
 .attr .v.velo { font-size: 14px; white-space: nowrap; }
 .attr .v.velo small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 2px; }
 .mgr .attr { font-size: 13px; padding: 4px 0; }
 .v1 { color: var(--loss); } .v2 { color: var(--muted); } .v3 { color: var(--fg); } .v4 { color: var(--win); } .v5 { color: var(--accent); }
 .b1 { background: var(--loss); } .b2 { background: var(--dim); } .b3 { background: var(--fg); } .b4 { background: var(--win); } .b5 { background: var(--accent); }
-.trait { font-size: 13.5px; }
+.trait { font-size: 14px; }
 .trait b { display: block; font-size: 12px; color: var(--muted); font-weight: 600; }
 
 
@@ -497,13 +499,14 @@ button.gm:hover { border-color: var(--line2); }
 .sheet-in.pfx { width: min(1280px, 100%); }
 .sheet-in.pfx .sheet-body { gap: 12px; }
 .fm { display: grid; gap: 12px; min-width: 0; }
-.fm h3 { font-size: 11.5px; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin: 0 0 6px; }
+.fm h3 { font-size: 12px; letter-spacing: 0; color: var(--muted); font-weight: 500; margin: 0 0 6px; }
 .fm-top { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 0; margin-right: 48px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line2);
-  background: linear-gradient(100deg, color-mix(in srgb, var(--tc) 55%, var(--panel)) 0%, color-mix(in srgb, var(--tc) 18%, var(--panel)) 45%, var(--panel2) 100%); }
+  background: var(--panel2); border-left: 4px solid var(--tc); }
+.fm-top > div:first-child { background: color-mix(in srgb, var(--tc) 30%, var(--panel2)); }
 .fm-top > div { padding: 10px 14px; min-width: 0; }
 .fm-top > div + div { border-left: 1px solid rgba(255,255,255,.08); }
 .fm-name { font-family: var(--f-display); font-size: 24px; line-height: 1.15; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: #fff; }
-.fm-sub { font-size: 12.5px; color: rgba(255,255,255,.78); margin-top: 3px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.fm-sub { font-size: 13px; color: rgba(255,255,255,.78); margin-top: 3px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .fm-hc { display: grid; align-content: center; gap: 2px; font-size: 13px; }
 .fm-hc > b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fm-hc > span, .fm-team span { color: var(--muted); font-size: 12px; }
@@ -516,13 +519,13 @@ button.gm:hover { border-color: var(--line2); }
 .fm-traits h3.rep { color: var(--fg); margin-bottom: 2px; }
 .fm-traits > div { display: grid; gap: 5px; }
 .fm-col, .fm-center { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-width: 0; display: grid; gap: 12px; align-content: start; }
-.fm-pic { position: relative; border-radius: 8px; overflow: hidden; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, var(--panel)) 0%, var(--panel) 100%); }
+.fm-pic { position: relative; border-radius: 8px; overflow: hidden; background: var(--panel2); }
 .fm-pic .pf-pic { width: 100%; height: auto; }
-.fm-pic-n { position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 6px; text-align: center; font-size: 11px; letter-spacing: .14em; font-weight: 700; color: rgba(255,255,255,.9); background: linear-gradient(0deg, rgba(0,0,0,.55), transparent); }
+.fm-pic-n { position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 6px; text-align: center; font-size: 11px; letter-spacing: 0; font-weight: 600; color: rgba(255,255,255,.9); background: linear-gradient(0deg, rgba(0,0,0,.55), transparent); }
 .fm-grades { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .fm-grades > div { display: grid; justify-items: center; gap: 4px; padding: 8px 4px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); }
 .fm-grades span { font-size: 11px; color: var(--muted); }
-.fm-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 8px; margin: 0; font-size: 12.5px; }
+.fm-kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 8px; margin: 0; font-size: 13px; }
 .fm-kv dt { color: var(--muted); }
 .fm-kv dd { margin: 0; text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .fm-attrs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -530,31 +533,31 @@ button.gm:hover { border-color: var(--line2); }
 .fm-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 8px; font-size: 13px; border-radius: 4px; }
 .fm-row:nth-of-type(odd) { background: rgba(255,255,255,.035); }
 .fm-row > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fm-v { font-family: var(--f-num); font-weight: 700; font-size: 14px; min-width: 22px; text-align: right; white-space: nowrap; }
-.fm-v.rng { font-size: 12.5px; }
+.fm-v { font-family: var(--f-num); font-weight: 600; font-size: 14px; min-width: 22px; text-align: right; white-space: nowrap; }
+.fm-v.rng { font-size: 13px; }
 .fm-v.hid { width: 28px; height: 12px; border-radius: 3px; background: repeating-linear-gradient(45deg, var(--line) 0 3px, transparent 3px 6px); }
-.fm-v.word { font-family: var(--f-body); font-size: 12.5px; }
-.fm-v.velo small { font-size: 10.5px; color: var(--muted); font-weight: 500; margin-left: 2px; }
-.fm-note { margin: 0; font-size: 11.5px; color: var(--muted); }
+.fm-v.word { font-family: var(--f-body); font-size: 13px; }
+.fm-v.velo small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.fm-note { margin: 0; font-size: 12px; color: var(--muted); }
 .fm-radar { width: 100%; max-width: 320px; justify-self: center; height: auto; }
 .fm-traits { display: grid; gap: 10px; }
 .fm-traits ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; }
-.fm-traits li { font-size: 12.5px; line-height: 1.4; padding-left: 16px; position: relative; }
+.fm-traits li { font-size: 13px; line-height: 1.4; padding-left: 16px; position: relative; }
 .fm-traits li::before { content: ''; position: absolute; left: 2px; top: 6px; width: 7px; height: 7px; border-radius: 50%; }
 .fm-traits > div:first-of-type li::before { background: var(--win); }
 .fm-traits > div:last-of-type li::before { background: var(--loss); }
 .fm-traits h3.good { color: var(--win); } .fm-traits h3.bad { color: var(--loss); }
-.fm-traits p { margin: 0; font-size: 12.5px; }
+.fm-traits p { margin: 0; font-size: 13px; }
 .fm-pos .posfield svg { max-width: 260px; }
 .fm-roles { display: grid; gap: 3px; }
-.fm-role { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 6px; font-size: 12.5px; border: 1px solid transparent; }
+.fm-role { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 6px; font-size: 13px; border: 1px solid transparent; }
 .fm-role .rb { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line2); }
 .fm-role.on { background: color-mix(in srgb, var(--accent) 14%, var(--panel)); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 .fm-role.on .rb { border-color: var(--accent); background: radial-gradient(var(--accent) 0 3px, transparent 3.5px); }
 .fm-role span:nth-child(2) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fm-foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.6fr) minmax(0, 1.4fr); gap: 10px; }
 .fm-foot section { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; display: grid; gap: 6px; align-content: start; }
-.fm-st { display: grid; gap: 2px; } .fm-st b { font-size: 17px; } .fm-st span { font-size: 12px; color: var(--muted); }
+.fm-st { display: grid; gap: 2px; } .fm-st b { font-size: 18px; } .fm-st span { font-size: 12px; color: var(--muted); }
 .fm-st b.wi { color: var(--win); } .fm-st b.lo { color: var(--loss); }
 .fm-bars { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 46px; align-items: end; }
 .fm-bars button { height: 100%; display: flex; align-items: flex-end; padding: 0; border: 0; background: var(--panel); border-radius: 3px; cursor: pointer; }
@@ -563,8 +566,8 @@ button.gm:hover { border-color: var(--line2); }
 .fm-foot section > span { font-size: 12px; color: var(--muted); }
 .fm-mini { display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 4px; }
 .fm-mini div { display: grid; gap: 1px; text-align: center; padding: 4px 2px; border-radius: 6px; background: var(--panel); }
-.fm-mini span { font-size: 11px; color: var(--muted); white-space: nowrap; } .fm-mini b { font-size: 13.5px; white-space: nowrap; }
-.fm-more summary { cursor: pointer; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; }
+.fm-mini span { font-size: 11px; color: var(--muted); white-space: nowrap; } .fm-mini b { font-size: 14px; white-space: nowrap; }
+.fm-more summary { cursor: pointer; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); font-size: 13px; font-weight: 500; color: var(--accent); list-style: none; }
 .fm-more summary::-webkit-details-marker { display: none; }
 .fm-more[open] summary { margin-bottom: 12px; }
 .fm-more-b { display: grid; gap: 12px; }
@@ -589,12 +592,12 @@ button.gm:hover { border-color: var(--line2); }
   .fm-left .fm-grades { grid-template-columns: 1fr; align-self: stretch; align-content: center; gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; }
   .fm-left .fm-grades > div { background: none; border: 0; border-radius: 0; grid-template-columns: minmax(0, 1fr) auto; justify-items: start; align-items: center; padding: 10px 2px; }
   .fm-left .fm-grades > div + div { border-top: 1px solid var(--line); }
-  .fm-left .fm-grades span { font-size: 12.5px; }
+  .fm-left .fm-grades span { font-size: 13px; }
   .fm-attrs { grid-template-columns: 1fr 1fr; }
   .fm-foot { grid-template-columns: 1fr 1fr; }
   .fm-foot section:nth-child(3), .fm-foot section.wide { grid-column: 1 / -1; }
 }
-@media (max-width: 400px) { .fm-attrs { grid-template-columns: 1fr; } .fm-name { font-size: 21px; } }
+@media (max-width: 400px) { .fm-attrs { grid-template-columns: 1fr; } .fm-name { font-size: 20px; } }
 
 /* 경기 상세 */
 .g-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; text-align: center; padding-right: 40px; padding-left: 40px; }
@@ -605,7 +608,7 @@ button.gm:hover { border-color: var(--line2); }
 table.t tr.tot td { font-weight: 600; color: var(--fg); border-top: 1px solid var(--line2); }
 .notes { display: grid; gap: 8px; font-size: 13px; }
 .note-t { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
-.note-t .note-team { font-weight: 700; min-width: 64px; }
+.note-t .note-team { font-weight: 600; min-width: 64px; }
 .note-t b { color: var(--muted); font-weight: 500; margin-right: 4px; }
 
 /* 퓨처스 이동 */
@@ -613,7 +616,7 @@ table.t tr.tot td { font-weight: 600; color: var(--fg); border-top: 1px solid va
 .moves { display: grid; gap: 4px; }
 .mv { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); align-items: start; }
 .mv:last-child { border-bottom: 0; }
-.mv .d { color: var(--muted); font-size: 12.5px; padding-top: 4px; }
+.mv .d { color: var(--muted); font-size: 13px; padding-top: 4px; }
 .mv-p { display: inline-flex; gap: 6px; align-items: center; border: 0; background: none; color: var(--fg); padding: 3px 8px 3px 0; cursor: pointer; font-size: 13px; }
 .mv-p:hover { color: var(--accent); }
 
@@ -631,37 +634,37 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 
 /* 문자 중계 */
 .feed { display: grid; gap: 0; }
-.fe { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-bottom: 1px solid var(--line); font-size: 13.5px; line-height: 1.45; }
+.fe { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.45; }
 .fe .tx { min-width: 0; }
 .fe .st { color: var(--dim); font-size: 12px; white-space: nowrap; padding-top: 2px; }
-.fe.inn { background: var(--panel2); border-radius: 8px; border: 0; margin: 10px 0 2px; padding: 8px 10px; font-weight: 700; font-family: var(--f-display); font-size: 16px; letter-spacing: 0.02em; }
+.fe.inn { background: var(--panel2); border-radius: 8px; border: 0; margin: 10px 0 2px; padding: 8px 10px; font-weight: 600; font-family: var(--f-display); font-size: 16px; letter-spacing: 0.02em; }
 .fe.inn .num { font-family: var(--f-num); font-size: 13px; color: var(--accent); }
 .fe.inn:first-child { margin-top: 0; }
 .fe.k-k, .fe.k-out, .fe.k-cs { color: var(--muted); }
 .fe.k-hit, .fe.k-bb, .fe.k-err, .fe.k-sb { color: var(--fg); }
-.fe.k-sub { color: var(--muted); font-style: italic; font-size: 12.5px; }
+.fe.k-sub { color: var(--muted); font-style: italic; font-size: 13px; }
 .fe.scored .tx { color: var(--fg); font-weight: 600; }
 .fe.scored .st { color: var(--accent); }
-.fe.k-hr .tx { color: var(--accent); font-weight: 700; }
-.fe.end { justify-content: center; font-weight: 700; color: var(--accent); border-bottom: 0; padding: 14px 4px; }
+.fe.k-hr .tx { color: var(--accent); font-weight: 600; }
+.fe.end { justify-content: center; font-weight: 600; color: var(--accent); border-bottom: 0; padding: 14px 4px; }
 
 /* 경기 보기 */
 .live-top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; padding-right: 44px; padding-left: 44px; }
-.lt-team { display: grid; justify-items: center; gap: 4px; min-width: 0; font-size: 13.5px; }
-.lt-sc { font-family: var(--f-display); font-size: 40px; line-height: 1; color: var(--accent); }
+.lt-team { display: grid; justify-items: center; gap: 4px; min-width: 0; font-size: 14px; }
+.lt-sc { font-family: var(--f-display); font-size: 44px; line-height: 1; color: var(--accent); }
 .lt-mid { display: grid; justify-items: center; gap: 4px; }
 .bases { width: 64px; height: 54px; }
-.lt-pitch { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 12.5px; }
+.lt-pitch { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; }
 .lt-pitch b { color: var(--fg); font-weight: 600; }
 .live-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
-@media (max-width: 480px) { .live-top { padding-left: 0; } .lt-sc { font-size: 32px; } }
+@media (max-width: 480px) { .live-top { padding-left: 0; } .lt-sc { font-size: 34px; } }
 
 /* 이적시장 */
 .plist { display: grid; gap: 4px; max-height: 560px; overflow-y: auto; padding-right: 2px; }
 .prow { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "n s" "m r"; gap: 2px 10px; width: 100%; text-align: left; padding: 9px 10px; border-radius: 9px; border: 1px solid transparent; background: var(--panel2); color: var(--fg); cursor: pointer; }
 .prow:hover { border-color: var(--line2); }
 .prow.sel { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel2)); }
-.prow .pr-n { grid-area: n; font-weight: 600; font-size: 13.5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prow .pr-n { grid-area: n; font-weight: 600; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .prow .stars { grid-area: s; justify-self: end; align-self: center; }
 .prow .pr-m { grid-area: m; font-size: 12px; min-width: 0; }
 .prow .pr-r { grid-area: r; display: flex; gap: 8px; align-items: center; justify-content: flex-end; font-size: 12px; }
@@ -670,13 +673,13 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .tcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
 @media (max-width: 560px) { .tcols { grid-template-columns: minmax(0, 1fr); } }
 .tchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; min-height: 34px; align-items: center; }
-.tchip { display: inline-flex; gap: 6px; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--fg); cursor: pointer; font-size: 13px; font-weight: 600; }
+.tchip { display: inline-flex; gap: 6px; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--fg); cursor: pointer; font-size: 13px; font-weight: 500; }
 .tinfo { font-size: 13px; }
 .probs { margin: 0; padding-left: 18px; color: var(--loss); font-size: 13px; display: grid; gap: 2px; }
 .reply { margin-top: 4px; padding: 14px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line2); }
 .reply.ok { border-color: color-mix(in srgb, var(--win) 55%, transparent); }
 .reply-h { display: flex; gap: 8px; align-items: center; }
-.reply p { margin: 8px 0 10px; font-size: 14.5px; }
+.reply p { margin: 8px 0 10px; font-size: 14px; }
 .meter { position: relative; height: 8px; border-radius: 4px; background: var(--line); overflow: visible; margin-bottom: 6px; }
 .meter i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
 .reply.ok .meter i { background: var(--win); }
@@ -707,11 +710,11 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 
 /* 오프시즌 */
 .stepper { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
-.stepper li { display: inline-flex; gap: 6px; align-items: center; min-height: 32px; padding: 0 10px 0 4px; border-radius: 16px; border: 1px solid var(--line2); color: var(--muted); font-size: 12.5px; }
-.stepper li .num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--panel2); font-size: 11.5px; }
+.stepper li { display: inline-flex; gap: 6px; align-items: center; min-height: 32px; padding: 0 10px 0 4px; border-radius: 16px; border: 1px solid var(--line2); color: var(--muted); font-size: 13px; }
+.stepper li .num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--panel2); font-size: 12px; }
 .stepper li.done { color: var(--fg); }
 .stepper li.done .num { background: var(--win); color: var(--bg); }
-.stepper li.cur { border-color: var(--accent); color: var(--fg); font-weight: 600; }
+.stepper li.cur { border-color: var(--accent); color: var(--fg); font-weight: 500; }
 .stepper li.cur .num { background: var(--accent); color: var(--accent-ink); }
 .awards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
 .aw { display: grid; gap: 2px; padding: 12px; border-radius: 10px; background: var(--panel2); }
@@ -719,7 +722,7 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .faform { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; padding: 10px; border-radius: 9px; background: var(--panel2); }
 .faform label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
 .inp { min-height: 38px; width: 110px; padding: 0 10px; border-radius: 9px; border: 1px solid var(--line2); background: var(--bg); color: var(--fg); font: inherit; }
-.myoffer { font-size: 12.5px; color: var(--accent); margin-right: auto; align-self: center; }
+.myoffer { font-size: 13px; color: var(--accent); margin-right: auto; align-self: center; }
 .frow-b { gap: 8px; flex-wrap: wrap; }
 .comp { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 .nextbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; position: sticky; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 5; border-color: var(--line2); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
@@ -737,7 +740,7 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .gg-who { min-width: 0; }
 .gg-who .linkish { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; }
 .gg-st { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.gg-perf { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--muted); min-width: 28px; text-align: right; }
+.gg-perf { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--muted); min-width: 28px; text-align: right; }
 .gg-t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 @media (max-width: 560px) { .gg-t .gg-tn { display: none; } .gg-t td, .gg-t th { padding-left: 5px; padding-right: 5px; } }
 .gg-t .linkish { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; }
@@ -745,7 +748,7 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .tp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: stretch; }
 .tp-row .tp-pf { align-self: center; padding: 6px 10px; font-size: 12px; }
 .prow .pr-g { grid-area: s; justify-self: end; align-self: center; display: inline-flex; align-items: center; gap: 4px; }
-.prow .pr-g small { font-size: 10.5px; color: var(--muted); }
+.prow .pr-g small { font-size: 11px; color: var(--muted); }
 .prow .pr-g small + .grade { margin-right: 2px; }
 .prow.static:hover { border-color: transparent; }
 .pm { display: inline-flex; gap: 4px; }
@@ -761,16 +764,16 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 
 /* 구단 */
 .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.hchip { display: inline-flex; gap: 6px; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid var(--line2); background: var(--panel2); color: var(--muted); font-size: 12.5px; cursor: pointer; }
+.hchip { display: inline-flex; gap: 6px; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid var(--line2); background: var(--panel2); color: var(--muted); font-size: 13px; cursor: pointer; }
 .hchip b { font-family: var(--f-num); color: var(--fg); }
 .hchip b.wi { color: var(--win); } .hchip b.lo { color: var(--loss); }
 .gauge { display: grid; gap: 6px; }
 .gauge-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--muted); }
-.gauge-h b { font-size: 26px; color: var(--fg); }
+.gauge-h b { font-size: 28px; color: var(--fg); }
 .gbar { height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
 .gbar i { display: block; height: 100%; border-radius: 5px; }
 .fin-net { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 12px; border-radius: 10px; background: var(--panel2); margin-bottom: 12px; }
-.fin-net b { font-size: 26px; }
+.fin-net b { font-size: 28px; }
 .cands { display: grid; gap: 6px; padding: 8px; border-radius: 9px; background: var(--bg); }
 .fired { border-color: var(--loss); display: grid; gap: 10px; }
 #rail { overflow-y: auto; }
@@ -778,7 +781,7 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 /* 감독 */
 .mgr { display: grid; gap: 8px; }
 .mgr-h { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
-.mgr-n { font-family: var(--f-display); font-size: 22px; line-height: 1.2; }
+.mgr-n { font-family: var(--f-display); font-size: 24px; line-height: 1.2; }
 .mgr-t { margin: 4px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; display: grid; gap: 2px; }
 
 /* ---------- 진행 표시 ---------- */
@@ -786,21 +789,21 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .busy-in { width: min(320px, calc(100% - 32px)); background: var(--panel); border: 1px solid var(--line2); border-radius: 12px; padding: 20px; display: grid; gap: 12px; text-align: center; }
 .prog { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
 .prog i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .15s; }
-#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 90; max-width: calc(100% - 32px); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 13.5px; }
+#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 90; max-width: calc(100% - 32px); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-weight: 500; font-size: 14px; }
 
-.empty { color: var(--muted); padding: 18px 4px; text-align: center; font-size: 13.5px; }
+.empty { color: var(--muted); padding: 18px 4px; text-align: center; font-size: 14px; }
 .inline-confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; padding: 12px; border-radius: 10px; background: color-mix(in srgb, var(--loss) 10%, transparent); border: 1px solid color-mix(in srgb, var(--loss) 40%, transparent); }
 .set-row { display: grid; gap: 8px; padding: 14px 0; border-bottom: 1px solid var(--line); }
 .set-row:last-child { border-bottom: 0; }
 .set-row p { margin: 0; color: var(--muted); font-size: 13px; }
-.champ { text-align: center; padding: 22px 16px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); background: radial-gradient(90% 120% at 50% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%), var(--panel); display: grid; gap: 8px; justify-items: center; }
+.champ { text-align: center; padding: 22px 16px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); background: color-mix(in srgb, var(--accent) 7%, var(--panel)), var(--panel); display: grid; gap: 8px; justify-items: center; }
 .champ .disp { font-size: 28px; }
 .pf-duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:12px;margin-bottom:16px}
 .pf-duo .pf-box{padding:12px}
-.pf-duo .pos-legend{flex-direction:column;align-items:flex-start;gap:4px;font-size:12px}
+.pf-duo .pos-legend{flex-direction:column;align-items:flex-start;gap:4px;font-size: 12px}
 .posfield{display:flex;flex-direction:column;align-items:center;gap:10px}
 .posfield svg{width:100%;max-width:300px;height:auto;display:block}
-.pos-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:13px}
+.pos-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size: 13px}
 .pos-legend span{display:inline-flex;align-items:center;gap:6px}
 .pos-legend i{width:14px;height:14px;border-radius:50%;display:inline-block;flex:none}
 .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
@@ -809,25 +812,25 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .opt.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel2)); box-shadow: inset 0 0 0 1px var(--accent); }
 .opt[disabled] { cursor: default; opacity: .55; }
 .opt.on[disabled] { opacity: 1; }
-.opt-h { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; font-size: 15px; }
+.opt-h { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; font-size: 16px; }
 .opt-h .num { font-size: 13px; color: var(--muted); white-space: nowrap; }
-.opt-m { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); }
+.opt-m { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); }
 .opt-m b { color: var(--fg); }
 .opt-m b.wi { color: var(--win); } .opt-m b.lo { color: var(--loss); }
-.opt-n { font-size: 12.5px; line-height: 1.45; }
+.opt-n { font-size: 13px; line-height: 1.45; }
 .chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip[disabled] { cursor: default; opacity: .5; }
 .chip.on[disabled] { opacity: 1; }
 .inv-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: center; }
 .name-cloud { display: flex; flex-wrap: wrap; gap: 2px 4px; }
 .name-cloud .mv-p.inv { color: var(--accent); font-weight: 600; }
-.sub-h { font-size: 12px; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin: 14px 0 6px; }
-ul.plain { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13.5px; }
+.sub-h { font-size: 12px; letter-spacing: 0; color: var(--muted); font-weight: 500; margin: 14px 0 6px; }
+ul.plain { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
 .diff-pick { margin: 4px 0 18px; display: grid; gap: 8px; }
 .diff-pick p { margin: 0; font-size: 13px; }
 .prow .qstar { justify-self: end; }
-.qstar { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 5px; border: 1px dashed var(--line2); color: var(--muted); font-size: 11.5px; white-space: nowrap; }
-.sk { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.qstar { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 5px; border: 1px dashed var(--line2); color: var(--muted); font-size: 12px; white-space: nowrap; }
+.sk { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .sk.on { color: var(--accent); }
 .skbar { width: 44px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; display: inline-block; }
 .skbar i { display: block; height: 100%; background: var(--muted); border-radius: 3px; }
@@ -836,13 +839,13 @@ ul.plain { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; fon
 .scout-sum .muted { font-size: 12px; }
 .scouts { display: grid; gap: 8px; }
 .reg-cell { white-space: normal !important; }
-.reg-cell small { display: block; font-size: 11.5px; line-height: 1.35; margin-top: 2px; }
-.scout-row { display: grid; grid-template-columns: minmax(70px, auto) minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13.5px; }
+.reg-cell small { display: block; font-size: 12px; line-height: 1.35; margin-top: 2px; }
+.scout-row { display: grid; grid-template-columns: minmax(70px, auto) minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 14px; }
 .scout-row .sel { min-width: 0; }
 .scout-row .muted { font-size: 12px; white-space: nowrap; }
-.grade { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 20px; padding: 0 6px; border-radius: 5px; font-family: var(--f-num); font-weight: 700; font-size: 12.5px; letter-spacing: .02em; white-space: nowrap; border: 1px solid transparent; justify-self: end; }
+.grade { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 20px; padding: 0 6px; border-radius: 5px; font-family: var(--f-num); font-weight: 600; font-size: 13px; letter-spacing: .02em; white-space: nowrap; border: 1px solid transparent; justify-self: end; }
 .grade.lg { min-width: 44px; height: 30px; font-size: 18px; border-radius: 7px; justify-self: start; }
-.grade.gs { background: linear-gradient(135deg, #f5c542, #e09a1a); color: #2a1a00; }
+.grade.gs { background: #f0b64a; color: #2a1a00; }
 .grade.ga { background: color-mix(in srgb, #3fbf6a 26%, transparent); color: #6fe39a; border-color: color-mix(in srgb, #3fbf6a 55%, transparent); }
 .grade.gb { background: color-mix(in srgb, #3f8fd4 22%, transparent); color: #8cc2f0; border-color: color-mix(in srgb, #3f8fd4 50%, transparent); }
 .grade.gc { background: color-mix(in srgb, #9aa3ad 16%, transparent); color: var(--fg); border-color: var(--line2); }
@@ -853,15 +856,15 @@ ul.plain { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; fon
 .nego-in { width: 76px; height: 32px; padding: 0 8px; border-radius: 7px; border: 1px solid var(--line2); background: var(--bg); color: var(--fg); font: inherit; font-family: var(--f-num); }
 .hijack { border-color: color-mix(in srgb, var(--loss) 50%, var(--line)); }
 .quote { margin: 0 0 10px; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--panel2); border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.55; }
-.dir-goals li { font-size: 14.5px; }
+.dir-goals li { font-size: 14px; }
 .dir-res { margin-top: 10px; padding: 9px 12px; border-radius: 8px; font-size: 13px; }
 .dir-res.ok { background: color-mix(in srgb, var(--win) 14%, transparent); }
 .dir-res.no { background: color-mix(in srgb, var(--loss) 14%, transparent); }
 b.wi { color: var(--win); } b.lo { color: var(--loss); }
 .nums { display: flex; flex-wrap: wrap; gap: 10px; }
 .rnum { display: grid; justify-items: center; gap: 2px; min-width: 72px; padding: 10px; border-radius: 10px; background: var(--panel2); }
-.rnum b { font-size: 26px; color: var(--accent); }
-.attr .v.rng { font-size: 13.5px; letter-spacing: -.02em; white-space: nowrap; }
+.rnum b { font-size: 28px; color: var(--accent); }
+.attr .v.rng { font-size: 14px; letter-spacing: -.02em; white-space: nowrap; }
 .attr .v.hid { display: inline-block; width: 30px; height: 4px; border-radius: 2px; background: var(--line); }
 </style>
 </head>
@@ -1090,9 +1093,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else s = rest.toLocaleString('ko-KR') + '만';
     return (neg ? '-' : '') + s;
   }
-  function moneyShort(man) { // 12.3억
-    if (Math.abs(man) >= 10000) return (man / 10000).toFixed(man >= 100000 ? 0 : 1).replace(/\.0$/, '') + '억';
-    return Math.round(man).toLocaleString('ko-KR') + '만';
+  // 표·목록용 짧은 금액: 항상 억 단위 (100억 미만은 소수 한 자리) → 2.6억 · 0.5억 · 134억
+  function moneyShort(man) {
+    const v = man / 10000;
+    return (Math.abs(v) >= 100 ? Math.round(v).toLocaleString('ko-KR') : v.toFixed(1)) + '억';
   }
 
   // ---- 기록 표기 ----
@@ -4061,7 +4065,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         if (gold && p.army === 'need') { p.army = 'exempt'; p.agGold = y; freed.push(p); }
       }
       const mine = freed.filter((p) => p.team === S.user);
-      SE().msg(S, date, '리그', y + ' 아시안게임 ' + (gold ? '금메달' : '결과'), gold ? '대표팀이 금메달을 땄습니다! 미필 선수 ' + freed.length + '명이 병역 특례를 받습니다.' + (mine.length ? ' 우리 구단: ' + mine.map((p) => p.name).join(', ') + '.' : '') : '대표팀이 금메달을 따지 못했습니다. 병역 특례는 없습니다.');
+      SE().msg(S, date, '리그', y + ' 아시안게임 ' + (gold ? '금메달' : '결과'), gold ? '대표팀이 금메달을 땄습니다. 미필 선수 ' + freed.length + '명이 병역 특례를 받습니다.' + (mine.length ? ' 우리 구단: ' + mine.map((p) => p.name).join(', ') + '.' : '') : '대표팀이 금메달을 따지 못했습니다. 병역 특례는 없습니다.');
       milLog(S, date, y + ' 아시안게임 ' + (gold ? '금메달 (특례 ' + freed.length + '명)' : '금메달 실패'));
       return true;
     }
@@ -5934,7 +5938,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const h = S.history[S.history.length - 1];
     if (h && h.year === gg.year && h.awards) h.awards.gg = win;
     SE().msg(S, date, 'KBO', gg.year + ' 골든글러브 시상식', POS.map((g) => g.n + ' ' + win[g.k].map((id) => P[id].name + '(' + (S.league.teams.find((t) => t.id === res[g.k].find((r) => r.id === id).tid) || {}).name + ')').join(', ')).join(' / ') + '.' +
-      (mine.length ? ' 우리 구단에서는 ' + mine.join(', ') + '이(가) 황금장갑을 받았습니다!' : ' 올해 우리 구단 수상자는 없습니다.'));
+      (mine.length ? ' 우리 구단에서는 ' + mine.join(', ') + '이(가) 황금장갑을 받았습니다.' : ' 올해 우리 구단 수상자는 없습니다.'));
     return res;
   }
   // 프로필·투표 화면용 성적 한 줄
@@ -6865,7 +6869,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     } else if (SE.nextPostGame(S)) {
       const nx = SE.nextPostGame(S);
       T.push(tile('다음 경기', '<div class="t-goal">' + esc(nx.rd.name) + ' ' + nx.n + '차전</div><div class="t-sub muted">' + esc(team(nx.a).name) + ' @ ' + esc(team(nx.h).name) + ' · ' + C.fmtDate(nx.date, true) + '</div>', 'data-nav="stand"'));
-    } else T.push(tile('다음 경기', '<div class="t-sub muted">예정된 경기가 없습니다.</div>', 'data-nav="sched"'));
+    } else T.push(tile('다음 경기', '<div class="t-sub muted">예정된 경기가 없습니다</div>', 'data-nav="sched"'));
     // 2. 지난 경기
     const lgid = lastUserGame();
     if (lgid) {
@@ -6874,7 +6878,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       const res = r.tie || my === op ? '<span class="badge">무</span>' : my > op ? '<span class="badge win">승</span>' : '<span class="badge loss">패</span>';
       T.push(tile('지난 경기', '<div class="t-score num"><span>' + esc(A.name) + '</span><b>' + r.as + ' : ' + r.hs + '</b><span>' + esc(H.name) + '</span></div>' +
         '<div class="t-sub muted">' + (r.wp ? '승 ' + esc(P[r.wp].name) : '무승부') + (r.lp ? ' · 패 ' + esc(P[r.lp].name) : '') + '</div>', 'data-game="' + lgid + '"', { badge: res }));
-    } else T.push(tile('지난 경기', '<div class="t-sub muted">아직 치른 경기가 없습니다.</div>', 'data-nav="sched"'));
+    } else T.push(tile('지난 경기', '<div class="t-sub muted">아직 치른 경기가 없습니다</div>', 'data-nav="sched"'));
     // 3. 순위 (상위 5팀 + 우리 팀)
     const st = SE.standings(S);
     const myI = st.findIndex((x) => x.t.id === S.user);
@@ -6883,7 +6887,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     T.push(tile('순위', '<ol class="t-list">' + rows.map(([x, i]) => '<li class="' + (x.t.id === S.user ? 'me' : '') + '"><span class="num">' + (i + 1) + '</span>' + patch(x.t, 16) + '<span class="nm">' + esc(x.t.name) + '</span><span class="num muted">' + x.r.w + '-' + x.r.l + '</span></li>').join('') + '</ol>', 'data-nav="stand"'));
     // 4. 메시지
     const unread = S.msgs.filter((x) => !x.read).length;
-    T.push(tile('받은 메시지', S.msgs.length ? '<ul class="t-msgs">' + S.msgs.slice(0, 3).map((m) => '<li><button data-inbox="' + m.id + '" class="' + (m.read ? '' : 'unread') + '"><i class="bul"></i><span>' + esc(m.title) + '</span></button></li>').join('') + '</ul>' : '<div class="t-sub muted">메시지가 없습니다.</div>',
+    T.push(tile('받은 메시지', S.msgs.length ? '<ul class="t-msgs">' + S.msgs.slice(0, 3).map((m) => '<li><button data-inbox="' + m.id + '" class="' + (m.read ? '' : 'unread') + '"><i class="bul"></i><span>' + esc(m.title) + '</span></button></li>').join('') + '</ul>' : '<div class="t-sub muted">메시지가 없습니다</div>',
       'data-nav="inbox"', { badge: unread ? '<button class="readall sm" data-act="msgs-readall" aria-label="받은 메시지 모두 확인 (' + unread + '개)">모두 확인</button>' : '' }));
     // 5. 구단
     if (S.owner) {
@@ -6908,7 +6912,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function inboxHTML() {
     return '<div class="wrap"><section class="card"><div class="card-h"><h2>받은 메시지</h2><span class="inbox-h"><span class="muted">' + S.msgs.filter((x) => !x.read).length + '개 안 읽음</span><button class="readall" data-act="msgs-readall"' + (S.msgs.some((x) => !x.read) ? '' : ' disabled') + '>모두 확인</button></span></div><div class="msgs">' +
-      (S.msgs.length ? S.msgs.slice(0, 60).map((m) => '<button class="msg' + (m.read ? '' : ' unread') + (ui.openMsg === m.id ? ' open' : '') + '" data-msg="' + m.id + '"><i class="bul"></i><div><div class="msg-t"><span>' + esc(m.title) + '</span><small>' + esc(m.from) + ' · ' + C.fmtDate(m.date) + '</small></div><div class="msg-b">' + esc(m.body) + '</div></div></button>').join('') : '<div class="empty">메시지가 없습니다.</div>') +
+      (S.msgs.length ? S.msgs.slice(0, 60).map((m) => '<button class="msg' + (m.read ? '' : ' unread') + (ui.openMsg === m.id ? ' open' : '') + '" data-msg="' + m.id + '"><i class="bul"></i><div><div class="msg-t"><span>' + esc(m.title) + '</span><small>' + esc(m.from) + ' · ' + C.fmtDate(m.date) + '</small></div><div class="msg-b">' + esc(m.body) + '</div></div></button>').join('') : '<div class="empty">메시지가 없습니다</div>') +
       '</div></section></div>';
   }
   function simButtonsHTML(inner) {
@@ -6944,7 +6948,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const sa = sp(A), sh = sp(H);
     const spLine = (p) => p ? '<span class="who">' + esc(p.name) + '</span><br><span class="muted">' + p.st.w + '승 ' + p.st.l + '패 · ERA <span class="num">' + C.era(p.st.er, p.st.outs) + '</span></span>' : '<span class="muted">미정</span>';
     const title = ng.post ? ng.post.name + ' ' + (ng.post.games.length + 1) + '차전' : '다음 경기';
-    return '<section class="card"><div class="card-h"><h2>' + esc(title) + '</h2><span class="muted" style="font-size:12.5px">' + C.fmtDate(ng.date, true) + ' · ' + esc(H.park) + '</span></div>' +
+    return '<section class="card"><div class="card-h"><h2>' + esc(title) + '</h2><span class="muted" style="font-size:13px">' + C.fmtDate(ng.date, true) + ' · ' + esc(H.park) + '</span></div>' +
       '<div class="matchup"><div class="side">' + patch(A, 48) + '<b>' + esc(LG.teamName(A)) + '</b><span class="muted num">' + A.rec.w + '-' + A.rec.l + '-' + A.rec.t + '</span></div>' +
       '<div class="vs">' + (home ? 'VS' : '@') + '</div>' +
       '<div class="side">' + patch(H, 48) + '<b>' + esc(LG.teamName(H)) + '</b><span class="muted num">' + H.rec.w + '-' + H.rec.l + '-' + H.rec.t + '</span></div></div>' +
@@ -6998,7 +7002,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const cur = kind === 'bat' ? ui.ldrBat : ui.ldrPit;
     const rows = SE.leaders(S, cur, 10);
     let h = '<div class="chips-scroll" role="tablist">' + list.map(([k, n]) => '<button class="chip' + (k === cur ? ' on' : '') + '" data-ldr="' + kind + ':' + k + '" role="tab" aria-selected="' + (k === cur) + '">' + n + '</button>').join('') + '</div>';
-    if (!rows.length) return h + '<div class="empty">규정 타석·이닝을 채운 선수가 아직 없습니다.</div>';
+    if (!rows.length) return h + '<div class="empty">규정 타석·이닝을 채운 선수가 아직 없습니다</div>';
     h += '<div class="tbl-wrap"><table class="t"><tbody>' + rows.map((x, i) => '<tr class="click' + (x.p.team === S.user ? ' me' : '') + '" data-player="' + x.p.id + '"><td class="l" style="width:28px">' + (i + 1) + '</td><td class="l txt"><span class="tn-cell">' + patch(team(x.p.team), 20) + esc(x.p.name) + '</span></td><td class="l txt muted">' + esc(team(x.p.team).name) + '</td><td><b>' + x.f + '</b></td></tr>').join('') + '</tbody></table></div>';
     return h;
   }
@@ -7010,7 +7014,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (nx) {
       const mine = nx.h === S.user || nx.a === S.user;
       head = '<div class="po-next' + (mine ? ' me' : '') + '"><span class="eyebrow">다음 경기 · ' + C.fmtDate(nx.date, true) + '</span><div class="po-vs">' + patch(team(nx.a), 28) + '<b>' + T(nx.a) + '</b><span class="muted">@</span><b>' + T(nx.h) + '</b>' + patch(team(nx.h), 28) + '</div>' +
-        '<div class="muted" style="font-size:12.5px">' + esc(nx.rd.name) + ' ' + nx.n + '차전 · 시리즈 ' + T(nx.rd.hi) + ' ' + nx.rd.wHi + ' : ' + nx.rd.wLo + ' ' + T(nx.rd.lo) + ' (' + nx.need + '승 먼저) · ' + esc(team(nx.h).park) + '</div></div>';
+        '<div class="muted" style="font-size:13px">' + esc(nx.rd.name) + ' ' + nx.n + '차전 · 시리즈 ' + T(nx.rd.hi) + ' ' + nx.rd.wHi + ' : ' + nx.rd.wLo + ' ' + T(nx.rd.lo) + ' (' + nx.need + '승 먼저) · ' + esc(team(nx.h).park) + '</div></div>';
       // 우리 팀이 기다리는 중이면 어느 라운드에서 만나는지
       const wait = po.rounds.findIndex((rd, i) => i > po.ri && rd.hi === S.user);
       if (!mine && wait >= 0) head += '<p class="muted" style="margin:8px 0 0;font-size:13px">우리 구단은 <b>' + esc(po.rounds[wait].name) + '</b>에 직행해 ' + (wait === po.ri + 1 ? '이 시리즈 승자를' : '상대를') + ' 기다립니다.</p>';
@@ -7022,7 +7026,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function bracketCol(rd, live) {
     const tr = (id, w, win) => id ? '<div class="br-t' + (win ? ' win' : '') + (id === S.user ? ' me' : '') + '">' + patch(team(id), 20) + esc(team(id).name) + '<span class="s">' + w + '</span></div>' : '<div class="br-t tbd">미정</div>';
     return '<div class="br-col' + (live ? ' live' : '') + '"><h3>' + esc(rd.name) + (live ? ' <span class="badge acc">진행 중</span>' : rd.winner ? ' <span class="badge">종료</span>' : '') + '</h3><div class="br-m">' + tr(rd.hi, rd.wHi, rd.winner && rd.winner === rd.hi) + tr(rd.lo, rd.wLo, rd.winner && rd.winner === rd.lo) + '</div>' +
-      (rd.key === 'wc' ? '<span class="dim" style="font-size:11.5px">4위가 1승 안고 시작</span>' : '') +
+      (rd.key === 'wc' ? '<span class="dim" style="font-size:12px">4위가 1승 안고 시작</span>' : '') +
       (rd.games.length ? '<div class="br-g">' + rd.games.map((gid, i) => { const r = S.results[gid]; if (!r) return ''; const mine = r.h === S.user || r.a === S.user; return '<button class="br-gb' + (mine ? ' me' : '') + '" data-game="' + gid + '" aria-label="' + esc(rd.name) + ' ' + (i + 1) + '차전 경기 기록"><span class="muted">' + (i + 1) + '차전 · ' + C.fmtDate(r.date) + '</span>' + poScore(r) + '</button>'; }).join('') + '</div>' : '') + '</div>';
   }
   // 포스트시즌 경기 결과 한 줄: 이긴 팀·진 팀 구분 (PO_RES: 'color' = 팀 이름 색 / 'label' = 승·패 표시)
@@ -7044,7 +7048,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function standHTML() {
     let h = '<div class="wrap">';
     if (S.post) h += bracketHTML();
-    h += '<section class="card"><div class="card-h"><h2>' + S.league.year + ' 정규시즌 순위</h2><span class="muted" style="font-size:12.5px">5위까지 가을야구</span></div>' + standTableHTML(false) + '</section>';
+    h += '<section class="card"><div class="card-h"><h2>' + S.league.year + ' 정규시즌 순위</h2><span class="muted" style="font-size:13px">5위까지 가을야구</span></div>' + standTableHTML(false) + '</section>';
     h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>타격 순위</h2></div>' + leaderBlock('bat') + '</section>' +
       '<section class="card"><div class="card-h"><h2>투수 순위</h2></div>' + leaderBlock('pit') + '</section></div>';
     return h + '</div>';
@@ -7054,8 +7058,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function teamHeadHTML(tid, sub) {
     const t = team(tid), L = S.league;
     const opts = L.teams.map((x) => '<option value="' + x.id + '"' + (x.id === tid ? ' selected' : '') + '>' + esc(LG.teamName(x)) + (x.id === S.user ? ' (우리 구단)' : '') + '</option>').join('');
-    return '<div class="bar-row" style="margin-bottom:14px"><div class="tn-cell">' + patch(t, 40) + '<div><h2 class="disp" style="font-size:24px">' + esc(LG.teamName(t)) + ' <span class="muted">' + sub + '</span></h2><span class="muted" style="font-size:12.5px">' + (t.mgr ? '감독 ' + esc(t.mgr.name) + ' · ' : '') + t.market + ' 시장 · 선수 ' + LG.teamPlayers(L, tid).length + '명 · 연봉 총액 <span class="num">' + C.money(LG.totalSalary(L, tid)) + '</span></span></div></div>' +
-      '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12.5px">구단</span><select class="sel" id="sqTeam">' + opts + '</select></label></div>';
+    return '<div class="bar-row" style="margin-bottom:14px"><div class="tn-cell">' + patch(t, 40) + '<div><h2 class="disp" style="font-size:24px">' + esc(LG.teamName(t)) + ' <span class="muted">' + sub + '</span></h2><span class="muted" style="font-size:13px">' + (t.mgr ? '감독 ' + esc(t.mgr.name) + ' · ' : '') + t.market + ' 시장 · 선수 ' + LG.teamPlayers(L, tid).length + '명 · 연봉 총액 <span class="num">' + C.money(LG.totalSalary(L, tid)) + '</span></span></div></div>' +
+      '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:13px">구단</span><select class="sel" id="sqTeam">' + opts + '</select></label></div>';
   }
   // ---- 표 정렬: 머리글을 누르면 내림차순 ↔ 오름차순 ----
   const TEXT_KEYS = { name: 1, role: 1, pos: 1 };
@@ -7106,11 +7110,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const attPct = Math.round((FA.stadMult(S, S.user) - 1) * 100);
     const myReq = F.req.filter((r) => r.tid === S.user).slice().reverse().slice(0, 6);
     const stLab = { wait: '<span class="badge">검토 중</span>', no: '<span class="badge loss">거절</span>', work: '<span class="badge acc">공사 중</span>', done: '<span class="badge win">완공</span>' };
-    let a = '<section class="card"><div class="card-h"><h2>1군 구장</h2><span class="muted" style="font-size:12.5px">' + esc(t.park) + ' · ' + esc(t.city) + '시 소유</span></div>' +
+    let a = '<section class="card"><div class="card-h"><h2>1군 구장</h2><span class="muted" style="font-size:13px">' + esc(t.park) + ' · ' + esc(t.city) + '시 소유</span></div>' +
       gauge(me.st, '구장 상태 · ' + FA.stadLabel(me.st)) +
       '<dl class="kv" style="margin-top:10px"><dt>관중 효과</dt><dd class="' + (attPct > 0 ? 'wi' : attPct < 0 ? 'lo' : '') + '">' + (attPct > 0 ? '+' : '') + attPct + '%</dd><dt>부상 위험</dt><dd class="' + (me.st < 40 ? 'lo' : '') + '">' + (me.st < 40 ? '+' + Math.round((t.facInj - 1) * 100) + '% (구장이 낡음)' : '영향 없음') + '</dd></dl>' +
       parkSVG(S.user) +
-      '<p class="muted" style="font-size:12.5px;margin:8px 0 0">구장은 시청 소유라 구단이 직접 고칠 수 없고 보수를 요청해야 합니다. 시즌이 끝날 때마다 조금씩 낡습니다. 구단 부담률을 높이면 승인 가능성이 올라갑니다.</p>' +
+      '<p class="muted" style="font-size:13px;margin:8px 0 0">구장은 시청 소유라 구단이 직접 고칠 수 없고 보수를 요청해야 합니다. 시즌이 끝날 때마다 조금씩 낡습니다. 구단 부담률을 높이면 승인 가능성이 올라갑니다.</p>' +
       '<div class="sect">구단 부담률</div><div class="tabs">' + [30, 50, 70].map((x) => '<button class="chip' + (share === x ? ' on' : '') + '" data-facshare="' + x + '">' + x + '%</button>').join('') + '</div>' +
       '<div class="fac-reqs">' + FA.REQ.map((q) => {
         const err = FA.canRequest(S, S.user, q.k, date), pay = Math.round(q.total * share / 100), pr = Math.round(FA.approvalChance(S, S.user, q.k, share) * 100);
@@ -7119,13 +7123,13 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       }).join('') + '</div>' +
       (myReq.length ? '<div class="sect">요청 기록</div><div class="news">' + myReq.map((r) => '<div class="nw"><span class="d num">' + C.fmtDate(r.date) + '</span><span>' + esc(FA.REQ.find((q) => q.k === r.k).name) + ' · 부담 ' + r.share + '% ' + (stLab[r.status] || '') + (r.status === 'work' ? ' <small class="muted">' + C.fmtDate(r.done) + ' 완공</small>' : '') + '</span></div>').join('') + '</div>' : '') + '</section>';
     const nx = me.farm < 5 ? FA.FARM[me.farm + 1] : null, uerr = FA.canUpgrade(S, S.user, date);
-    let b = '<section class="card"><div class="card-h"><h2>2군 훈련시설</h2><span class="muted" style="font-size:12.5px">구단 소유</span></div>' +
+    let b = '<section class="card"><div class="card-h"><h2>2군 훈련시설</h2><span class="muted" style="font-size:13px">구단 소유</span></div>' +
       '<div class="fac-lv">' + [1, 2, 3, 4, 5].map((i) => '<i class="' + (i <= me.farm ? 'on' : me.build && i === me.build.lv ? 'bld' : '') + '"></i>').join('') + '<b>' + me.farm + '단계</b><span>' + esc(FA.FARM[me.farm].name) + '</span></div>' +
       '<dl class="kv" style="margin-top:10px"><dt>유망주 성장</dt><dd class="' + (me.farm > 3 ? 'wi' : me.farm < 3 ? 'lo' : '') + '">' + (me.farm === 3 ? '보통' : (me.farm > 3 ? '+' : '') + Math.round((me.farm - 3) * 0.05 * 100) / 100 + ' (해마다, 1군 주전이 아닌 26세 이하)') + '</dd><dt>부상 재활 기간</dt><dd class="' + (me.farm > 3 ? 'wi' : me.farm < 3 ? 'lo' : '') + '">' + (me.farm === 3 ? '보통' : (me.farm > 3 ? '-' : '+') + Math.abs(Math.round((me.farm - 3) * 6)) + '%') + '</dd><dt>유지비</dt><dd class="num">' + C.money(FA.FARM[me.farm].keep) + ' / 년</dd></dl>';
     if (me.build) b += '<p class="fac-build">' + me.build.lv + '단계 "' + esc(FA.FARM[me.build.lv].name) + '" 공사 중 · ' + C.fmtDate(me.build.done) + ' 완공</p>';
     else if (nx) b += '<div class="fac-req"><div><b>' + (me.farm + 1) + '단계로 올리기</b> <span class="muted">' + esc(nx.name) + '</span><p>공사 ' + Math.round(FA.BUILD_DAYS / 30) + '개월 · 비용 ' + C.money(nx.up) + '(바로 냄) · 완공 뒤 유지비 ' + C.money(nx.keep) + '/년</p></div>' + (uerr ? '<small class="muted fac-why">' + esc(uerr) + '</small>' : '<button class="btn sm" data-facup="1">공사 시작</button>') + '</div>';
-    else b += '<p class="muted" style="font-size:12.5px">최고 단계입니다.</p>';
-    b += '<p class="muted" style="font-size:12.5px;margin:8px 0 0">2군 시설은 구단이 직접 짓습니다. 유망주가 퓨처스에서 크는 속도와 1군 선수 부상 재활 기간에 영향을 줍니다.</p></section>';
+    else b += '<p class="muted" style="font-size:13px">최고 단계입니다.</p>';
+    b += '<p class="muted" style="font-size:13px;margin:8px 0 0">2군 시설은 구단이 직접 짓습니다. 유망주가 퓨처스에서 크는 속도와 1군 선수 부상 재활 기간에 영향을 줍니다.</p></section>';
     // 리그 비교
     const rows = S.league.teams.map((x) => ({ x, f: F.t[x.id] })).sort((p, q) => q.f.st - p.f.st);
     const cmp = '<section class="card" style="margin-top:16px"><div class="card-h"><h2>리그 시설 비교</h2></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">구단</th><th class="l">구장</th><th>구장 상태</th><th class="l">2군 시설</th></tr></thead><tbody>' +
@@ -7151,12 +7155,12 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const DP = OD.Dispatch, P = S.league.players, date = SE.currentDate(S);
     const D = S.disp || { list: [] };
     const money = FI.cash ? C.moneyShort(Math.round(FI.cash(S, S.user))) : '-';
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>유망주 파견</h2><span class="muted" style="font-size:12.5px">보유 현금 ' + money + '</span></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:0">' + DP.MAX_AGE + '세 이하 국내 선수를 해외·국내 훈련 프로그램에 보냅니다. 돌아오면 프로그램이 다루는 능력치가 오르지만 <b>잠재력을 넘지는 않습니다</b>(잠재력까지 가는 속도만 빨라짐). 성실성·적응력이 낮으면 적응에 실패할 수 있고, 강도 높은 곳은 부상 위험이 있습니다. 비용은 구단 현금(유망주 파견)에서 나가고, 출발 전에 취소하면 80%를 돌려받습니다.</p></section>';
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>유망주 파견</h2><span class="muted" style="font-size:13px">보유 현금 ' + money + '</span></div>' +
+      '<p class="muted" style="font-size:13px;margin:0">' + DP.MAX_AGE + '세 이하 국내 선수를 해외·국내 훈련 프로그램에 보냅니다. 돌아오면 프로그램이 다루는 능력치가 오르지만 <b>잠재력을 넘지는 않습니다</b>(잠재력까지 가는 속도만 빨라짐). 성실성·적응력이 낮으면 적응에 실패할 수 있고, 강도 높은 곳은 부상 위험이 있습니다. 비용은 구단 현금(유망주 파견)에서 나가고, 출발 전에 취소하면 80%를 돌려받습니다.</p></section>';
     // 진행 중·예정·최근 결과
     const cur = D.list.filter((x) => x.status !== 'cancel').slice().sort((a, b) => (a.status === 'done') - (b.status === 'done') || (a.start < b.start ? 1 : -1)).slice(0, 14);
-    h += '<section class="card"><div class="card-h"><h2>파견 현황</h2><span class="muted" style="font-size:12.5px">시즌 중 동시 ' + DP.IN_CAP + '명까지</span></div>';
-    if (!cur.length) h += '<div class="empty">아직 보낸 선수가 없습니다.</div>';
+    h += '<section class="card"><div class="card-h"><h2>파견 현황</h2><span class="muted" style="font-size:13px">시즌 중 동시 ' + DP.IN_CAP + '명까지</span></div>';
+    if (!cur.length) h += '<div class="empty">아직 보낸 선수가 없습니다</div>';
     else h += '<div class="tbl-wrap"><table class="t"><thead><tr><th class="l">선수</th><th class="l">프로그램</th><th class="l">기간</th><th class="l">상태</th><th class="l">결과</th><th></th></tr></thead><tbody>' + cur.map((x) => {
       const p = P[x.pid], g = DP.prog(x.prog); if (!p) return '';
       const stt = x.status === 'plan' ? '<span class="badge">출발 예정</span>' : x.status === 'away' ? '<span class="badge acc">파견 중</span>' : '<span class="badge win">귀국</span>';
@@ -7177,12 +7181,12 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       if (ui.dpPick === g.k && si.open && !full) {
         const mine = LG.teamPlayers(S.league, S.user).concat(Object.values(P).filter((p) => p.serve && p.serve.orig === S.user && false));
         const ok = mine.filter((p) => !DP.eligible(S, p, g.k, date)).sort((a, b) => (b.pa - b.ca) - (a.pa - a.ca) || a.age - b.age);
-        c += '<div class="dp-pick">' + (ok.length ? ok.slice(0, 30).map((p) => '<div class="dp-row"><button class="mv-p" data-player="' + p.id + '">' + esc(p.name) + '</button><span class="muted">' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · ' + (p.ent ? '1군' : '퓨처스') + '</span><span class="dp-g">' + starsHTML(p.ca) + '<i>→</i>' + starsHTML(p.pa) + '</span><button class="btn sm primary" data-dsend="' + g.k + ':' + p.id + '">보내기</button></div>').join('') : '<p class="muted" style="margin:0;font-size:12.5px">보낼 수 있는 선수가 없습니다. (' + DP.MAX_AGE + '세 이하 국내 선수' + (g.kind === 'in' ? ', 1군 엔트리 제외' : '') + (g.who === 'pit' ? ', 투수만' : '') + ')</p>') + '</div>';
+        c += '<div class="dp-pick">' + (ok.length ? ok.slice(0, 30).map((p) => '<div class="dp-row"><button class="mv-p" data-player="' + p.id + '">' + esc(p.name) + '</button><span class="muted">' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · ' + (p.ent ? '1군' : '퓨처스') + '</span><span class="dp-g">' + starsHTML(p.ca) + '<i>→</i>' + starsHTML(p.pa) + '</span><button class="btn sm primary" data-dsend="' + g.k + ':' + p.id + '">보내기</button></div>').join('') : '<p class="muted" style="margin:0;font-size:13px">보낼 수 있는 선수가 없습니다. (' + DP.MAX_AGE + '세 이하 국내 선수' + (g.kind === 'in' ? ', 1군 엔트리 제외' : '') + (g.who === 'pit' ? ', 투수만' : '') + ')</p>') + '</div>';
       }
       return c + '</div>';
     };
-    h += '<section class="card"><div class="card-h"><h2>시즌 중 파견</h2><span class="muted" style="font-size:12.5px">정규시즌 4~8월 · 1군 엔트리 제외 · 동시 ' + DP.IN_CAP + '명</span></div><div class="dp-grid">' + DP.PROGS.filter((g) => g.kind === 'in').map(card).join('') + '</div></section>';
-    h += '<section class="card"><div class="card-h"><h2>시즌 후 파견</h2><span class="muted" style="font-size:12.5px">7월 1일부터 신청 · 일정이 정해져 있음</span></div><div class="dp-grid">' + DP.PROGS.filter((g) => g.kind === 'off').map(card).join('') + '</div></section>';
+    h += '<section class="card"><div class="card-h"><h2>시즌 중 파견</h2><span class="muted" style="font-size:13px">정규시즌 4~8월 · 1군 엔트리 제외 · 동시 ' + DP.IN_CAP + '명</span></div><div class="dp-grid">' + DP.PROGS.filter((g) => g.kind === 'in').map(card).join('') + '</div></section>';
+    h += '<section class="card"><div class="card-h"><h2>시즌 후 파견</h2><span class="muted" style="font-size:13px">7월 1일부터 신청 · 일정이 정해져 있음</span></div><div class="dp-grid">' + DP.PROGS.filter((g) => g.kind === 'off').map(card).join('') + '</div></section>';
     return h + '</div>';
   }
   // ---- 라인업 (보기 전용): 감독 AI가 짜는 기본 라인업, 오늘 휴식 무작위는 뺌 ----
@@ -7192,7 +7196,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const hand = ui.luHand === 'L' ? 'L' : 'R';
     let h = '<div class="wrap"><section class="card">' + teamHeadHTML(tid, '라인업') +
       '<div class="tabs" role="tablist">' + [['R', '우완 선발 상대'], ['L', '좌완 선발 상대']].map(([k, n]) => '<button class="chip' + (hand === k ? ' on' : '') + '" data-luhand="' + k + '" role="tab" aria-selected="' + (hand === k) + '">' + n + '</button>').join('') + '</div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">감독이 지금 1군 엔트리로 짜는 기본 라인업입니다. 실제 경기에서는 체력 안배로 쉬는 선수가 생기거나 상대 투수에 따라 조금씩 바뀝니다. 라인업은 감독 권한이라 단장은 볼 수만 있습니다.</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">감독이 지금 1군 엔트리로 짜는 기본 라인업입니다. 실제 경기에서는 체력 안배로 쉬는 선수가 생기거나 상대 투수에 따라 조금씩 바뀝니다. 라인업은 감독 권한이라 단장은 볼 수만 있습니다.</p></section>';
     if (!t.entry || !t.entry.length) return h + '<section class="card"><div class="empty">아직 1군 엔트리가 정해지지 않았습니다. 시즌이 가까워지면 감독이 엔트리를 짭니다.</div></section></div>';
     const lu = SIM.makeLineup(S.league, t, { chance: () => false }, hand);
     const inLu = new Set(lu.map((x) => x.id));
@@ -7215,8 +7219,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const row = (x, i) => { const p = P[x.id], st = s(p);
       return '<tr class="click" data-player="' + p.id + '"><td><b class="lu-no">' + (i + 1) + '</b></td><td class="l txt"><span class="pname">' + esc(p.name) + '</span></td><td class="l">' + (x.pos === 'DH' ? '지명타자' : LG.POS_KO[x.pos]) + '</td><td class="muted">' + (p.bats === 'S' ? '양타' : p.bats === 'L' ? '좌타' : '우타') + '</td><td class="l">' + starsHTML(p.ca) + '</td><td>' + C.avg3(st.h, st.ab) + '</td><td>' + st.hr + '</td><td>' + (st.ab ? (SE.obp(st) + SE.slg(st)).toFixed(3).replace(/^0/, '') : '-') + '</td></tr>'; };
     const dh = lu.find((x) => x.pos === 'DH');
-    h += '<div class="lu-grid"><section class="card"><div class="card-h"><h2>수비 위치</h2>' + (dh ? '<span class="muted" style="font-size:12.5px">지명타자 ' + (lu.indexOf(dh) + 1) + '번 ' + esc(P[dh.id].name) + '</span>' : '') + '</div>' + field + '</section>' +
-      '<section class="card"><div class="card-h"><h2>타순</h2><span class="muted" style="font-size:12.5px">' + (hand === 'R' ? '우완' : '좌완') + ' 선발 상대</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>타순</th><th class="l">선수</th><th class="l">포지션</th><th>타석</th><th class="l">현재</th><th>타율</th><th>홈런</th><th>OPS</th></tr></thead><tbody>' + lu.map(row).join('') + '</tbody></table></div>';
+    h += '<div class="lu-grid"><section class="card"><div class="card-h"><h2>수비 위치</h2>' + (dh ? '<span class="muted" style="font-size:13px">지명타자 ' + (lu.indexOf(dh) + 1) + '번 ' + esc(P[dh.id].name) + '</span>' : '') + '</div>' + field + '</section>' +
+      '<section class="card"><div class="card-h"><h2>타순</h2><span class="muted" style="font-size:13px">' + (hand === 'R' ? '우완' : '좌완') + ' 선발 상대</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th>타순</th><th class="l">선수</th><th class="l">포지션</th><th>타석</th><th class="l">현재</th><th>타율</th><th>홈런</th><th>OPS</th></tr></thead><tbody>' + lu.map(row).join('') + '</tbody></table></div>';
     const bench = t.entry.map((id) => P[id]).filter((p) => p && !p.pr && !inLu.has(p.id));
     h += '<h3 class="lu-bench-h">벤치 (' + bench.length + '명)</h3><div class="lu-bench">' + (bench.length ? bench.map((p) => '<button class="chip" data-player="' + p.id + '">' + LG.POS_SHORT[p.pos] + ' · ' + esc(p.name) + (p.inj ? ' <span class="badge loss">부상</span>' : '') + '</button>').join('') : '<span class="muted">없음</span>') + '</div></section></div>';
     return h + '</div>';
@@ -7229,7 +7233,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (ui.sqTab !== 'pit' && ui.sqTab !== 'bat') ui.sqTab = 'pit';
     let h = '<div class="wrap"><section class="card">' + teamHeadHTML(tid, '1군') +
       '<div class="tabs" role="tablist">' + [['pit', '투수 ' + all.filter((p) => p.pr && ent.has(p.id)).length], ['bat', '야수 ' + all.filter((p) => !p.pr && ent.has(p.id)).length]].map(([k, n]) => '<button class="chip' + (ui.sqTab === k ? ' on' : '') + '" data-sqtab="' + k + '" role="tab" aria-selected="' + (ui.sqTab === k) + '">' + n + '</button>').join('') + '</div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">1군 엔트리 29명. 등록·말소와 기용은 감독이 정하고, 단장은 보기만 할 수 있습니다.</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">1군 엔트리 29명. 등록·말소와 기용은 감독이 정하고, 단장은 보기만 할 수 있습니다.</p></section>';
     const pit = ui.sqTab === 'pit';
     const list = pit ? all.filter((p) => p.pr && ent.has(p.id)).sort((a, b) => orderP(t, a) - orderP(t, b))
       : all.filter((p) => !p.pr && ent.has(p.id)).sort((a, b) => LG.POS.indexOf(a.pos) - LG.POS.indexOf(b.pos) || b.ca - a.ca);
@@ -7267,10 +7271,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const desc = ft.kind === 'army' ? '국군체육부대 소속. 군 복무 중인 선수들로 꾸려지며, 선수마다 원소속 구단이 있습니다.'
       : ft.kind === 'citizen' ? '1군 없이 퓨처스리그만 뛰는 시민구단. 방출되거나 지명받지 못한 선수들의 재기 무대입니다.'
         : '1군 엔트리에 들지 않은 선수들이 2군 경기를 뜁니다. 감독이 매주 1군과 오갈 선수를 정합니다.';
-    let h = '<div class="wrap"><section class="card"><div class="bar-row" style="margin-bottom:14px"><div class="tn-cell">' + patch(ft, 40) + '<div><h2 class="disp" style="font-size:24px">' + esc(ft.full) + '</h2><span class="muted" style="font-size:12.5px">' + FU.DIV_NAME[ft.div] + ' · ' + r.w + '승 ' + r.l + '패 ' + r.t + '무 · ' + (FU.standings(L, ft.div).findIndex((x) => x.t.id === fid) + 1) + '위 · 선수 ' + roster.length + '명</span></div></div>' +
-      '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12.5px">팀</span><select class="sel" id="futTeam">' + opts + '</select></label></div>' +
+    let h = '<div class="wrap"><section class="card"><div class="bar-row" style="margin-bottom:14px"><div class="tn-cell">' + patch(ft, 40) + '<div><h2 class="disp" style="font-size:24px">' + esc(ft.full) + '</h2><span class="muted" style="font-size:13px">' + FU.DIV_NAME[ft.div] + ' · ' + r.w + '승 ' + r.l + '패 ' + r.t + '무 · ' + (FU.standings(L, ft.div).findIndex((x) => x.t.id === fid) + 1) + '위 · 선수 ' + roster.length + '명</span></div></div>' +
+      '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:13px">팀</span><select class="sel" id="futTeam">' + opts + '</select></label></div>' +
       '<div class="tabs" role="tablist">' + [['pit', '투수 ' + roster.filter((p) => p.pr).length], ['bat', '야수 ' + roster.filter((p) => !p.pr).length]].map(([k, n]) => '<button class="chip' + (ui.futTab === k ? ' on' : '') + '" data-futtab="' + k + '" role="tab" aria-selected="' + (ui.futTab === k) + '">' + n + '</button>').join('') + '</div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">' + desc + '</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">' + desc + '</p></section>';
     const list = roster.filter((p) => !!p.pr === pit).sort((a, b) => pit ? (ft.rot && ft.rot.indexOf(a.id) >= 0 ? ft.rot.indexOf(a.id) : 9) - (ft.rot && ft.rot.indexOf(b.id) >= 0 ? ft.rot.indexOf(b.id) : 9) || b.ca - a.ca : LG.POS.indexOf(a.pos) - LG.POS.indexOf(b.pos) || b.ca - a.ca);
     h += '<div class="grid2"><div class="stack"><section class="card"><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">선수</th><th class="l">' + (pit ? '역할' : '포지션') + '</th><th>나이</th><th class="l">현재</th><th class="l">잠재력</th>' +
       (pit ? '<th>경기</th><th>승-패</th><th>이닝</th><th>ERA</th><th>삼진</th>' : '<th>경기</th><th>타율</th><th>홈런</th><th>타점</th><th>OPS</th>') + '<th class="l">' + (ft.kind === 'army' ? '원소속' : '연봉') + '</th></tr></thead><tbody>';
@@ -7288,7 +7292,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (fid === S.user) {
       h += '<section class="card"><div class="card-h"><h2>최근 2군 경기</h2></div>';
       const fr = S.fres || [];
-      if (!fr.length) h += '<div class="empty">아직 치른 2군 경기가 없습니다.</div>';
+      if (!fr.length) h += '<div class="empty">아직 치른 2군 경기가 없습니다</div>';
       else h += '<div class="sched">' + fr.slice(0, 8).map((g) => {
         const home = g.h === S.user, opp = fteamOf(home ? g.a : g.h), my = home ? g.hs : g.as, op = home ? g.as : g.hs;
         const res = g.tie ? '<span class="muted">무 ' + my + '-' + op + '</span>' : my > op ? '<span class="wi">승 ' + my + '-' + op + '</span>' : '<span class="lo">패 ' + my + '-' + op + '</span>';
@@ -7308,17 +7312,17 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function futStandHTML(mark) {
     const L = S.league, FU = OD.Futures;
-    let h = '<section class="card"><div class="card-h"><h2>' + L.year + ' 퓨처스리그</h2><span class="muted" style="font-size:12.5px">팀당 ' + FU.GAMES + '경기</span></div>';
+    let h = '<section class="card"><div class="card-h"><h2>' + L.year + ' 퓨처스리그</h2><span class="muted" style="font-size:13px">팀당 ' + FU.GAMES + '경기</span></div>';
     if (S.fpost) {
       const fp = S.fpost, c = fteamOf(fp.champ);
-      h += '<div class="fchamp">' + patch(c, 28) + '<div><div class="eyebrow">퓨처스 챔피언</div><b>' + esc(c.full) + '</b><div class="muted" style="font-size:12.5px">챔피언결정전 ' + Math.max(fp.wHi, fp.wLo) + '승 ' + Math.min(fp.wHi, fp.wLo) + '패 · ' + esc(fteamOf(fp.hi).short) + ' vs ' + esc(fteamOf(fp.lo).short) + '</div></div></div>';
+      h += '<div class="fchamp">' + patch(c, 28) + '<div><div class="eyebrow">퓨처스 챔피언</div><b>' + esc(c.full) + '</b><div class="muted" style="font-size:13px">챔피언결정전 ' + Math.max(fp.wHi, fp.wLo) + '승 ' + Math.min(fp.wHi, fp.wLo) + '패 · ' + esc(fteamOf(fp.hi).short) + ' vs ' + esc(fteamOf(fp.lo).short) + '</div></div></div>';
     }
     for (const d of ['N', 'S']) {
       const st = FU.standings(L, d);
       h += '<div class="sect">' + FU.DIV_NAME[d] + '</div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">순위</th><th class="l">팀</th><th>승-패-무</th><th>승률</th><th>차</th></tr></thead><tbody>' +
         st.map((x, i) => '<tr class="click' + (x.t.id === mark ? ' me' : '') + '" data-futteam="' + x.t.id + '"><td class="l">' + (i + 1) + '</td><td class="l txt"><span class="tn-cell">' + patch(x.t, 22) + esc(x.t.short) + '</span></td><td>' + x.r.w + '-' + x.r.l + '-' + x.r.t + '</td><td>' + (x.r.w + x.r.l ? (x.r.w / (x.r.w + x.r.l)).toFixed(3).replace(/^0/, '') : '.000') + '</td><td>' + (x.gb ? x.gb.toFixed(1) : '-') + '</td></tr>').join('') + '</tbody></table></div>';
     }
-    h += '<p class="muted" style="font-size:12.5px;margin:10px 0 0">정규시즌이 끝나면 북부·남부 1위가 챔피언결정전(3전 2선승)을 치릅니다.</p>';
+    h += '<p class="muted" style="font-size:13px;margin:10px 0 0">정규시즌이 끝나면 북부·남부 1위가 챔피언결정전(3전 2선승)을 치릅니다.</p>';
     return h + '</section>';
   }
 
@@ -7336,8 +7340,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const tabs = '<div class="tabs" style="margin-bottom:8px">' + [['all', '전체'], ['pit', '투수'], ['bat', '야수'], ['pick', '지명권']].map(([k, n]) => '<button class="chip' + (filter === k ? ' on' : '') + '" data-tf="' + fk + ':' + k + '">' + n + '</button>').join('') + '</div>';
     if (filter === 'pick') {
       const psel = side === 'give' ? T.pgive : T.pget, ks = MK.pickList(S, tid);
-      return tabs + '<p class="muted" style="font-size:12.5px;margin:0 0 8px">' + MK.pickYears(S).join('·') + ' 신인 드래프트 ' + MK.PICK_ROUNDS + '라운드까지 거래할 수 있습니다. 순번은 원래 구단의 성적 역순입니다.</p><div class="plist">' +
-        (ks.length ? ks.map((k) => { const on = psel.includes(k); const pp = MK.pickParse(k); return '<button class="prow' + (on ? ' sel' : '') + '" data-tpk="' + (side === 'give' ? 'pgive' : 'pget') + ':' + k + '" aria-pressed="' + on + '"><span class="pr-n">' + pp.y + ' 신인 ' + pp.r + '라운드</span><span class="pr-m muted">' + esc(MK.pickLabel(S, k).split(' · ').slice(1).join(' · ') || '순번 미정') + '</span><span class="pr-r">' + patch(team(pp.orig), 20) + '</span></button>'; }).join('') : '<div class="empty">거래할 수 있는 지명권이 없습니다.</div>') + '</div>';
+      return tabs + '<p class="muted" style="font-size:13px;margin:0 0 8px">' + MK.pickYears(S).join('·') + ' 신인 드래프트 ' + MK.PICK_ROUNDS + '라운드까지 거래할 수 있습니다. 순번은 원래 구단의 성적 역순입니다.</p><div class="plist">' +
+        (ks.length ? ks.map((k) => { const on = psel.includes(k); const pp = MK.pickParse(k); return '<button class="prow' + (on ? ' sel' : '') + '" data-tpk="' + (side === 'give' ? 'pgive' : 'pget') + ':' + k + '" aria-pressed="' + on + '"><span class="pr-n">' + pp.y + ' 신인 ' + pp.r + '라운드</span><span class="pr-m muted">' + esc(MK.pickLabel(S, k).split(' · ').slice(1).join(' · ') || '순번 미정') + '</span><span class="pr-r">' + patch(team(pp.orig), 20) + '</span></button>'; }).join('') : '<div class="empty">거래할 수 있는 지명권이 없습니다</div>') + '</div>';
     }
     let ps = LG.teamPlayers(S.league, tid);
     if (filter === 'pit') ps = ps.filter((p) => p.pr); else if (filter === 'bat') ps = ps.filter((p) => !p.pr);
@@ -7361,8 +7365,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const dl = MK.deadline(S.league.year);
     const left = Math.round((Date.parse(dl) - Date.parse(date)) / 864e5);
     let h = '<section class="card"><div class="bar-row"><div><div class="eyebrow">트레이드 마감 ' + C.fmtDate(dl) + '</div><b>' + (open ? (left > 0 ? '마감까지 ' + left + '일' : '오늘 마감') : S.phase === 'reg' ? '마감됨 · 오프시즌에 다시 열립니다' : '지금은 트레이드 기간이 아닙니다') + '</b></div>' +
-      '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:12.5px">상대 구단</span><select class="sel" id="tPartner">' + others.map((t) => '<option value="' + t.id + '"' + (t.id === T.partner ? ' selected' : '') + '>' + esc(LG.teamName(t)) + '</option>').join('') + '</select></label></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">한쪽에서 선수 최대 ' + MK.MAX_SIDE + '명, 신인 지명권 최대 ' + MK.MAX_SIDE + '장까지 주고받습니다. 상대 단장은 선수 가치, 나이, 연봉, 자기 팀 사정(우승 경쟁·리빌딩)과 그 자리가 필요한지를 보고 답합니다.</p></section>';
+      '<label style="display:flex;gap:8px;align-items:center"><span class="muted" style="font-size:13px">상대 구단</span><select class="sel" id="tPartner">' + others.map((t) => '<option value="' + t.id + '"' + (t.id === T.partner ? ' selected' : '') + '>' + esc(LG.teamName(t)) + '</option>').join('') + '</select></label></div>' +
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">한쪽에서 선수 최대 ' + MK.MAX_SIDE + '명, 신인 지명권 최대 ' + MK.MAX_SIDE + '장까지 주고받습니다. 상대 단장은 선수 가치, 나이, 연봉, 자기 팀 사정(우승 경쟁·리빌딩)과 그 자리가 필요한지를 보고 답합니다.</p></section>';
     // 요약
     const chip = (id, side) => '<button class="tchip" data-tsel="' + side + ':' + id + '" aria-label="' + esc(P[id].name) + ' 빼기">' + esc(P[id].name) + ' <span class="muted">' + (P[id].pr ? roleOf(P[id]) : LG.POS_SHORT[P[id].pos]) + '</span> ✕</button>';
     const pchip = (k, side) => '<button class="tchip pk" data-tpk="' + side + ':' + k + '" aria-label="지명권 빼기">' + esc(MK.pickLabel(S, k, true)) + ' <span class="muted">지명권</span> ✕</button>';
@@ -7386,12 +7390,12 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       const pctv = Math.min(150, Math.floor(r.ratio * 100 + 1e-9)); // 수락 기준(100%)과 맞추려고 내림
       h += '<div class="reply' + (r.accept ? ' ok' : '') + '"><div class="reply-h">' + patch(pt, 24) + '<b>' + esc(pt.name) + ' 단장</b></div><p>"' + esc(r.reply) + '"</p>' +
         '<div class="meter" aria-label="상대가 느끼는 매력도 ' + pctv + '%"><i style="width:' + (pctv / 1.5) + '%"></i><span class="mk" style="left:' + (100 / 1.5) + '%"></span></div><div class="muted" style="font-size:12px">상대가 느끼는 매력도 ' + pctv + '% (100% 이상이면 수락)</div>' +
-        (r.notes.length ? '<div class="muted" style="font-size:12.5px;margin-top:6px">' + r.notes.map(esc).join(' · ') + '</div>' : '') +
+        (r.notes.length ? '<div class="muted" style="font-size:13px;margin-top:6px">' + r.notes.map(esc).join(' · ') + '</div>' : '') +
         (r.accept ? '<div style="margin-top:12px"><button class="btn primary" data-tact="confirm">트레이드 확정</button></div>' : '') + '</div>';
     }
     h += '</section>';
-    h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>우리 선수</h2><span class="muted" style="font-size:12.5px">' + LG.teamPlayers(S.league, S.user).length + '명</span></div>' + tradeSideList(S.user, 'give', T.mf) + '</section>' +
-      '<section class="card"><div class="card-h"><h2>' + esc(pt.name) + ' 선수</h2><span class="muted" style="font-size:12.5px">' + LG.teamPlayers(S.league, pt.id).length + '명</span></div>' + tradeSideList(pt.id, 'get', T.tf) + '</section></div>';
+    h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>우리 선수</h2><span class="muted" style="font-size:13px">' + LG.teamPlayers(S.league, S.user).length + '명</span></div>' + tradeSideList(S.user, 'give', T.mf) + '</section>' +
+      '<section class="card"><div class="card-h"><h2>' + esc(pt.name) + ' 선수</h2><span class="muted" style="font-size:13px">' + LG.teamPlayers(S.league, pt.id).length + '명</span></div>' + tradeSideList(pt.id, 'get', T.tf) + '</section></div>';
     return h;
   }
   // 외국인 협상 입력·가로채기 카드
@@ -7415,7 +7419,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const used = S.frep[S.user] || 0;
     const dl = MK.fDeadline(S.league.year);
     let h = hijackCard() + '<section class="card"><div class="fstat">' +
-      '<div><div class="eyebrow">' + (isF ? '외국인 선수' : '아시아쿼터') + '</div><b class="disp" style="font-size:26px">' + (isF ? c.f + ' / ' + MK.F_MAX + '명' : c.a + ' / ' + MK.A_MAX + '명') + '</b>' + (isF ? '<div class="muted" style="font-size:12.5px">투수 ' + c.fp + ' · 타자 ' + c.fb + ' (같은 유형 최대 ' + MK.F_SAME + '명)</div>' : '<div class="muted" style="font-size:12.5px">아시아 국적·호주, 아시아 리그 출신</div>') + '</div>' +
+      '<div><div class="eyebrow">' + (isF ? '외국인 선수' : '아시아쿼터') + '</div><b class="disp" style="font-size:28px">' + (isF ? c.f + ' / ' + MK.F_MAX + '명' : c.a + ' / ' + MK.A_MAX + '명') + '</b>' + (isF ? '<div class="muted" style="font-size:13px">투수 ' + c.fp + ' · 타자 ' + c.fb + ' (같은 유형 최대 ' + MK.F_SAME + '명)</div>' : '<div class="muted" style="font-size:13px">아시아 국적·호주, 아시아 리그 출신</div>') + '</div>' +
       '<dl class="kv"><dt>신규 계약 상한</dt><dd class="num">' + (isF ? MK.F_CAP : MK.A_CAP) + '만 달러</dd>' + (isF ? '<dt>연봉 합계</dt><dd class="num' + (MK.fTotal(S, S.user) > MK.F_TOTAL_CAP * 0.85 ? ' lo' : '') + '">' + C.money(MK.fTotal(S, S.user)) + ' / 40억</dd>' : '') + '<dt>영입 마감</dt><dd>' + C.fmtDate(dl) + '</dd><dt>시즌 중 교체</dt><dd>' + (S.fStarted ? (MK.F_REPLACE - used) + '번 남음 (외국인·아시아쿼터 합산)<br><small class="muted">' + (MK.isReplace(S, S.user) ? '지금 영입하면 교체 1번을 씁니다' : '빈 자리를 채우는 영입은 교체로 치지 않음') + '</small>' : '개막 전 영입은 교체로 치지 않음') + '</dd></dl></div>';
     if (!S.fStarted) h += '<div class="scout-note" style="margin-top:12px">' + (S.phase === 'pre' ? '2월 1일 스프링캠프가 출발하면 다른 9개 구단이 남은 후보로 영입을 마칩니다. 1월에는 \'1주 진행\'으로 스카우트 정보를 모으면서 고를 수 있습니다.' : '개막 전입니다. 지금 먼저 고르세요. 첫 경기를 진행하면 다른 9개 구단이 남은 후보로 영입을 마칩니다.') + '</div>';
     h += '</section>';
@@ -7424,7 +7428,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (!mine.length) h += '<div class="empty">아직 없습니다. 아래 후보 중에서 계약하세요.</div>';
     else h += '<div class="plist">' + mine.map((p) => { const s = p.st; const rec = p.pr ? (s.pg ? s.w + '승 ' + s.l + '패 ERA ' + C.era(s.er, s.outs) : '1군 기록 없음') : (s.g ? C.avg3(s.h, s.ab) + ' ' + s.hr + '홈런' : '1군 기록 없음');
       return '<button class="prow" data-player="' + p.id + '"><span class="pr-n">' + esc(p.name) + '</span>' + starsHTML(p.ca) + '<span class="pr-m muted">' + esc(p.nat) + ' · ' + (p.pr ? roleOf(p) : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · ' + rec + '</span><span class="pr-r"><span class="num">' + C.moneyShort(p.sal) + '</span></span></button>'; }).join('') + '</div>';
-    h += '<p class="muted" style="font-size:12.5px;margin:10px 0 0">교체하려면 선수 프로필에서 방출한 뒤 새 후보와 계약하세요.</p></section>';
+    h += '<p class="muted" style="font-size:13px;margin:10px 0 0">교체하려면 선수 프로필에서 방출한 뒤 새 후보와 계약하세요.</p></section>';
     // 후보: 표 (포지션·나이·능력치·연봉, 머리글로 정렬)
     const f = ui.fFilter === 'bat' ? 'bat' : 'pit';
     const pitT = f === 'pit';
@@ -7436,9 +7440,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const scope = 'f' + kind + f;
     cands = applySort(cands, scope, (p, k) => k === 'name' ? p.name : k === 'pos' ? (pitT ? (p.role === 'SP' ? 0 : 1) * 2 + (p.throws === 'L' ? 0 : 1) : LG.POS.indexOf(p.pos)) : k === 'age' ? p.age : k === 'grade' ? p.scout : k === 'ask' ? p.ask : k === 'sk' ? (p.sk || 0) : mid(shown(p, k)));
     const cell = (v, k) => v == null ? '<td class="fc"><span class="fm-v hid" aria-label="알 수 없음"></span></td>' : typeof v === 'object' ? '<td class="fc rng' + (k === 'velo' ? '' : ' v' + vcls(mid(v))) + '">' + v.lo + '~' + v.hi + '</td>' : '<td class="fc' + (k === 'velo' ? '' : ' v' + vcls(v)) + '"><b>' + v + '</b></td>';
-    h += '<section class="card"><div class="card-h"><h2>' + (isF ? '외국인' : '아시아쿼터') + ' 후보</h2><span class="muted" style="font-size:12.5px">' + cands.length + '명</span></div>' +
+    h += '<section class="card"><div class="card-h"><h2>' + (isF ? '외국인' : '아시아쿼터') + ' 후보</h2><span class="muted" style="font-size:13px">' + cands.length + '명</span></div>' +
       '<div class="tabs" style="margin-bottom:10px">' + [['pit', '투수 ' + MK.pool(S, kind).filter((p) => p.pr).length], ['bat', '타자 ' + MK.pool(S, kind).filter((p) => !p.pr).length]].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-ff="' + k + '">' + nm + '</button>').join('') + '</div>' +
-      '<p class="muted" style="font-size:12.5px;margin:0 0 10px">처음엔 등급과 능력치가 공개되지 않습니다. 해외 스카우트를 그 선수가 뛰는 지역(북중미·일본·호주)에 보내면 1주마다 정보가 쌓여 범위가 좁아지고 정확해집니다. 지난 시즌 기록과 요구 연봉은 누구나 볼 수 있습니다. 머리글을 누르면 정렬되고, 다시 누르면 순서가 뒤집힙니다.</p>' + scoutSummary('F') +
+      '<p class="muted" style="font-size:13px;margin:0 0 10px">처음엔 등급과 능력치가 공개되지 않습니다. 해외 스카우트를 그 선수가 뛰는 지역(북중미·일본·호주)에 보내면 1주마다 정보가 쌓여 범위가 좁아지고 정확해집니다. 지난 시즌 기록과 요구 연봉은 누구나 볼 수 있습니다. 머리글을 누르면 정렬되고, 다시 누르면 순서가 뒤집힙니다.</p>' + scoutSummary('F') +
       '<div class="tbl-wrap" style="margin-top:10px"><table class="t ftbl"><thead><tr>' + sortTh(scope, 'name', '선수', 'l') + sortTh(scope, 'pos', pitT ? '역할' : '포지션', 'l') + sortTh(scope, 'age', '나이') + sortTh(scope, 'grade', '평가', 'l') +
       COLS.map(([k, n]) => sortTh(scope, k, n)).join('') + '<th class="l">지난 시즌</th>' + sortTh(scope, 'ask', '희망 연봉') + sortTh(scope, 'sk', '스카우팅', 'l') + '<th class="l"></th></tr></thead><tbody>';
     for (const p of cands) {
@@ -7479,8 +7483,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (lf !== 'all') ps = ps.filter((p) => p.slvl === lf);
     const key = (p) => p.scoutPa == null ? p.scout * 0.3 - 10 : p.scoutPa * 0.7 + p.scout * 0.3;
     ps.sort((a, b) => key(b) - key(a) || (b.sk || 0) - (a.sk || 0));
-    let h = '<section class="card"><div class="card-h"><h2>' + (S.league.year + 1) + ' 신인 드래프트 후보</h2><span class="muted" style="font-size:12.5px">' + ids.length + '명 · 12월 드래프트</span></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:0 0 10px">처음엔 등급이 공개되지 않습니다. 스카우트를 지역의 고교나 대학에 보내면 그곳 후보들의 정보가 매주 쌓여 등급이 드러나고 점점 정확해집니다. 같은 곳에 여러 명을 보내면 더 빨라집니다.</p>' + scoutSummary('D') +
+    let h = '<section class="card"><div class="card-h"><h2>' + (S.league.year + 1) + ' 신인 드래프트 후보</h2><span class="muted" style="font-size:13px">' + ids.length + '명 · 12월 드래프트</span></div>' +
+      '<p class="muted" style="font-size:13px;margin:0 0 10px">처음엔 등급이 공개되지 않습니다. 스카우트를 지역의 고교나 대학에 보내면 그곳 후보들의 정보가 매주 쌓여 등급이 드러나고 점점 정확해집니다. 같은 곳에 여러 명을 보내면 더 빨라집니다.</p>' + scoutSummary('D') +
       '<div class="tabs" style="margin:10px 0 6px">' + [['all', '전체'], ['pit', '투수'], ['bat', '야수'], ['on', '스카우트 간 곳']].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-amf="' + k + '">' + nm + '</button>').join('') + '</div>' +
       '<div class="chips-scroll" style="margin-bottom:6px">' + [['all', '모든 권역']].concat((lf === 'U' ? MK.UREG : lf === 'H' ? MK.HREG : MK.DREG).map((r) => [r.id, lf === 'all' ? MK.regLabel(r.id) : r.name])).map(([k, nm]) => '<button class="chip' + (rf === k ? ' on' : '') + '" data-amreg="' + k + '">' + nm + '</button>').join('') + '</div>' +
       '<div class="tabs" style="margin-bottom:10px">' + [['all', '고교·대학'], ['H', '고교'], ['U', '대학']].map(([k, nm]) => '<button class="chip' + (lf === k ? ' on' : '') + '" data-amlvl="' + k + '">' + nm + '</button>').join('') + '</div><div class="plist tall">';
@@ -7496,10 +7500,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const st = MK.scoutStaff(S), P = S.league.players;
     const fs = MK.regionStats(S, 'F'), ds = MK.regionStats(S, 'D');
     const pct = (x) => x ? Math.round(x.sk) + '%' : '-';
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>스카우트</h2><span class="muted" style="font-size:12.5px">해외 1주 비용 ' + C.money(MK.weeklyCost(S)) + '</span></div>' +
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>스카우트</h2><span class="muted" style="font-size:13px">해외 1주 비용 ' + C.money(MK.weeklyCost(S)) + '</span></div>' +
       '<p class="muted" style="margin:0;font-size:13px">스카우트를 지역에 보내면 그 지역 후보들의 정보가 1주마다 쌓입니다(해외 1명당 1주 +' + MK.SCOUT_WEEK.F + '%, 아마추어 1명당 +' + MK.SCOUT_WEEK.D + '%). 같은 곳에 여러 명을 보내면 더 빨라지고, 아무도 안 간 곳은 아마추어만 리그 소문으로 조금씩(1주 +' + 1 + '%) 알려집니다. 15%가 넘으면 등급이 드러나고, 오래 볼수록 정확해집니다.</p></section>';
     const opt = (list, cur) => '<option value=""' + (!cur ? ' selected' : '') + '>대기 (사무실)</option>' + list.map((r) => '<option value="' + r.id + '"' + (cur === r.id ? ' selected' : '') + '>' + esc(r.name) + '</option>').join('');
-    h += '<div><section class="card"><div class="card-h"><h2>해외 스카우트</h2><span class="muted" style="font-size:12.5px">외국인·아시아쿼터</span></div><div class="scouts">' +
+    h += '<div><section class="card"><div class="card-h"><h2>해외 스카우트</h2><span class="muted" style="font-size:13px">외국인·아시아쿼터</span></div><div class="scouts">' +
       st.F.map((x, i) => '<div class="scout-row"><b>' + esc(x.name) + '</b><select class="sel" data-sreg="F:' + i + '" aria-label="' + esc(x.name) + ' 스카우트 지역">' + opt(MK.FREG, x.reg) + '</select>' + (x.reg ? '<span class="muted">1주 ' + C.moneyShort(MK.FREG.find((r) => r.id === x.reg).cost) + '</span>' : '<span class="muted">비용 없음</span>') + '</div>').join('') + '</div>' +
       '<div class="tbl-wrap" style="margin-top:12px"><table class="t"><thead><tr><th class="l">지역 · 리그</th><th>후보</th><th>스카우트</th><th>파악</th></tr></thead><tbody>' +
       MK.FREG.map((r) => { const o = fs[r.id]; const n = st.F.filter((x) => x.reg === r.id).length; return '<tr><td class="l txt reg-cell"><b>' + esc(r.name) + '</b><small class="muted">' + esc(r.note) + '</small></td><td>' + (o ? o.n : 0) + '</td><td>' + (n ? '<span class="badge acc">' + n + '</span>' : '-') + '</td><td>' + pct(o) + '</td></tr>'; }).join('') + '</tbody></table></div>' +
@@ -7508,7 +7512,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const amCard = (lvl) => {
       const regs = lvl === 'H' ? MK.HREG : MK.UREG;
       const team = st.D.map((x, i) => [x, i]).filter(([x]) => x.lvl === lvl);
-      return '<section class="card"><div class="card-h"><h2>' + (lvl === 'H' ? '고교 스카우트' : '대학 스카우트') + '</h2><span class="muted" style="font-size:12.5px">' + (lvl === 'H' ? '고교 야구부 12개 권역' : '대학 야구부 6개 권역') + ' · ' + team.length + '명</span></div><div class="scouts">' +
+      return '<section class="card"><div class="card-h"><h2>' + (lvl === 'H' ? '고교 스카우트' : '대학 스카우트') + '</h2><span class="muted" style="font-size:13px">' + (lvl === 'H' ? '고교 야구부 12개 권역' : '대학 야구부 6개 권역') + ' · ' + team.length + '명</span></div><div class="scouts">' +
         team.map(([x, i]) => '<div class="scout-row"><b>' + esc(x.name) + '</b><select class="sel" data-sreg="D:' + i + '" aria-label="' + esc(x.name) + ' 스카우트 권역">' + opt(regs, x.reg) + '</select></div>').join('') + '</div>' +
         '<div class="tbl-wrap" style="margin-top:12px"><table class="t"><thead><tr><th class="l">권역</th><th>후보</th><th>스카우트</th><th>파악</th><th class="l">눈에 띄는 선수</th></tr></thead><tbody>' +
         regs.map((r) => { const o = ds[r.id + ':' + lvl]; const n = st.D.filter((x) => x.reg === r.id).length;
@@ -7520,7 +7524,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const yr = Number(SE.currentDate(S).slice(0, 4));
     const sch = OD.Amateur ? OD.Amateur.schedule(S, yr) : [];
     if (sch.length) {
-      h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>' + yr + ' 아마추어 대회</h2><span class="muted" style="font-size:12.5px">중계 없음 · 4강과 결과는 메시지로 알려 드립니다</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">대회</th><th>부문</th><th class="l">시기</th><th class="l">4강</th><th class="l">우승 · 준우승</th></tr></thead><tbody>' +
+      h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>' + yr + ' 아마추어 대회</h2><span class="muted" style="font-size:13px">중계 없음 · 4강과 결과는 메시지로 알려 드립니다</span></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">대회</th><th>부문</th><th class="l">시기</th><th class="l">4강</th><th class="l">우승 · 준우승</th></tr></thead><tbody>' +
         sch.map((x) => '<tr><td class="l txt"><b>' + esc(x.t.name) + '</b>' + (x.t.note ? '<small class="muted" style="display:block">' + esc(x.t.note) + '</small>' : '') + '</td><td>' + (x.t.lvl === 'H' ? '고교' : '대학') + '</td><td class="l txt">' + esc(x.t.when) + '<small class="muted" style="display:block">4강 ' + C.fmtDate(x.semi) + ' · 결승 ' + C.fmtDate(x.fin) + '</small></td>' +
           '<td class="l txt">' + (x.four ? esc(x.four.join(', ')) : x.skipped ? '<span class="muted">이미 끝남</span>' : '<span class="muted">예정</span>') + '</td><td class="l txt">' + (x.win ? '<b>' + esc(x.win) + '</b> · ' + esc(x.ru) : '<span class="muted">-</span>') + '</td></tr>').join('') + '</tbody></table></div></section>';
     }
@@ -7533,17 +7537,17 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return os.map((o) => {
       const T = team(o.from);
       const li = (ids) => ids.map((id) => '<button class="mv-p" data-player="' + id + '">' + esc(P[id].name) + ' <span class="muted">' + (P[id].pr ? roleOf(P[id]) : LG.POS_SHORT[P[id].pos]) + ' · ' + P[id].age + '세</span> ' + starsHTML(P[id].ca) + '</button>').join('');
-      return '<section class="card offer"><div class="card-h"><h2 class="tn-cell">' + patch(T, 28) + esc(LG.teamName(T)) + '</h2><span class="muted" style="font-size:12.5px">' + C.fmtDate(o.until) + '까지</span></div>' +
+      return '<section class="card offer"><div class="card-h"><h2 class="tn-cell">' + patch(T, 28) + esc(LG.teamName(T)) + '</h2><span class="muted" style="font-size:13px">' + C.fmtDate(o.until) + '까지</span></div>' +
         '<div class="tcols"><div><div class="eyebrow">그쪽이 원하는 것</div>' + li(o.get) + (o.pkGet || []).map((k) => '<div class="tchip pk">' + esc(MK.pickLabel(S, k, true)) + ' 지명권</div>').join('') + (o.cash < 0 ? '<div class="tchip pk">현금 ' + C.money(-o.cash) + '</div>' : '') + '</div><div><div class="eyebrow">대신 주는 것</div>' + li(o.give) + (o.pkGive || []).map((k) => '<div class="tchip pk">' + esc(MK.pickLabel(S, k, true)) + ' 지명권</div>').join('') + (o.cash > 0 ? '<div class="tchip pk">현금 ' + C.money(o.cash) + '</div>' : '') + '</div></div>' +
-        (o.kind ? '<p class="muted" style="font-size:12.5px;margin:10px 0 0">' + ({ sell: '우리가 하위권이라 상대는 즉시 전력을 원하고 유망주와 대가를 제시했습니다.', buy: '우리가 상위권이라 상대는 주전급 선수를 내주는 대신 우리 유망주와 대가를 원합니다.', mid: '서로 필요한 포지션을 맞추는 1:1 제안입니다 (등급 한 단계 차이).' })[o.kind] + '</p>' : '') +
+        (o.kind ? '<p class="muted" style="font-size:13px;margin:10px 0 0">' + ({ sell: '우리가 하위권이라 상대는 즉시 전력을 원하고 유망주와 대가를 제시했습니다.', buy: '우리가 상위권이라 상대는 주전급 선수를 내주는 대신 우리 유망주와 대가를 원합니다.', mid: '서로 필요한 포지션을 맞추는 1:1 제안입니다 (등급 한 단계 차이).' })[o.kind] + '</p>' : '') +
         '<div class="sim-row" style="margin-top:12px"><button class="btn primary" data-offer="ok:' + o.id + '">수락</button><button class="btn ghost" data-offer="no:' + o.id + '">거절</button></div></section>';
     }).join('');
   }
   function waiverHTML() {
     const P = S.league.players;
     const ws = (S.waivers || []).map((id) => P[id]);
-    let h = '<section class="card"><div class="card-h"><h2>웨이버 공시 중</h2></div><p class="muted" style="font-size:12.5px;margin:0 0 10px">방출된 선수는 7일 동안 공시됩니다. 영입을 신청한 구단 중 순위가 낮은 구단이 먼저 데려가고, 남은 연봉도 넘겨받습니다. 아무도 안 데려가면 울산 오르카스나 자유계약으로 갑니다. 우리 선수 방출은 선수 프로필에서 합니다.</p>';
-    if (!ws.length) h += '<div class="empty">공시된 선수가 없습니다.</div>';
+    let h = '<section class="card"><div class="card-h"><h2>웨이버 공시 중</h2></div><p class="muted" style="font-size:13px;margin:0 0 10px">방출된 선수는 7일 동안 공시됩니다. 영입을 신청한 구단 중 순위가 낮은 구단이 먼저 데려가고, 남은 연봉도 넘겨받습니다. 아무도 안 데려가면 울산 오르카스나 자유계약으로 갑니다. 우리 선수 방출은 선수 프로필에서 합니다.</p>';
+    if (!ws.length) h += '<div class="empty">공시된 선수가 없습니다</div>';
     else h += '<div class="plist">' + ws.map((p) => {
       const from = team(p.waiver.from);
       const mine = p.waiver.from === S.user;
@@ -7555,7 +7559,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 울산 오르카스
     const uso = LG.teamPlayers(S.league, 'USO').sort((a, b) => b.ca - a.ca);
     if (uso.length) {
-      h += '<section class="card"><div class="card-h"><h2>울산 오르카스 선수 영입</h2><span class="muted" style="font-size:12.5px">' + uso.length + '명</span></div><p class="muted" style="font-size:12.5px;margin:0 0 10px">시민구단 선수는 이적료를 내고 언제든 데려올 수 있습니다 (7월 31일까지). 연봉은 그대로 이어집니다. 퓨처스 기록을 보고 고르세요.</p><div class="plist">' +
+      h += '<section class="card"><div class="card-h"><h2>울산 오르카스 선수 영입</h2><span class="muted" style="font-size:13px">' + uso.length + '명</span></div><p class="muted" style="font-size:13px;margin:0 0 10px">시민구단 선수는 이적료를 내고 언제든 데려올 수 있습니다 (7월 31일까지). 연봉은 그대로 이어집니다. 퓨처스 기록을 보고 고르세요.</p><div class="plist">' +
         uso.map((p) => { const s = p.fst || {}; const rec = p.pr ? (s.pg ? s.pg + '경기 ERA ' + C.era(s.er, s.outs) : '기록 없음') : (s.g ? s.g + '경기 ' + C.avg3(s.h, s.ab) + ' ' + s.hr + '홈런' : '기록 없음');
           return '<div class="wrow"><button class="prow" data-player="' + p.id + '"><span class="pr-n">' + esc(p.name) + '</span><span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발형' : '구원형') : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · 퓨처스 ' + rec + '</span>' + starsHTML(p.ca) + '<span class="pr-r"><span class="muted">이적료</span><span class="num">' + C.moneyShort(MK.usoFee(p)) + '</span></span></button>' +
             (ui.sheetConfirm === 'uso:' + p.id ? '<span class="sim-row"><button class="btn sm primary" data-uso="yes:' + p.id + '">영입 확정</button><button class="btn sm ghost" data-uso="no:' + p.id + '">취소</button></span>' : '<button class="btn sm" data-uso="ask:' + p.id + '">영입</button>') + '</div>'; }).join('') + '</div></section>';
@@ -7564,7 +7568,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function newsHTML() {
     const tr = S.trans || [];
-    if (!tr.length) return '<section class="card"><div class="empty">아직 이적 소식이 없습니다.</div></section>';
+    if (!tr.length) return '<section class="card"><div class="empty">아직 이적 소식이 없습니다</div></section>';
     const lab = { trade: '트레이드', release: '방출', waiver: '웨이버', uso: '울산', fa: '자유계약', mgr: '감독', foreign: '영입', draft: '드래프트', post: '포스팅' };
     return '<section class="card"><div class="news">' + tr.map((t) => '<div class="nw"><span class="d num">' + C.fmtDate(t.date) + '</span><span class="badge' + (t.kind === 'trade' ? ' acc' : t.kind === 'foreign' || t.kind === 'fa' ? ' win' : t.kind === 'release' ? ' loss' : '') + '">' + (lab[t.kind] || '기타') + '</span><span>' + esc(t.text) + '</span></div>').join('') + '</div></section>';
   }
@@ -7572,7 +7576,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const n = (S.offers || []).filter((o) => o.until >= today()).length;
     const c = MK.foreignCount(S, S.user);
     const tabs = [['trade', '트레이드'], ['foreign', '외국인 ' + c.f + '/' + MK.F_MAX], ['asia', '아시아쿼터 ' + c.a + '/' + MK.A_MAX], ['amateur', '아마추어'], ['offers', '받은 제안' + (n ? ' ' + n : '')], ['waiver', '웨이버·울산'], ['news', '이적 소식']];
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>이적시장</h2><span class="muted" style="font-size:12.5px">' + esc(team(S.user).name) + ' 선수 ' + LG.teamPlayers(S.league, S.user).length + '명 / 최대 ' + MK.MAX_ROSTER + '명</span></div><div class="tabs" role="tablist">' +
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>이적시장</h2><span class="muted" style="font-size:13px">' + esc(team(S.user).name) + ' 선수 ' + LG.teamPlayers(S.league, S.user).length + '명 / 최대 ' + MK.MAX_ROSTER + '명</span></div><div class="tabs" role="tablist">' +
       tabs.map(([k, nm]) => '<button class="chip' + (ui.mktTab === k ? ' on' : '') + '" data-mkt="' + k + '" role="tab" aria-selected="' + (ui.mktTab === k) + '">' + nm + '</button>').join('') + '</div></section>';
     if (ui.mktTab === 'trade') h += tradeHTML();
     else if (ui.mktTab === 'foreign') h += foreignHTML('F');
@@ -7587,16 +7591,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   // ================= 감독 =================
   function mgrCard(m, opts) {
     const bar = (lab, v) => attr(lab, v);
-    return '<div class="mgr"><div class="mgr-h"><div><div class="mgr-n">' + esc(m.name) + '</div><div class="muted" style="font-size:12.5px">' + m.age + '세 · ' + esc(m.career) + (m.yrs ? ' · 계약 ' + m.yrs + '년' : '') + ' · 연봉 ' + C.money(m.sal) + '</div></div>' + starsHTML(MK.mgrRating(m)) + '</div>' +
+    return '<div class="mgr"><div class="mgr-h"><div><div class="mgr-n">' + esc(m.name) + '</div><div class="muted" style="font-size:13px">' + m.age + '세 · ' + esc(m.career) + (m.yrs ? ' · 계약 ' + m.yrs + '년' : '') + ' · 연봉 ' + C.money(m.sal) + '</div></div>' + starsHTML(MK.mgrRating(m)) + '</div>' +
       bar('작전·운영', m.tac) + bar('유망주 기용', m.youth) + bar('성적 반영', m.form) +
       '<ul class="mgr-t">' + MK.mgrText(m).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' + (opts || '') + '</div>';
   }
   function mgrHTML() {
     const t = team(S.user), m = t.mgr;
     if (!m) return '<div class="wrap"><section class="card"><div class="empty">이 저장 파일에는 감독 정보가 없습니다. 새 게임을 시작해 주세요.</div></section></div>';
-    let h = '<div class="wrap"><div class="grid2"><div class="stack"><section class="card"><div class="card-h"><h2>우리 감독</h2><span class="muted" style="font-size:12.5px">올해 ' + (m.w || 0) + '승 ' + (m.l || 0) + '패</span></div>' + mgrCard(m) +
-      '<p class="muted" style="font-size:12.5px;margin:12px 0 0">감독은 라인업, 투수 교체, 1군 엔트리를 모두 정합니다. 단장은 지시할 수 없고 감독을 바꾸는 것만 할 수 있습니다. 작전·운영 능력은 경기마다 조금씩 결과에 반영됩니다.</p></section>' + coachHTML();
-    h += '<section class="card"><div class="card-h"><h2>감독 후보</h2><span class="muted" style="font-size:12.5px">' + (S.mgrPool || []).length + '명</span></div><div class="stack">';
+    let h = '<div class="wrap"><div class="grid2"><div class="stack"><section class="card"><div class="card-h"><h2>우리 감독</h2><span class="muted" style="font-size:13px">올해 ' + (m.w || 0) + '승 ' + (m.l || 0) + '패</span></div>' + mgrCard(m) +
+      '<p class="muted" style="font-size:13px;margin:12px 0 0">감독은 라인업, 투수 교체, 1군 엔트리를 모두 정합니다. 단장은 지시할 수 없고 감독을 바꾸는 것만 할 수 있습니다. 작전·운영 능력은 경기마다 조금씩 결과에 반영됩니다.</p></section>' + coachHTML();
+    h += '<section class="card"><div class="card-h"><h2>감독 후보</h2><span class="muted" style="font-size:13px">' + (S.mgrPool || []).length + '명</span></div><div class="stack">';
     for (const c of S.mgrPool || []) {
       const owed = Math.round(m.sal * (Math.max(0, 1 - S.dayIdx / S.sched.days.length) + Math.max(0, m.yrs - 1)));
       const btn = ui.mgrConfirm === c.id
@@ -7645,9 +7649,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const st = S.dirHist || [];
     const prev = st.find((x) => x.year === d.year - 1);
     const prevFail = prev && !prev.ok && !d.result;
-    let h = '<section class="card dir"><div class="card-h"><h2>' + d.year + ' 구단주 지상 과제</h2><span class="muted" style="font-size:12.5px">11월 1주 평가</span></div>' +
+    let h = '<section class="card dir"><div class="card-h"><h2>' + d.year + ' 구단주 지상 과제</h2><span class="muted" style="font-size:13px">11월 1주 평가</span></div>' +
       '<blockquote class="quote">"' + esc(d.quote) + '"</blockquote><ul class="plain dir-goals">' + d.goals.map((g) => '<li><b>' + esc(g.text) + '</b></li>').join('') + '</ul>' +
-      '<p class="muted" style="margin:8px 0 0;font-size:12.5px">성공하면 특별 지원금 ' + (RW[d.goals[0].k] || '') + ', 실패하면 예산 10~30억 삭감' + (prevFail ? '. <b style="color:var(--loss)">작년에도 실패했습니다. 올해도 실패하면 경질 통보 임박 경고를 받습니다.</b>' : '.') + '</p>';
+      '<p class="muted" style="margin:8px 0 0;font-size:13px">성공하면 특별 지원금 ' + (RW[d.goals[0].k] || '') + ', 실패하면 예산 10~30억 삭감' + (prevFail ? '. <b style="color:var(--loss)">작년에도 실패했습니다. 올해도 실패하면 경질 통보 임박 경고를 받습니다.</b>' : '.') + '</p>';
     if (d.result) h += '<div class="dir-res ' + (d.result.ok ? 'ok' : 'no') + '">' + (d.result.ok ? '달성 · 특별 지원금 ' + C.money(d.result.amt) : '실패 · 예산 삭감 ' + C.money(d.result.amt)) + ' — ' + d.result.res.map((x) => esc(x.text) + ': ' + esc(x.note) + (x.ok ? ' ✓' : ' ✗')).join(', ') + (d.result.warn ? ' · 경질 통보 임박' : '') + '</div>';
     if (full && st.length) h += '<div class="sect">지난 과제</div><ul class="plain">' + st.slice().reverse().slice(0, 5).map((x) => '<li>' + x.year + ' ' + esc(x.text) + ' — ' + (x.ok ? '<b class="wi">달성</b> +' : '<b class="lo">실패</b> -') + C.money(x.amt) + '</li>').join('') + '</ul>';
     return h + '</section>';
@@ -7667,7 +7671,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const ps = (t.pred || 5) <= 5;
     const est = (k) => { const b = FI.BCAST[k]; return b.fee + b.win * wins + (ps ? b.ps : 0); };
     const pick = ui.bcastPick;
-    let h = '<section class="card"><div class="card-h"><h2>' + S.league.year + ' 중계권 계약</h2><span class="muted" style="font-size:12.5px">1월 안에 · 계약 후 변경 불가</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">방송사 하나와 계약합니다. 예상 ' + (t.pred || '-') + '위 기준 예상 승수 ' + wins + '승, 가을야구 ' + (ps ? '진출' : '탈락') + '으로 계산한 예상 수입입니다. 2월 1일까지 정하지 않으면 MBC와 자동 계약합니다.</p><div class="opts">';
+    let h = '<section class="card"><div class="card-h"><h2>' + S.league.year + ' 중계권 계약</h2><span class="muted" style="font-size:13px">1월 안에 · 계약 후 변경 불가</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">방송사 하나와 계약합니다. 예상 ' + (t.pred || '-') + '위 기준 예상 승수 ' + wins + '승, 가을야구 ' + (ps ? '진출' : '탈락') + '으로 계산한 예상 수입입니다. 2월 1일까지 정하지 않으면 MBC와 자동 계약합니다.</p><div class="opts">';
     for (const k of Object.keys(FI.BCAST)) {
       const b = FI.BCAST[k];
       h += '<button class="opt' + (pick === k ? ' on' : '') + '" data-bcast="' + k + '" aria-pressed="' + (pick === k) + '"><span class="opt-h"><b>' + b.name + '</b><span class="num">약 ' + C.money(est(k)) + '</span></span><span class="opt-n muted">' + esc(b.note) + '</span></button>';
@@ -7684,22 +7688,22 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const attRank = S.league.teams.map((x) => ({ x, a: S.fin[x.id].attN ? S.fin[x.id].att / S.fin[x.id].attN : 0 })).sort((a, b) => b.a - a.a);
     const myAttRank = attRank.findIndex((y) => y.x.id === S.user) + 1;
     const cap = FI.CAPACITY[S.user];
-    let h = '<div class="wrap">' + directiveCard(true) + bcastCard(true) + '<div class="grid2 even"><section class="card"><div class="card-h"><h2>구단주</h2><span class="muted" style="font-size:12.5px">' + esc(t.city) + ' 모기업</span></div>' + gauge(o.trust, '신뢰도') +
+    let h = '<div class="wrap">' + directiveCard(true) + bcastCard(true) + '<div class="grid2 even"><section class="card"><div class="card-h"><h2>구단주</h2><span class="muted" style="font-size:13px">' + esc(t.city) + ' 모기업</span></div>' + gauge(o.trust, '신뢰도') +
       '<dl class="kv" style="margin-top:12px"><dt>올해 목표</dt><dd>' + esc(t.goal.text) + '</dd><dt>연봉 한도</dt><dd class="num' + (pay > o.limit ? ' lo' : '') + '">' + C.money(pay) + ' / ' + C.money(o.limit) + '</dd><dt>모기업 지원금</dt><dd class="num">연 ' + C.money(FI.supportOf(S, t)) + (FI.supMult(t) < 1 ? ' <small class="muted">지난해 흑자로 ' + Math.round((1 - FI.supMult(t)) * 100) + '% 감액</small>' : '') + '</dd><dt>보유 현금</dt><dd class="num' + (FI.cash(S, S.user) < 0 ? ' lo' : '') + '">' + C.money(Math.round(FI.cash(S, S.user))) + '</dd><dt>중계권</dt><dd>' + (FI.bcastOf(S, S.user) || '미계약') + '</dd></dl>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">신뢰도는 매달 성적·팬 여론·재정으로 조금씩 바뀌고, 시즌이 끝나면 크게 평가됩니다. 15 아래로 떨어지면 해임됩니다. 연봉 한도(경쟁균형세 기준)를 넘는 FA 계약·트레이드는 구단주가 승인하지 않습니다.</p>' +
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">신뢰도는 매달 성적·팬 여론·재정으로 조금씩 바뀌고, 시즌이 끝나면 크게 평가됩니다. 15 아래로 떨어지면 해임됩니다. 연봉 한도(경쟁균형세 기준)를 넘는 FA 계약·트레이드는 구단주가 승인하지 않습니다.</p>' +
       (o.hist.length ? '<div class="sect">지난 평가</div><div class="news">' + o.hist.slice().reverse().slice(0, 4).map((e) => '<div class="nw nw2"><span><b>' + e.year + '</b> 신뢰도 ' + e.before + ' → ' + e.after + ' · ' + e.parts.map((x) => esc(x[0]) + ' ' + (x[1] > 0 ? '+' : '') + x[1]).join(', ') + '</span></div>').join('') + '</div>' : '') + '</section>';
-    h += '<section class="card"><div class="card-h"><h2>팬</h2><span class="muted" style="font-size:12.5px">' + esc(t.park) + ' · ' + cap.toLocaleString('ko-KR') + '석</span></div>' + gauge(t.fans.mood, '팬 여론') +
+    h += '<section class="card"><div class="card-h"><h2>팬</h2><span class="muted" style="font-size:13px">' + esc(t.park) + ' · ' + cap.toLocaleString('ko-KR') + '석</span></div>' + gauge(t.fans.mood, '팬 여론') +
       '<dl class="kv" style="margin-top:12px"><dt>평균 관중</dt><dd class="num">' + (attAvg ? attAvg.toLocaleString('ko-KR') + '명 (' + Math.round(attAvg / cap * 100) + '%, 리그 ' + myAttRank + '위)' : '아직 홈경기 없음') + '</dd></dl>' +
-      '<div class="sect">팬 게시판</div>' + ((S.fan || []).length ? '<div class="news">' + S.fan.slice(0, 8).map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 반응이 없습니다.</div>') + '</section></div>';
+      '<div class="sect">팬 게시판</div>' + ((S.fan || []).length ? '<div class="news">' + S.fan.slice(0, 8).map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 반응이 없습니다</div>') + '</section></div>';
     h += facHTML();
     h += parksHTML();
     // 장부
     const row = (lab, v, neg) => '<tr><td class="l txt">' + lab + '</td><td class="' + (neg ? 'lo' : '') + '">' + (neg && v ? '-' : '') + eok(v) + '</td></tr>';
-    h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>' + f.year + ' 재정</h2><span class="muted" style="font-size:12.5px">' + (S.phase === 'reg' ? '지금까지' : '') + '</span></div>' +
+    h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>' + f.year + ' 재정</h2><span class="muted" style="font-size:13px">' + (S.phase === 'reg' ? '지금까지' : '') + '</span></div>' +
       '<div class="fin-net"><span>순이익</span><b class="disp ' + (net >= 0 ? 'wi' : 'lo') + '">' + (net >= 0 ? '+' : '') + eok(net) + '</b></div>' +
       '<div class="tbl-wrap"><table class="t"><thead><tr><th class="l">수입</th><th>' + eok(rev) + '</th></tr></thead><tbody>' + FI.REV.map(([k, lab]) => row(lab, f.rev[k])).join('') + '</tbody></table></div>' +
       '<div class="tbl-wrap" style="margin-top:10px"><table class="t"><thead><tr><th class="l">지출</th><th>' + eok(exp) + '</th></tr></thead><tbody>' + FI.EXP.map(([k, lab]) => row(lab, f.exp[k], true)).join('') + '</tbody></table></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">연봉·운영비·중계권·스폰서·지원금은 정규시즌 동안 매일 나눠 들어오고 나갑니다. 경쟁균형세와 포스트시즌 배당금은 시즌이 끝날 때 정산합니다.</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">연봉·운영비·중계권·스폰서·지원금은 정규시즌 동안 매일 나눠 들어오고 나갑니다. 경쟁균형세와 포스트시즌 배당금은 시즌이 끝날 때 정산합니다.</p></section>';
     h += '<section class="card"><div class="card-h"><h2>구단별 관중·재정</h2></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">구단</th><th>평균 관중</th><th>순이익</th><th>보유 현금</th><th>여론</th></tr></thead><tbody>' +
       attRank.map(({ x, a }) => { const fx = S.fin[x.id]; const nx = FI.sum(fx.rev) - FI.sum(fx.exp); return '<tr' + (x.id === S.user ? ' class="me"' : '') + '><td class="l txt"><span class="tn-cell">' + patch(x, 20) + esc(x.name) + '</span></td><td>' + (a ? Math.round(a).toLocaleString('ko-KR') : '-') + '</td><td class="' + (nx >= 0 ? '' : 'lo') + '">' + C.moneyShort(Math.round(nx)) + '</td><td>' + C.moneyShort(Math.round(FI.cash(S, x.id))) + '</td><td>' + Math.round(x.fans.mood) + '</td></tr>'; }).join('') + '</tbody></table></div>' +
       ((f.hist || []).length ? '<div class="sect">지난 시즌</div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">연도</th><th>수입</th><th>지출</th><th>순이익</th><th>평균 관중</th></tr></thead><tbody>' + f.hist.slice().reverse().map((x) => '<tr><td class="l">' + x.year + '</td><td>' + C.moneyShort(Math.round(x.rev)) + '</td><td>' + C.moneyShort(Math.round(x.exp)) + '</td><td class="' + (x.net >= 0 ? '' : 'lo') + '">' + C.moneyShort(Math.round(x.net)) + '</td><td>' + x.att.toLocaleString('ko-KR') + '</td></tr>').join('') + '</tbody></table></div>' : '') + '</section></div></div>';
@@ -7709,7 +7713,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function coachHTML() {
     const t = team(S.user);
     if (!t.staff) return '';
-    let h = '<section class="card"><div class="card-h"><h2>코칭스태프</h2><span class="muted" style="font-size:12.5px">연봉 합계 ' + C.money(Object.values(t.staff).reduce((a, c) => a + c.sal, 0)) + '</span></div><div class="plist">';
+    let h = '<section class="card"><div class="card-h"><h2>코칭스태프</h2><span class="muted" style="font-size:13px">연봉 합계 ' + C.money(Object.values(t.staff).reduce((a, c) => a + c.sal, 0)) + '</span></div><div class="plist">';
     for (const r of FI.ROLES) {
       const c = t.staff[r.key];
       h += '<div class="frow"><div class="prow static"><span class="pr-n">' + esc(r.name) + ' · ' + esc(c.name) + '</span>' + starsHTML(c.r) + '<span class="pr-m muted">' + c.age + '세 · ' + esc(r.eff) + ' · 계약 ' + c.yrs + '년</span><span class="pr-r num">' + C.moneyShort(c.sal) + '</span></div>' +
@@ -7717,11 +7721,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       if (ui.coachRole === r.key) {
         const cands = (S.coachPool || []).filter((x) => x.role === r.key).sort((a, b) => b.r - a.r);
         h += '<div class="cands">' + (cands.length ? cands.map((x) => '<div class="wrow"><div class="prow static"><span class="pr-n">' + esc(x.name) + '</span>' + starsHTML(x.r) + '<span class="pr-m muted">' + x.age + '세' + (x.ex ? ' · 은퇴 선수 출신 (' + esc(team(x.ex) ? team(x.ex).name : '') + ')' : '') + (x.fired ? ' · ' + C.fmtDate(x.fired) + ' 해임됨' : '') + '</span><span class="pr-r num">' + C.moneyShort(x.sal) + '</span></div>' +
-          (ui.coachConfirm === x.id ? '<span class="sim-row"><button class="btn sm primary" data-coach="yes:' + x.id + '">선임</button><button class="btn sm ghost" data-coach="no:' + x.id + '">취소</button></span>' : '<button class="btn sm" data-coach="ask:' + x.id + '">선임</button>') + '</div>').join('') : '<div class="empty">후보가 없습니다.</div>') + '</div>';
+          (ui.coachConfirm === x.id ? '<span class="sim-row"><button class="btn sm primary" data-coach="yes:' + x.id + '">선임</button><button class="btn sm ghost" data-coach="no:' + x.id + '">취소</button></span>' : '<button class="btn sm" data-coach="ask:' + x.id + '">선임</button>') + '</div>').join('') : '<div class="empty">후보가 없습니다</div>') + '</div>';
       }
       h += '</div>';
     }
-    return h + '</div><p class="muted" style="font-size:12.5px;margin:10px 0 0">코치 능력은 경기 결과와 겨울 성장에 조금씩 반영됩니다. 트레이닝 코치는 부상 빈도와 회복 기간을 줄입니다. 교체하면 전 코치의 남은 연봉은 구단이 부담합니다.</p></section>';
+    return h + '</div><p class="muted" style="font-size:13px;margin:10px 0 0">코치 능력은 경기 결과와 겨울 성장에 조금씩 반영됩니다. 트레이닝 코치는 부상 빈도와 회복 기간을 줄입니다. 교체하면 전 코치의 남은 연봉은 구단이 부담합니다.</p></section>';
   }
 
   // ================= 오프시즌 =================
@@ -7744,7 +7748,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function campHTML() {
     const CP = OD.Camp, pr = S.pre;
-    if (!pr || S.phase !== 'pre') return '<div class="wrap"><section class="card"><div class="empty">스프링캠프 기간이 아닙니다.</div></section></div>';
+    if (!pr || S.phase !== 'pre') return '<div class="wrap"><section class="card"><div class="empty">스프링캠프 기간이 아닙니다</div></section></div>';
     const pl = pr.plan, P = S.league.players, open = pr.stage === 'plan';
     const locCard = (x, kind, on) => {
       const cost = kind === 'l2' ? (x.cost == null ? Math.round(CP.loc1(pl.l1).cost * 0.45 / 100) * 100 : x.cost) : x.cost;
@@ -7753,23 +7757,23 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         '<span class="opt-m"><span>훈련 효과 <b class="' + (x.eff >= 1 ? 'wi' : x.eff >= 0.9 || (kind === 'l2' && x.eff >= 0.4) ? '' : 'lo') + '">' + (kind === 'l2' ? (x.eff >= 0.5 ? '높음' : x.eff >= 0.4 ? '보통' : '낮음') : x.eff >= 1.05 ? '최고' : x.eff >= 1 ? '높음' : x.eff >= 0.9 ? '보통' : '낮음') + '</b></span><span>부상 위험 <b class="' + (inj > 1.05 ? 'lo' : inj < 0.95 ? 'wi' : '') + '">' + (inj > 1.05 ? '높음' : inj < 0.95 ? '낮음' : '보통') + '</b></span>' + (x.games ? '<span>연습경기 ' + x.games + '경기</span>' : '') + '</span>' +
         '<span class="opt-n muted">' + esc(x.note) + '</span></button>';
     };
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + pr.year + ' 스프링캠프</h2><span class="muted" style="font-size:12.5px">' + C.fmtDate(pr.date, true) + '</span></div>' + campStepper() +
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + pr.year + ' 스프링캠프</h2><span class="muted" style="font-size:13px">' + C.fmtDate(pr.date, true) + '</span></div>' + campStepper() +
       '<p class="muted" style="margin:10px 0 0;font-size:13px">' + (open ? '2월 1일 출발 전까지 계획을 정하세요. 출발하면 바꿀 수 없습니다. 1군 캠프 명단은 감독이 투수 ' + 22 + '명·야수 20명으로 꾸리고, 나머지는 국내 2군 캠프에서 훈련합니다.' : '캠프 계획이 확정되어 진행 중입니다.') + '</p>' +
       '<div class="sim-row" style="margin-top:12px">' + simButtonsHTML(true) + '</div></section>';
     // 비용
     h += '<section class="card"><div class="card-h"><h2>캠프 비용</h2><b class="num">' + C.money(CP.planCost(pl)) + '</b></div><p class="muted" style="margin:0;font-size:13px">1차 ' + C.money(CP.loc1(pl.l1).cost) + ' + 2차 ' + C.money(CP.cost2(pl)) + '. 구단 재정의 \'전지훈련\' 지출로 잡힙니다.</p></section>';
     if (!open) h += '<section class="card"><div class="card-h"><h2>확정된 계획</h2></div><dl class="kv"><dt>1차 캠프</dt><dd>' + esc(CP.loc1(pl.l1).name) + ' <small class="muted">2/1~2/23</small></dd><dt>2차 캠프</dt><dd>' + esc(CP.loc2(pl.l2).name) + ' <small class="muted">2/24~3/8</small></dd><dt>훈련 중점</dt><dd>' + esc(CP.focusOf(pl.focus).name) + '</dd><dt>초청 유망주</dt><dd>' + (pl.inv.length ? pl.inv.map((id) => P[id] ? esc(P[id].name) : '').join(', ') : '없음') + '</dd></dl></section>';
-    if (open) h += '<section class="card"><div class="card-h"><h2>1차 캠프지</h2><span class="muted" style="font-size:12.5px">2월 1일 ~ 2월 23일</span></div><div class="opts">' + CP.LOC1.map((x) => locCard(x, 'l1', pl.l1 === x.id)).join('') + '</div></section>';
-    if (open) h += '<section class="card"><div class="card-h"><h2>2차 캠프지</h2><span class="muted" style="font-size:12.5px">2월 24일 ~ 3월 8일</span></div><div class="opts">' + CP.LOC2.map((x) => locCard(x, 'l2', pl.l2 === x.id)).join('') + '</div></section>';
+    if (open) h += '<section class="card"><div class="card-h"><h2>1차 캠프지</h2><span class="muted" style="font-size:13px">2월 1일 ~ 2월 23일</span></div><div class="opts">' + CP.LOC1.map((x) => locCard(x, 'l1', pl.l1 === x.id)).join('') + '</div></section>';
+    if (open) h += '<section class="card"><div class="card-h"><h2>2차 캠프지</h2><span class="muted" style="font-size:13px">2월 24일 ~ 3월 8일</span></div><div class="opts">' + CP.LOC2.map((x) => locCard(x, 'l2', pl.l2 === x.id)).join('') + '</div></section>';
     if (open) h += '<section class="card"><div class="card-h"><h2>훈련 중점</h2></div><div class="chips-wrap">' + CP.FOCUS.map((f) => '<button class="chip' + (pl.focus === f.id ? ' on' : '') + '" data-camp="focus:' + f.id + '"' + (open ? '' : ' disabled') + '>' + esc(f.name) + '</button>').join('') + '</div><p class="muted" style="margin:10px 0 0;font-size:13px">' + esc(CP.focusOf(pl.focus).note) + '</p></section>';
     // 유망주 초청
     if (open) {
       const inv = CP.invitable(S);
-      h += '<section class="card"><div class="card-h"><h2>유망주 1군 캠프 초청</h2><span class="muted" style="font-size:12.5px">' + pl.inv.length + '/' + CP.INV_MAX + '명</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">감독 명단에 들지 못한 25세 이하 선수를 1군 캠프에 데려갑니다. 초청 선수는 훈련 효과가 30% 더 큽니다.</p><div class="plist">' +
-        (inv.length ? inv.slice(0, 24).map((p) => '<div class="inv-row"><button class="prow' + (pl.inv.includes(p.id) ? ' sel' : '') + '" data-camp="inv:' + p.id + '" aria-pressed="' + pl.inv.includes(p.id) + '"><span class="pr-n">' + esc(p.name) + '</span><span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · 잠재력</span>' + starsHTML(p.pa) + '<span class="pr-r">' + (pl.inv.includes(p.id) ? '<span class="badge acc">초청</span>' : '<span class="badge dimb">2군 캠프</span>') + '</span></button><button class="btn sm ghost" data-player="' + p.id + '">프로필</button></div>').join('') : '<div class="empty">초청할 선수가 없습니다.</div>') + '</div></section>';
+      h += '<section class="card"><div class="card-h"><h2>유망주 1군 캠프 초청</h2><span class="muted" style="font-size:13px">' + pl.inv.length + '/' + CP.INV_MAX + '명</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">감독 명단에 들지 못한 25세 이하 선수를 1군 캠프에 데려갑니다. 초청 선수는 훈련 효과가 30% 더 큽니다.</p><div class="plist">' +
+        (inv.length ? inv.slice(0, 24).map((p) => '<div class="inv-row"><button class="prow' + (pl.inv.includes(p.id) ? ' sel' : '') + '" data-camp="inv:' + p.id + '" aria-pressed="' + pl.inv.includes(p.id) + '"><span class="pr-n">' + esc(p.name) + '</span><span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · 잠재력</span>' + starsHTML(p.pa) + '<span class="pr-r">' + (pl.inv.includes(p.id) ? '<span class="badge acc">초청</span>' : '<span class="badge dimb">2군 캠프</span>') + '</span></button><button class="btn sm ghost" data-player="' + p.id + '">프로필</button></div>').join('') : '<div class="empty">초청할 선수가 없습니다</div>') + '</div></section>';
     } else {
       const att = pr.att.map((id) => P[id]).filter(Boolean);
-      h += '<section class="card"><div class="card-h"><h2>1군 캠프 명단</h2><span class="muted" style="font-size:12.5px">' + att.length + '명</span></div><div class="name-cloud">' + att.map((p) => '<button class="mv-p' + (pl.inv.includes(p.id) ? ' inv' : '') + '" data-player="' + p.id + '">' + esc(p.name) + '</button>').join('') + '</div></section>';
+      h += '<section class="card"><div class="card-h"><h2>1군 캠프 명단</h2><span class="muted" style="font-size:13px">' + att.length + '명</span></div><div class="name-cloud">' + att.map((p) => '<button class="mv-p' + (pl.inv.includes(p.id) ? ' inv' : '') + '" data-player="' + p.id + '">' + esc(p.name) + '</button>').join('') + '</div></section>';
     }
     // 성과
     if (pr.gains.length || pr.inj.length) {
@@ -7777,7 +7781,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       for (const g of pr.gains) { const x = m[g.id] || (m[g.id] = { id: g.id, up: [], fut: g.fut }); x.up = x.up.concat(g.up); if (!g.fut) x.fut = 0; }
       const rows = Object.values(m).filter((x) => P[x.id]).sort((a, b) => b.up.length - a.up.length);
       const cnt = (arr) => { const o = {}; for (const k of arr) o[k] = (o[k] || 0) + 1; return Object.entries(o).map(([k, n]) => k + ' +' + n).join(' · '); };
-      h += '<section class="card"><div class="card-h"><h2>캠프 성과</h2><span class="muted" style="font-size:12.5px">능력 상승 ' + rows.length + '명</span></div><div class="tbl-wrap"><table class="t"><tbody>' +
+      h += '<section class="card"><div class="card-h"><h2>캠프 성과</h2><span class="muted" style="font-size:13px">능력 상승 ' + rows.length + '명</span></div><div class="tbl-wrap"><table class="t"><tbody>' +
         rows.map((x) => '<tr class="click" data-player="' + x.id + '"><td class="l txt"><span class="pname">' + esc(P[x.id].name) + (x.fut ? ' <span class="badge dimb">2군</span>' : '') + '</span></td><td class="l txt">' + esc(cnt(x.up)) + '</td></tr>').join('') + '</tbody></table></div>' +
         (pr.inj.length ? '<h3 class="sub-h">캠프 부상</h3><ul class="plain">' + pr.inj.map((x) => '<li>' + pname(x.id) + ' · ' + esc(x.name) + ' ' + x.days + '일' + (P[x.id] && P[x.id].inj ? ' <span class="badge loss">재활 중</span>' : ' <span class="badge">회복</span>') + '</li>').join('') + '</ul>' : '') + '</section>';
     }
@@ -7808,7 +7812,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       '<div class="tbl-wrap"><table class="t"><tbody>' + Object.keys(T).filter((k) => aw.titles && aw.titles[k]).map((k) => '<tr><td class="l txt muted">' + T[k] + '</td><td class="l txt">' + pname(aw.titles[k].id) + '</td><td class="l txt muted">' + esc(tn(aw.titles[k].id)) + '</td><td>' + aw.titles[k].f + '</td></tr>').join('') + '</tbody></table></div></section>';
     h += '</div>';
     const ev = S.owner && S.owner.hist.length && S.owner.hist[S.owner.hist.length - 1].year === o.year ? S.owner.hist[S.owner.hist.length - 1] : null;
-    if (ev) h += '<section class="card"><div class="card-h"><h2>구단주 평가</h2><span class="muted" style="font-size:12.5px">신뢰도 ' + ev.before + ' → <b class="' + gaugeCls(ev.after) + '">' + ev.after + '</b></span></div><div class="tbl-wrap"><table class="t"><tbody>' + ev.parts.map((x) => '<tr><td class="l txt">' + esc(x[0]) + '</td><td class="' + (x[1] >= 0 ? 'wi' : 'lo') + '">' + (x[1] > 0 ? '+' : '') + x[1] + '</td></tr>').join('') + '</tbody></table></div></section>';
+    if (ev) h += '<section class="card"><div class="card-h"><h2>구단주 평가</h2><span class="muted" style="font-size:13px">신뢰도 ' + ev.before + ' → <b class="' + gaugeCls(ev.after) + '">' + ev.after + '</b></span></div><div class="tbl-wrap"><table class="t"><tbody>' + ev.parts.map((x) => '<tr><td class="l txt">' + esc(x[0]) + '</td><td class="' + (x[1] >= 0 ? 'wi' : 'lo') + '">' + (x[1] > 0 ? '+' : '') + x[1] + '</td></tr>').join('') + '</tbody></table></div></section>';
     return h;
   }
   // ---- 골든글러브 ----
@@ -7818,10 +7822,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const cs = (gg.cands[pos.k] || []).filter((c) => P[c.id]);
     const mine = gg.uvote[pos.k] || [];
     const done = GG.POS.filter((x) => (gg.uvote[x.k] || []).length).length;
-    return '<section class="card gg"><div class="card-h"><h2>' + gg.year + ' 골든글러브 투표</h2><span class="muted" style="font-size:12.5px">시상식 12월 8일 · ' + done + '/' + GG.POS.length + ' 포지션 투표</span></div>' +
+    return '<section class="card gg"><div class="card-h"><h2>' + gg.year + ' 골든글러브 투표</h2><span class="muted" style="font-size:13px">시상식 12월 8일 · ' + done + '/' + GG.POS.length + ' 포지션 투표</span></div>' +
       '<div class="gg-w"><span>선수 성적 50%</span><span>팀 성적 20%</span><span>인기도 10%</span><span>10개 구단 단장 투표 20%</span></div>' +
       '<div class="tabs gg-tabs">' + GG.POS.map((x) => '<button class="chip' + (x.k === pos.k ? ' on' : '') + '" data-ggpos="' + x.k + '">' + x.n + ((gg.uvote[x.k] || []).length ? ' ✓' : '') + '</button>').join('') + '</div>' +
-      (pos.win > 1 ? '<p class="muted" style="margin:8px 0 0;font-size:12.5px">외야수는 3명에게 투표합니다 (' + mine.length + '/3)</p>' : '') +
+      (pos.win > 1 ? '<p class="muted" style="margin:8px 0 0;font-size:13px">외야수는 3명에게 투표합니다 (' + mine.length + '/3)</p>' : '') +
       '<div class="gg-list">' + cs.map((c) => {
         const p = P[c.id], t = team(c.tid), own = c.tid === S.user, on = mine.includes(c.id);
         return '<div class="gg-row' + (on ? ' on' : '') + '">' + patch(t, 26) + '<div class="gg-who"><button class="linkish" data-player="' + p.id + '"><b>' + esc(p.name) + '</b></button> <span class="muted">' + esc(t.name) + (pos.k === 'OF' ? ' · ' + LG.POS_KO[p.pos] : '') + '</span><div class="gg-st">' + esc(GG.line(p)) + '</div></div>' +
@@ -7831,7 +7835,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function ggResultHTML() {
     const GG = OD.GG, gg = S.off.gg, P = S.league.players;
-    return '<section class="card gg"><div class="card-h"><h2>' + gg.year + ' 골든글러브 수상자</h2><span class="muted" style="font-size:12.5px">성적 50 · 팀 20 · 인기 10 · 투표 20</span></div><div class="tbl-wrap"><table class="t gg-t"><thead><tr><th class="l">포지션</th><th class="l">수상자</th><th>총점</th><th>성적</th><th>팀</th><th>인기</th><th>표</th></tr></thead><tbody>' +
+    return '<section class="card gg"><div class="card-h"><h2>' + gg.year + ' 골든글러브 수상자</h2><span class="muted" style="font-size:13px">성적 50 · 팀 20 · 인기 10 · 투표 20</span></div><div class="tbl-wrap"><table class="t gg-t"><thead><tr><th class="l">포지션</th><th class="l">수상자</th><th>총점</th><th>성적</th><th>팀</th><th>인기</th><th>표</th></tr></thead><tbody>' +
       GG.POS.map((x) => gg.win[x.k].map((id, i) => { const r = gg.res[x.k].find((y) => y.id === id), p = P[id], t = team(r.tid);
         return '<tr' + (r.tid === S.user ? ' class="me"' : '') + '><td class="l txt muted">' + (i ? '' : x.n) + '</td><td class="l txt">' + patch(t, 20) + ' ' + (p ? '<button class="linkish" data-player="' + id + '">' + esc(p.name) + '</button>' : '-') + ' <span class="muted gg-tn">' + esc(t.name) + '</span></td><td><b>' + r.tot + '</b></td><td>' + r.perf + '</td><td>' + r.team + '</td><td>' + r.pop + '</td><td>' + r.votes + '</td></tr>'; }).join('')).join('') +
       '</tbody></table></div></section>';
@@ -7841,17 +7845,17 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const o = S.off, P = S.league.players;
     const dev = (o.dev || []).filter((x) => P[x.id] && x.b != null && LG.gradeKey(x.b) !== LG.gradeKey(x.a));
     const up = dev.filter((x) => x.a > x.b).sort((a, b) => (b.a - b.b) - (a.a - a.b)), down = dev.filter((x) => x.a < x.b).sort((a, b) => (a.a - a.b) - (b.a - b.b));
-    const row = (x) => { const p = P[x.id], gb = LG.grade(x.b), ga = LG.grade(x.a); const tag = ga.i <= gb.i - 2 ? '<span class="badge acc">스텝업!</span>' : ga.i > gb.i && p.age >= 31 ? '<span class="badge loss">에이징 커브</span>' : '';
+    const row = (x) => { const p = P[x.id], gb = LG.grade(x.b), ga = LG.grade(x.a); const tag = ga.i <= gb.i - 2 ? '<span class="badge acc">스텝업</span>' : ga.i > gb.i && p.age >= 31 ? '<span class="badge loss">에이징 커브</span>' : '';
       return '<tr class="click" data-player="' + p.id + '"><td class="l txt">' + esc(p.name) + ' <span class="muted">' + p.age + '세</span></td><td class="l txt">' + starsHTML(x.b) + ' → ' + starsHTML(x.a) + '</td><td class="l txt">' + tag + '</td></tr>'; };
-    let h = '<section class="card"><div class="card-h"><h2>' + o.year + ' 연말 선수단 성장·노쇠화 보고서</h2><span class="muted" style="font-size:12.5px">등급이 바뀐 선수만</span></div>' +
+    let h = '<section class="card"><div class="card-h"><h2>' + o.year + ' 연말 선수단 성장·노쇠화 보고서</h2><span class="muted" style="font-size:13px">등급이 바뀐 선수만</span></div>' +
       (dev.length ? (up.length ? '<div class="sect">오른 선수 ' + up.length + '명</div><div class="tbl-wrap"><table class="t ye"><tbody>' + up.map(row).join('') + '</tbody></table></div>' : '') +
         (down.length ? '<div class="sect">떨어진 선수 ' + down.length + '명</div><div class="tbl-wrap"><table class="t ye"><tbody>' + down.map(row).join('') + '</tbody></table></div>' : '')
         : '<p class="muted" style="margin:0">올겨울 등급이 바뀐 우리 선수는 없습니다.</p>') + '</section>';
     const ret = o.retired || [];
     const mineRet = ret.filter((x) => x.t === S.user);
-    h += '<section class="card"><div class="card-h"><h2>은퇴</h2><span class="muted" style="font-size:12.5px">리그 전체 ' + ret.length + '명' + (ret.filter((x) => x.orphan).length ? ' (FA 미아 ' + ret.filter((x) => x.orphan).length + '명)' : '') + '</span></div>' +
+    h += '<section class="card"><div class="card-h"><h2>은퇴</h2><span class="muted" style="font-size:13px">리그 전체 ' + ret.length + '명' + (ret.filter((x) => x.orphan).length ? ' (FA 미아 ' + ret.filter((x) => x.orphan).length + '명)' : '') + '</span></div>' +
       (mineRet.length ? '<p style="margin:0">우리 구단: ' + mineRet.map((x) => esc(P[x.id] ? P[x.id].name : '') + ' (' + x.age + '세' + (x.legend ? ', 영구결번' : '') + ')').join(', ') + '</p>' : '<p class="muted" style="margin:0">우리 구단 은퇴 선수는 없습니다.</p>') +
-      '<p class="muted" style="margin:8px 0 0;font-size:12.5px">B- 등급 이상으로 은퇴한 선수는 감독·코치 화면의 코치 후보에 합류합니다.</p></section>';
+      '<p class="muted" style="margin:8px 0 0;font-size:13px">B- 등급 이상으로 은퇴한 선수는 감독·코치 화면의 코치 후보에 합류합니다.</p></section>';
     return h;
   }
   function postingHTML() {
@@ -7859,8 +7863,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (!list.length) return '';
     const P = S.league.players;
     const mine = list.map((x, i) => [x, i]).filter(([x]) => x.tid === S.user);
-    let h = '<section class="card"><div class="card-h"><h2>포스팅 (메이저리그 진출)</h2><span class="muted" style="font-size:12.5px">리그 ' + list.length + '명 요청</span></div>';
-    if (mine.length) h += '<p class="muted" style="margin:0 0 10px;font-size:13px">S·A+ 등급이고 1군 4시즌 이상 뛴 선수가 메이저리그 진출을 요청했습니다. 수락하면 이적료를 받고 선수는 떠납니다.</p>' + mine.map(([x, i]) => { const p = P[x.pid]; return '<div class="post-row"><div>' + pname(x.pid) + ' ' + starsHTML(p ? p.ca : 0) + ' <span class="muted">' + (p ? p.age + '세' : '') + '</span><div class="muted" style="font-size:12.5px">예상 이적료 <b class="num">' + C.money(x.fee) + '</b></div></div>' +
+    let h = '<section class="card"><div class="card-h"><h2>포스팅 (메이저리그 진출)</h2><span class="muted" style="font-size:13px">리그 ' + list.length + '명 요청</span></div>';
+    if (mine.length) h += '<p class="muted" style="margin:0 0 10px;font-size:13px">S·A+ 등급이고 1군 4시즌 이상 뛴 선수가 메이저리그 진출을 요청했습니다. 수락하면 이적료를 받고 선수는 떠납니다.</p>' + mine.map(([x, i]) => { const p = P[x.pid]; return '<div class="post-row"><div>' + pname(x.pid) + ' ' + starsHTML(p ? p.ca : 0) + ' <span class="muted">' + (p ? p.age + '세' : '') + '</span><div class="muted" style="font-size:13px">예상 이적료 <b class="num">' + C.money(x.fee) + '</b></div></div>' +
       (x.done ? '<span class="badge ' + (x.ok ? 'acc' : '') + '">' + (x.ok ? '수락 · MLB 진출' : '거절 · 잔류') + '</span>' : '<div class="sim-row"><button class="btn sm primary" data-post="' + i + ':1">수락</button><button class="btn sm" data-post="' + i + ':0">거절</button></div>') + '</div>'; }).join('');
     const others = list.filter((x) => x.tid !== S.user);
     if (others.length) h += '<div class="sect">다른 구단</div><ul class="plain">' + others.map((x) => '<li>' + esc(team(x.tid).name) + ' ' + pname(x.pid) + ' (' + x.grade + ') · ' + (x.ok ? '수락, 이적료 ' + C.money(x.fee) : '거절, 잔류') + '</li>').join('') + '</ul>';
@@ -7874,7 +7878,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     for (const [c, i] of list) {
       const faP = P[c.pid];
       const ros = LG.teamPlayers(S.league, S.user).filter((p) => !p.foreign && !p.newFA).sort((a, b) => b.ca - a.ca);
-      h += '<section class="card"><div class="card-h"><h2>보호선수 명단 제출</h2><span class="muted" style="font-size:12.5px">' + c.ids.length + ' / ' + c.n + '명</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">' + esc(faP ? faP.name : '') + '(' + c.grade + '등급) 영입 보상으로 ' + esc(team(c.from).name) + '가 명단 밖 선수 1명을 데려갑니다(보상금 직전 연봉 ' + (c.grade === 'A' ? '200' : '100') + '% 포함). 외국인과 이번 FA 영입 선수는 자동 보호됩니다. 처음엔 가치가 높은 순으로 채워 두었습니다.</p><div class="plist tall">' +
+      h += '<section class="card"><div class="card-h"><h2>보호선수 명단 제출</h2><span class="muted" style="font-size:13px">' + c.ids.length + ' / ' + c.n + '명</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">' + esc(faP ? faP.name : '') + '(' + c.grade + '등급) 영입 보상으로 ' + esc(team(c.from).name) + '가 명단 밖 선수 1명을 데려갑니다(보상금 직전 연봉 ' + (c.grade === 'A' ? '200' : '100') + '% 포함). 외국인과 이번 FA 영입 선수는 자동 보호됩니다. 처음엔 가치가 높은 순으로 채워 두었습니다.</p><div class="plist tall">' +
         ros.map((p) => { const on = c.ids.includes(p.id); return '<button class="prow' + (on ? ' sel' : '') + '" data-prot="' + i + ':' + p.id + '" aria-pressed="' + on + '"><span class="pr-n">' + esc(p.name) + '</span>' + starsHTML(p.ca) + '<span class="pr-m muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[p.pos]) + ' · ' + p.age + '세 · 잠재 ' + LG.gradeKey(p.pa) + '</span><span class="pr-r">' + (on ? '<span class="badge acc">보호</span>' : '<span class="badge dimb">명단 밖</span>') + '</span></button>'; }).join('') +
         '</div><div class="sim-row" style="margin-top:10px"><button class="btn primary" data-protgo="' + i + '"' + (c.ids.length ? '' : ' disabled') + '>명단 제출하기</button></div></section>';
     }
@@ -7887,25 +7891,25 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const pay = LG.payroll(S.league, S.user);
     const mineOffers = Object.keys(fa.offers).filter((pid) => fa.offers[pid][S.user] && P[pid].faInfo);
     const committed = mineOffers.reduce((a, pid) => a + fa.offers[pid][S.user].aav, 0);
-    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">FA 협상</div><b class="disp" style="font-size:26px">' + (fa.done ? '협상 종료' : (fa.round + 1) + ' / ' + OF.FA_ROUNDS + ' 라운드') + '</b><div class="muted" style="font-size:12.5px">공시 ' + fa.list.length + '명 · 계약 ' + fa.signed.length + '명</div></div>' +
+    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">FA 협상</div><b class="disp" style="font-size:28px">' + (fa.done ? '협상 종료' : (fa.round + 1) + ' / ' + OF.FA_ROUNDS + ' 라운드') + '</b><div class="muted" style="font-size:13px">공시 ' + fa.list.length + '명 · 계약 ' + fa.signed.length + '명</div></div>' +
       '<dl class="kv"><dt>경쟁균형세 기준</dt><dd class="num' + (pay + committed > cap ? ' lo' : '') + '">' + C.money(pay) + (committed ? ' + 제안 ' + C.money(committed) : '') + '</dd><dt>' + (S.league.year + 1) + ' 상한</dt><dd class="num">' + C.money(cap) + '</dd></dl></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:12px 0 0">라운드마다 원하는 선수에게 계약 기간과 연봉을 제안하세요. 라운드를 진행하면 선수들이 다른 구단 제안과 비교해 가장 좋은 조건을 고릅니다. 원소속 구단에는 조금 더 끌리고, 라운드가 지날수록 요구액이 내려갑니다. 우리 구단 FA도 남기려면 제안해야 합니다.</p>' +
-      '<p class="muted" style="font-size:12.5px;margin:6px 0 0">다른 구단 FA를 데려오면 보상이 있습니다. A등급은 직전 연봉 200%와 보상선수(보호 20명 외) 또는 300%, B등급은 100%와 보상선수(보호 25명 외) 또는 200%, C등급은 150%입니다.</p>' +
+      '<p class="muted" style="font-size:13px;margin:12px 0 0">라운드마다 원하는 선수에게 계약 기간과 연봉을 제안하세요. 라운드를 진행하면 선수들이 다른 구단 제안과 비교해 가장 좋은 조건을 고릅니다. 원소속 구단에는 조금 더 끌리고, 라운드가 지날수록 요구액이 내려갑니다. 우리 구단 FA도 남기려면 제안해야 합니다.</p>' +
+      '<p class="muted" style="font-size:13px;margin:6px 0 0">다른 구단 FA를 데려오면 보상이 있습니다. A등급은 직전 연봉 200%와 보상선수(보호 20명 외) 또는 300%, B등급은 100%와 보상선수(보호 25명 외) 또는 200%, C등급은 150%입니다.</p>' +
       (fa.done ? '' : '<div class="sim-row" style="margin-top:12px"><button class="btn primary" data-fa="round">' + (fa.round + 1) + '라운드 마감하기</button></div>') + '</section>';
     // 보상 선택
     const pend = fa.comp.map((c, i) => ({ c, i })).filter((x) => !x.c.done);
     for (const { c, i } of pend) {
       const o = OF.compOptions(S, c);
       const faP = P[c.pid];
-      h += '<section class="card comp"><div class="card-h"><h2>보상 선택: ' + esc(faP.name) + ' (' + c.grade + '등급)</h2><span class="muted" style="font-size:12.5px">' + esc(team(c.payer).name) + '</span></div>' +
+      h += '<section class="card comp"><div class="card-h"><h2>보상 선택: ' + esc(faP.name) + ' (' + c.grade + '등급)</h2><span class="muted" style="font-size:13px">' + esc(team(c.payer).name) + '</span></div>' +
         '<div class="sim-row"><button class="btn" data-comp="' + i + ':0">보상금만 받기 · ' + C.money(o.moneyOnly) + '</button></div>' +
-        '<p class="muted" style="font-size:12.5px;margin:10px 0 6px">또는 보상금 ' + C.money(o.withPlayer) + ' + 보상선수 1명 (상대 보호선수 ' + o.protN + '명 제외):</p><div class="plist">' +
+        '<p class="muted" style="font-size:13px;margin:10px 0 6px">또는 보상금 ' + C.money(o.withPlayer) + ' + 보상선수 1명 (상대 보호선수 ' + o.protN + '명 제외):</p><div class="plist">' +
         o.list.slice(0, 15).map((pl) => '<div class="wrow">' + pRow(pl, false, 'data-player="' + pl.id + '"') + '<button class="btn sm" data-comp="' + i + ':' + pl.id + '">데려오기</button></div>').join('') + '</div></section>';
     }
     // FA 목록
     const list = fa.list.map((id) => P[id]).filter((p) => p && p.faInfo).sort((a, b) => b.ca - a.ca);
-    h += '<section class="card"><div class="card-h"><h2>남은 FA</h2><span class="muted" style="font-size:12.5px">' + list.length + '명</span></div>';
-    if (!list.length) h += '<div class="empty">남은 FA가 없습니다.</div>';
+    h += '<section class="card"><div class="card-h"><h2>남은 FA</h2><span class="muted" style="font-size:13px">' + list.length + '명</span></div>';
+    if (!list.length) h += '<div class="empty">남은 FA가 없습니다</div>';
     h += '<div class="plist tall">';
     for (const p of list) {
       const inf = p.faInfo, my = fa.offers[p.id] && fa.offers[p.id][S.user];
@@ -7931,7 +7935,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   function offForeign() {
     const P = S.league.players;
     const mine = S.off.foreign.list.map((id) => P[id]).filter((p) => p && p.team === S.user && p.fre);
-    let h = '<section class="card"><div class="card-h"><h2>외국인 재계약</h2></div><p class="muted" style="font-size:12.5px;margin:0">재계약에는 신규 계약 상한이 없습니다. 성적이 좋으면 몸값이 오릅니다. 결별하면 새 시즌 개막 전에 후보 중에서 다시 고를 수 있습니다.</p></section>';
+    let h = '<section class="card"><div class="card-h"><h2>외국인 재계약</h2></div><p class="muted" style="font-size:13px;margin:0">재계약에는 신규 계약 상한이 없습니다. 성적이 좋으면 몸값이 오릅니다. 결별하면 새 시즌 개막 전에 후보 중에서 다시 고를 수 있습니다.</p></section>';
     if (!mine.length) return h + '<section class="card"><div class="empty">재계약할 외국인 선수가 없습니다. 새 시즌 개막 전에 이적시장에서 영입하세요.</div></section>';
     for (const p of mine) {
       const s = p.st, f = p.fre;
@@ -7946,11 +7950,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const clock = OF.onClock(S);
     const n = d.order.length;
     const rd = Math.floor(d.pick / n) + 1, no = d.pick % n + 1;
-    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">' + (S.league.year + 1) + ' 신인 드래프트</div><b class="disp" style="font-size:26px">' + (d.done ? '드래프트 종료' : rd + '라운드 ' + no + '순위') + '</b><div class="muted" style="font-size:12.5px">' + (d.done ? '미지명 선수 ' + (d.toUso || 0) + '명은 울산 오르카스에 입단했습니다' : clock === S.user ? '우리 차례입니다' : esc(team(clock).name) + ' 차례') + '</div></div>' +
+    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">' + (S.league.year + 1) + ' 신인 드래프트</div><b class="disp" style="font-size:28px">' + (d.done ? '드래프트 종료' : rd + '라운드 ' + no + '순위') + '</b><div class="muted" style="font-size:13px">' + (d.done ? '미지명 선수 ' + (d.toUso || 0) + '명은 울산 오르카스에 입단했습니다' : clock === S.user ? '우리 차례입니다' : esc(team(clock).name) + ' 차례') + '</div></div>' +
       '<dl class="kv"><dt>지명 순서</dt><dd>지난 시즌 성적 역순 (트레이드된 지명권은 가진 구단이 행사)</dd>' + (d.slots ? '<dt>우리 지명권</dt><dd>' + d.slots.filter((x) => x.owner === S.user).length + '장</dd>' : '') + '<dt>라운드</dt><dd>' + OF.DRAFT_ROUNDS + '라운드 (구단마다 ' + OF.DRAFT_ROUNDS + '명)</dd></dl></div>' +
       (d.done ? '' : '<div class="sim-row" style="margin-top:12px"><button class="btn" data-draft="auto">남은 지명 모두 자동</button></div>') + '</section>';
     const mine = d.picks.filter((x) => x.tid === S.user);
-    h += '<div class="grid2"><section class="card"><div class="card-h"><h2>지명 후보</h2><span class="muted" style="font-size:12.5px">' + d.pool.length + '명</span></div><p class="muted" style="font-size:12.5px;margin:0 0 10px">등급은 1년 동안 스카우트가 모은 정보입니다. 오래 지켜본 선수일수록 정확하고, 거의 못 본 선수는 미공개이거나 오차가 큽니다. 고졸은 오래 키워야 하지만 잠재력이 큰 선수가 많습니다.</p><div class="plist tall">';
+    h += '<div class="grid2"><section class="card"><div class="card-h"><h2>지명 후보</h2><span class="muted" style="font-size:13px">' + d.pool.length + '명</span></div><p class="muted" style="font-size:13px;margin:0 0 10px">등급은 1년 동안 스카우트가 모은 정보입니다. 오래 지켜본 선수일수록 정확하고, 거의 못 본 선수는 미공개이거나 오차가 큽니다. 고졸은 오래 키워야 하지만 잠재력이 큰 선수가 많습니다.</p><div class="plist tall">';
     const dkey = (p) => p.scoutPa == null ? p.scout * 0.3 - 10 : p.scoutPa * 0.7 + p.scout * 0.3;
     const pool = d.pool.map((id) => P[id]).sort((a, b) => dkey(b) - dkey(a) || (b.sk || 0) - (a.sk || 0));
     for (const p of pool.slice(0, 60)) {
@@ -7958,8 +7962,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
         '<div class="wrow-b"><button class="btn sm ghost" data-player="' + p.id + '">프로필</button>' +
         (!d.done && clock === S.user ? '<button class="btn sm primary" data-draft="pick:' + p.id + '">지명</button>' : '') + '</div></div>';
     }
-    h += '</div></section><section class="card"><div class="card-h"><h2>우리 지명</h2><span class="muted" style="font-size:12.5px">' + mine.length + '명</span></div>' +
-      (mine.length ? '<div class="news">' + mine.map((x) => '<div class="nw"><span class="d num">' + x.r + 'R</span>' + pname(x.pid) + (x.orig && x.orig !== x.tid ? '<span class="badge acc">' + esc(team(x.orig).name) + ' 지명권</span>' : '') + '<span class="muted">' + (P[x.pid] ? (P[x.pid].pr ? (P[x.pid].role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[P[x.pid].pos]) + ' · ' + P[x.pid].age + '세' : '') + '</span></div>').join('') + '</div>' : '<div class="empty">아직 지명한 선수가 없습니다.</div>') +
+    h += '</div></section><section class="card"><div class="card-h"><h2>우리 지명</h2><span class="muted" style="font-size:13px">' + mine.length + '명</span></div>' +
+      (mine.length ? '<div class="news">' + mine.map((x) => '<div class="nw"><span class="d num">' + x.r + 'R</span>' + pname(x.pid) + (x.orig && x.orig !== x.tid ? '<span class="badge acc">' + esc(team(x.orig).name) + ' 지명권</span>' : '') + '<span class="muted">' + (P[x.pid] ? (P[x.pid].pr ? (P[x.pid].role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[P[x.pid].pos]) + ' · ' + P[x.pid].age + '세' : '') + '</span></div>').join('') + '</div>' : '<div class="empty">아직 지명한 선수가 없습니다</div>') +
       '<div class="sect">최근 지명</div><div class="news">' + d.picks.slice(-8).reverse().map((x) => '<div class="nw"><span class="d num">' + x.r + 'R ' + x.n + '</span><span class="badge">' + esc(team(x.tid).name) + '</span>' + pname(x.pid) + '</div>').join('') + '</div></section></div>';
     return h;
   }
@@ -7967,8 +7971,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const P = S.league.players;
     const list = (S.off.salary.list || []).map((id) => P[id]).filter((p) => p && p.nsal != null && p.team === S.user).sort((a, b) => b.nsal - a.nsal);
     const before = list.reduce((a, p) => a + p.sal, 0), after = list.reduce((a, p) => a + p.nsal, 0);
-    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">' + (S.league.year + 1) + ' 연봉 협상</div><b class="disp" style="font-size:26px">' + list.length + '명</b><div class="muted" style="font-size:12.5px">다년 계약·외국인·FA 계약 선수는 제외</div></div><dl class="kv"><dt>합계</dt><dd class="num">' + C.money(before) + ' → ' + C.money(after) + '</dd><dt>변화</dt><dd class="num ' + (after >= before ? 'lo' : 'wi') + '">' + (after >= before ? '+' : '') + C.money(after - before) + '</dd></dl></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:12px 0 0">올해 성적과 능력으로 정한 제시액입니다. ±버튼으로 조정할 수 있고, 다음 단계로 넘어가면 이 금액으로 계약합니다. 삭감은 25%까지만 할 수 있습니다.</p></section>';
+    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">' + (S.league.year + 1) + ' 연봉 협상</div><b class="disp" style="font-size:28px">' + list.length + '명</b><div class="muted" style="font-size:13px">다년 계약·외국인·FA 계약 선수는 제외</div></div><dl class="kv"><dt>합계</dt><dd class="num">' + C.money(before) + ' → ' + C.money(after) + '</dd><dt>변화</dt><dd class="num ' + (after >= before ? 'lo' : 'wi') + '">' + (after >= before ? '+' : '') + C.money(after - before) + '</dd></dl></div>' +
+      '<p class="muted" style="font-size:13px;margin:12px 0 0">올해 성적과 능력으로 정한 제시액입니다. ±버튼으로 조정할 수 있고, 다음 단계로 넘어가면 이 금액으로 계약합니다. 삭감은 25%까지만 할 수 있습니다.</p></section>';
     h += '<section class="card"><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">선수</th><th>나이</th><th class="l">능력</th><th class="l">올해 기록</th><th>올해</th><th>제시액</th><th>변화</th><th></th></tr></thead><tbody>';
     for (const p of list) {
       const s = p.st;
@@ -7981,26 +7985,26 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   }
   function offRoster() {
     const all = LG.teamPlayers(S.league, S.user), L = OF.cutList(S), n = all.length, after = n - L.length, left = OF.cutLeft(S);
-    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">선수단 정리</div><b class="disp" style="font-size:26px' + (left ? ';color:var(--loss)' : '') + '">' + after + ' / ' + OF.MAX_ROSTER + '명</b><div class="muted" style="font-size:12.5px">지금 ' + n + '명 · 방출 명단 ' + L.length + '명' + (left ? ' · ' + left + '명 더 넣어야 합니다' : '') + '</div></div></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:12px 0 0">오프시즌에는 보류선수 명단에서 빼는 방식으로 정리합니다. 다년 계약이 남은 선수를 빼면 남은 연봉을 부담합니다. 다른 구단도 같은 방식으로 65명을 맞춥니다.</p></section>';
+    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">선수단 정리</div><b class="disp" style="font-size:28px' + (left ? ';color:var(--loss)' : '') + '">' + after + ' / ' + OF.MAX_ROSTER + '명</b><div class="muted" style="font-size:13px">지금 ' + n + '명 · 방출 명단 ' + L.length + '명' + (left ? ' · ' + left + '명 더 넣어야 합니다' : '') + '</div></div></div>' +
+      '<p class="muted" style="font-size:13px;margin:12px 0 0">오프시즌에는 보류선수 명단에서 빼는 방식으로 정리합니다. 다년 계약이 남은 선수를 빼면 남은 연봉을 부담합니다. 다른 구단도 같은 방식으로 65명을 맞춥니다.</p></section>';
     const row = (p, on) => '<tr><td class="l txt"><button class="linkish" data-player="' + p.id + '">' + esc(p.name) + '</button> <small class="muted">' + (p.pr ? (p.role === 'SP' ? '선발' : '구원') : LG.POS_SHORT[p.pos]) + (p.foreign ? ' · 외국인' : '') + '</small></td><td>' + p.age + '</td><td>' + starsHTML(p.ca) + '</td><td>' + starsHTML(p.pa) + '</td><td class="num c-sal">' + C.moneyShort(p.sal) + (p.yrs > 0 ? ' <small class="muted">· ' + p.yrs + '년</small>' : '') + '</td><td><button class="btn sm ' + (on ? 'ghost' : 'danger') + '" data-cut="' + p.id + '">' + (on ? '빼기' : '추가') + '</button></td></tr>';
     const head = '<thead><tr><th class="l">이름</th><th>나이</th><th>현재 능력</th><th>잠재 능력</th><th class="c-sal">연봉</th><th></th></tr></thead>';
     const inL = L.map((id) => S.league.players[id]);
-    h += '<section class="card"><div class="card-h"><h2>방출 명단</h2><span class="muted" style="font-size:12.5px">' + L.length + '명</span></div>' +
-      (inL.length ? '<div class="tbl-wrap"><table class="t cut-t">' + head + '<tbody>' + inL.map((p) => row(p, true)).join('') + '</tbody></table></div>' : '<div class="empty">방출 명단이 비어 있습니다.</div>') + '</section>';
+    h += '<section class="card"><div class="card-h"><h2>방출 명단</h2><span class="muted" style="font-size:13px">' + L.length + '명</span></div>' +
+      (inL.length ? '<div class="tbl-wrap"><table class="t cut-t">' + head + '<tbody>' + inL.map((p) => row(p, true)).join('') + '</tbody></table></div>' : '<div class="empty">방출 명단이 비어 있습니다</div>') + '</section>';
     const f = ui.cutF || 'all';
     const keep = (p) => p.ca + Math.max(0, p.pa - p.ca) * (p.age <= 21 ? 0.4 : p.age <= 24 ? 0.25 : 0);
     let rest = all.filter((p) => !L.includes(p.id));
     if (f === 'pit') rest = rest.filter((p) => p.pr); else if (f === 'bat') rest = rest.filter((p) => !p.pr);
     rest.sort((a, b) => keep(a) - keep(b));
-    h += '<section class="card"><div class="card-h"><h2>선수 추가</h2><span class="muted" style="font-size:12.5px">' + rest.length + '명</span></div>' +
+    h += '<section class="card"><div class="card-h"><h2>선수 추가</h2><span class="muted" style="font-size:13px">' + rest.length + '명</span></div>' +
       '<div class="tabs" style="margin-bottom:8px">' + [['all', '전체'], ['pit', '투수'], ['bat', '야수']].map(([k, nm]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-cutf="' + k + '">' + nm + '</button>').join('') + '</div>' +
       '<div class="tbl-wrap cut-box"><table class="t cut-t">' + head + '<tbody>' + rest.map((p) => row(p, false)).join('') + '</tbody></table></div></section>';
     return h;
   }
   function offHTML() {
     if (S.phase === 'done') return '<div class="wrap"><section class="card"><div class="card-h"><h2>오프시즌</h2></div><p class="muted" style="margin:0 0 12px">한국시리즈가 끝났습니다. 오프시즌을 시작할까요?</p><button class="btn primary" data-off="start">오프시즌 시작</button></section></div>';
-    if (S.phase !== 'off') return '<div class="wrap"><section class="card"><div class="empty">지금은 오프시즌이 아닙니다.</div></section></div>';
+    if (S.phase !== 'off') return '<div class="wrap"><section class="card"><div class="empty">지금은 오프시즌이 아닙니다</div></section></div>';
     const o = S.off;
     const st = OF.STEPS.find((x) => x.key === o.step);
     const i = OF.STEPS.indexOf(st);
@@ -8010,7 +8014,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       return '<div class="wrap"><section class="card fired"><div class="eyebrow">해임 통보</div><h2 class="disp" style="font-size:28px">' + esc(LG.teamName(team(o.fired.from))) + ' 단장에서 물러납니다</h2><p class="muted">구단주 신뢰도가 바닥으로 떨어졌습니다. ' + (off ? LG.teamName(off) + '에서 새 단장을 맡아 달라는 제안이 왔습니다. 받아들이면 그 구단의 오프시즌을 이어서 진행합니다.' : '다른 구단의 제안은 없습니다.') + '</p>' +
         '<div class="sim-row">' + (off ? '<button class="btn primary" data-fired="accept">' + esc(off.name) + ' 단장 맡기</button>' : '') + (ui.firedConfirm ? '<button class="btn danger" data-fired="newyes">새 게임 시작 (지금 게임 삭제)</button><button class="btn ghost" data-fired="newno">취소</button>' : '<button class="btn ghost" data-fired="new">새 게임 시작</button>') + '</div></section></div>';
     }
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + o.year + ' 오프시즌 · ' + esc(st.name) + '</h2><span class="muted" style="font-size:12.5px">' + C.fmtDate(o.date) + '</span></div>' + offStepper() + '</section>';
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + o.year + ' 오프시즌 · ' + esc(st.name) + '</h2><span class="muted" style="font-size:13px">' + C.fmtDate(o.date) + '</span></div>' + offStepper() + '</section>';
     if (o.step === 'review') h += directiveCard(false) + postingHTML() + offReview();
     else if (o.step === 'fa') h += protectHTML() + offFA();
     else if (o.step === 'foreign') h += offForeign();
@@ -8020,7 +8024,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else if (o.step === 'roster') h += offRoster();
     if (OD.GG && o.gg) h += o.gg.res ? ggResultHTML() : ggVoteHTML(); // 골든글러브 투표·결과
     const err = OF.canAdvance(S);
-    if (nx) h += '<section class="card nextbar"><div><b>다음: ' + esc(nx.name === '새 시즌' ? (S.league.year + 1) + ' 시즌 시작' : nx.name) + '</b>' + (err ? '<div class="muted" style="font-size:12.5px">' + esc(err) + '</div>' : '') + '</div><button class="btn primary" data-off="next"' + (err ? ' disabled' : '') + '>다음 단계로</button></section>';
+    if (nx) h += '<section class="card nextbar"><div><b>다음: ' + esc(nx.name === '새 시즌' ? (S.league.year + 1) + ' 시즌 시작' : nx.name) + '</b>' + (err ? '<div class="muted" style="font-size:13px">' + esc(err) + '</div>' : '') + '</div><button class="btn primary" data-off="next"' + (err ? ' disabled' : '') + '>다음 단계로</button></section>';
     return h + '</div>';
   }
 
@@ -8038,15 +8042,15 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const done = mine.filter((p) => p.army === 'done' || p.army === 'exempt').length;
     const y = S.league.year;
     let nextAg = y; while (!MI.isAgYear(nextAg)) nextAg++;
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>병역</h2><span class="muted" style="font-size:12.5px">다음 아시안게임 ' + nextAg + '년</span></div>' +
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>병역</h2><span class="muted" style="font-size:13px">다음 아시안게임 ' + nextAg + '년</span></div>' +
       '<div class="milsum"><div><b class="disp">' + need.length + '</b><span>미필</span></div><div><b class="disp">' + serving.filter((p) => p.serve.type === '상무').length + '</b><span>상무 복무</span></div><div><b class="disp">' + serving.filter((p) => p.serve.type === '현역').length + '</b><span>현역 복무</span></div><div><b class="disp">' + done + '</b><span>군필·면제</span></div></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:12px 0 0">미필 선수는 ' + MI.DEADLINE_AGE + '세가 되기 전에 입대해야 합니다. 상무는 지원해서 뽑혀야 하고(현재 능력 기준), 복무 중에도 퓨처스리그에서 뛰며 성장합니다. 현역은 경기를 못 뛰어 감각이 떨어집니다. 둘 다 18개월로, 겨울에 입대하면 다다음해 6월 시즌 중에 돌아옵니다. 입대 결정은 오프시즌 \'병역\' 단계에서 합니다. 아시안게임 금메달을 따면 대표팀의 미필 선수는 병역 특례를 받습니다.</p></section>';
-    h += '<div class="grid2"><div class="stack"><section class="card"><div class="card-h"><h2>복무 중</h2><span class="muted" style="font-size:12.5px">' + serving.length + '명</span></div>' +
-      (serving.length ? '<div class="plist">' + serving.map((p) => { const f = p.fst; const rec = p.serve.type === '상무' && f && (f.pa || f.bf) ? (p.pr ? '퓨처스 ERA ' + C.era(f.er, f.outs) : '퓨처스 ' + C.avg3(f.h, f.ab)) : ''; return milRow(p, '<span class="muted">' + rec + '</span>'); }).join('') + '</div>' : '<div class="empty">복무 중인 선수가 없습니다.</div>') + '</section>';
-    h += '<section class="card"><div class="card-h"><h2>미필 선수</h2><span class="muted" style="font-size:12.5px">나이 많은 순</span></div>' +
-      (need.length ? '<div class="plist tall">' + need.map((p) => milRow(p, p.ent ? '<span class="badge">1군</span>' : '<span class="badge dimb">2군</span>')).join('') + '</div>' : '<div class="empty">미필 선수가 없습니다.</div>') + '</section></div>';
+      '<p class="muted" style="font-size:13px;margin:12px 0 0">미필 선수는 ' + MI.DEADLINE_AGE + '세가 되기 전에 입대해야 합니다. 상무는 지원해서 뽑혀야 하고(현재 능력 기준), 복무 중에도 퓨처스리그에서 뛰며 성장합니다. 현역은 경기를 못 뛰어 감각이 떨어집니다. 둘 다 18개월로, 겨울에 입대하면 다다음해 6월 시즌 중에 돌아옵니다. 입대 결정은 오프시즌 \'병역\' 단계에서 합니다. 아시안게임 금메달을 따면 대표팀의 미필 선수는 병역 특례를 받습니다.</p></section>';
+    h += '<div class="grid2"><div class="stack"><section class="card"><div class="card-h"><h2>복무 중</h2><span class="muted" style="font-size:13px">' + serving.length + '명</span></div>' +
+      (serving.length ? '<div class="plist">' + serving.map((p) => { const f = p.fst; const rec = p.serve.type === '상무' && f && (f.pa || f.bf) ? (p.pr ? '퓨처스 ERA ' + C.era(f.er, f.outs) : '퓨처스 ' + C.avg3(f.h, f.ab)) : ''; return milRow(p, '<span class="muted">' + rec + '</span>'); }).join('') + '</div>' : '<div class="empty">복무 중인 선수가 없습니다</div>') + '</section>';
+    h += '<section class="card"><div class="card-h"><h2>미필 선수</h2><span class="muted" style="font-size:13px">나이 많은 순</span></div>' +
+      (need.length ? '<div class="plist tall">' + need.map((p) => milRow(p, p.ent ? '<span class="badge">1군</span>' : '<span class="badge dimb">2군</span>')).join('') + '</div>' : '<div class="empty">미필 선수가 없습니다</div>') + '</section></div>';
     const log = (S.mil.log || []).slice(0, 25);
-    h += '<div class="stack"><section class="card"><div class="card-h"><h2>병역 소식</h2></div>' + (log.length ? '<div class="news">' + log.map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 소식이 없습니다.</div>') + '</section></div></div></div>';
+    h += '<div class="stack"><section class="card"><div class="card-h"><h2>병역 소식</h2></div>' + (log.length ? '<div class="news">' + log.map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 소식이 없습니다</div>') + '</section></div></div></div>';
     return h;
   }
   function offMilitary() {
@@ -8054,13 +8058,13 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (!m) return '';
     const list = m.list.map((id) => P[id]).filter((p) => p && p.team === S.user && p.army === 'need' && !p.serve);
     const sm = LG.teamPlayers(S.league, 'SM').length;
-    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">병역</div><b class="disp" style="font-size:26px">미필 ' + list.length + '명</b><div class="muted" style="font-size:12.5px">이번 겨울 전역 복귀 ' + (m.discharged || 0) + '명 (리그 전체) · 상무 현재 ' + sm + '/' + MI.SANGMU_MAX + '명</div></div></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:12px 0 0">선수마다 상무 지원, 현역 입대, 미루기 중 하나를 고르세요. ' + MI.DEADLINE_AGE + '세 선수는 더 미룰 수 없습니다. 상무에서 떨어지면 ' + MI.DEADLINE_AGE + '세 선수는 현역으로 가고, 그보다 어린 선수는 내년으로 미뤄집니다. 입대한 선수는 18개월 뒤(다다음해 6월) 돌아옵니다.</p></section>';
-    if (!list.length) return h + '<section class="card"><div class="empty">결정할 미필 선수가 없습니다.</div></section>';
+    let h = '<section class="card"><div class="fstat"><div><div class="eyebrow">병역</div><b class="disp" style="font-size:28px">미필 ' + list.length + '명</b><div class="muted" style="font-size:13px">이번 겨울 전역 복귀 ' + (m.discharged || 0) + '명 (리그 전체) · 상무 현재 ' + sm + '/' + MI.SANGMU_MAX + '명</div></div></div>' +
+      '<p class="muted" style="font-size:13px;margin:12px 0 0">선수마다 상무 지원, 현역 입대, 미루기 중 하나를 고르세요. ' + MI.DEADLINE_AGE + '세 선수는 더 미룰 수 없습니다. 상무에서 떨어지면 ' + MI.DEADLINE_AGE + '세 선수는 현역으로 가고, 그보다 어린 선수는 내년으로 미뤄집니다. 입대한 선수는 18개월 뒤(다다음해 6월) 돌아옵니다.</p></section>';
+    if (!list.length) return h + '<section class="card"><div class="empty">결정할 미필 선수가 없습니다</div></section>';
     const cnt = { 상무: 0, 현역: 0, 미루기: 0 }; for (const p of list) cnt[p.milPlan || '미루기']++;
-    h += '<section class="card"><div class="card-h"><h2>한꺼번에 정하기</h2><span class="muted" style="font-size:12.5px">상무 ' + cnt['상무'] + ' · 현역 ' + cnt['현역'] + ' · 미루기 ' + cnt['미루기'] + '</span></div>' +
+    h += '<section class="card"><div class="card-h"><h2>한꺼번에 정하기</h2><span class="muted" style="font-size:13px">상무 ' + cnt['상무'] + ' · 현역 ' + cnt['현역'] + ' · 미루기 ' + cnt['미루기'] + '</span></div>' +
       '<div class="chips-wrap"><button class="chip" data-mall="rec">추천대로</button><button class="chip" data-mall="상무">모두 상무 지원</button><button class="chip" data-mall="현역">모두 현역 입대</button><button class="chip" data-mall="미루기">모두 미루기</button></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">추천: ' + MI.DEADLINE_AGE + '세는 합격 가능성이 있으면 상무, 아니면 현역 · 1~2년 남은 선수는 상무 합격이 유력하면 상무, 2군 선수면 현역 · 그 밖에는 미루기. ' + MI.DEADLINE_AGE + '세 선수는 \'모두 미루기\'를 골라도 추천대로 정해집니다. 아래에서 선수마다 바꿀 수 있습니다.</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">추천: ' + MI.DEADLINE_AGE + '세는 합격 가능성이 있으면 상무, 아니면 현역 · 1~2년 남은 선수는 상무 합격이 유력하면 상무, 2군 선수면 현역 · 그 밖에는 미루기. ' + MI.DEADLINE_AGE + '세 선수는 \'모두 미루기\'를 골라도 추천대로 정해집니다. 아래에서 선수마다 바꿀 수 있습니다.</p></section>';
     h += '<section class="card"><div class="plist tall">';
     for (const p of list) {
       const forced = p.age >= MI.DEADLINE_AGE;
@@ -8112,12 +8116,12 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     rows = rows.slice(0, R.limit);
     if (R.team !== 'all' && gp[R.team] == null) R.team = 'all';
     const opts = '<option value="all"' + (R.team === 'all' ? ' selected' : '') + '>전체 ' + (futLg ? '팀' : '구단') + '</option>' + tlist.map((t) => '<option value="' + t.id + '"' + (R.team === t.id ? ' selected' : '') + '>' + esc(LG.teamName(t)) + '</option>').join('');
-    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + L.year + ' 개인 기록</h2><span class="muted" style="font-size:12.5px">' + total + '명</span></div>' +
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + L.year + ' 개인 기록</h2><span class="muted" style="font-size:13px">' + total + '명</span></div>' +
       '<div class="tabs" role="tablist" style="margin-bottom:10px">' + [['st', '1군 (KBO리그)'], ['fst', '퓨처스리그']].map(([k, n]) => '<button class="chip' + (R.lg === k ? ' on' : '') + '" data-reclg="' + k + '" role="tab" aria-selected="' + (R.lg === k) + '">' + n + '</button>').join('') + '</div>' +
       '<div class="bar-row"><div class="tabs" role="tablist">' + [['bat', '타자'], ['pit', '투수']].map(([k, n]) => '<button class="chip' + (R.kind === k ? ' on' : '') + '" data-reck="' + k + '" role="tab" aria-selected="' + (R.kind === k) + '">' + n + '</button>').join('') + '</div>' +
       '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><select class="sel" id="recTeam" aria-label="구단">' + opts + '</select>' +
       '<label class="chk"><input type="checkbox" id="recQual"' + (R.qual ? ' checked' : '') + '> 규정 ' + (R.kind === 'bat' ? '타석' : '이닝') + ' 충족</label></div></div>' +
-      '<p class="muted" style="font-size:12.5px;margin:10px 0 0">열 제목을 누르면 그 기록 순으로 정렬합니다. 규정: 팀 경기 수 × ' + (R.kind === 'bat' ? '3.1타석' : '1이닝') + '.</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">열 제목을 누르면 그 기록 순으로 정렬합니다. 규정: 팀 경기 수 × ' + (R.kind === 'bat' ? '3.1타석' : '1이닝') + '.</p></section>';
     h += '<section class="card"><div class="tbl-wrap"><table class="t rec"><thead><tr><th class="l sticky">#</th><th class="l sticky2">선수</th><th class="l">팀</th>' +
       cols.map((c) => '<th><button class="sort' + (c[0] === R.sort ? ' on' : '') + '" data-sort="' + c[0] + '">' + c[1] + (c[0] === R.sort ? (R.dir < 0 ? ' ▼' : ' ▲') : '') + '</button></th>').join('') + '</tr></thead><tbody>';
     rows.forEach((x, i) => {
@@ -8170,7 +8174,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 설정 =================
   function settingsHTML() {
-    let h = '<div class="wrap" style="max-width:720px"><section class="card"><div class="card-h"><h2>설정</h2><span class="muted" style="font-size:12.5px">On Diamond · ' + VERSION + '</span></div>';
+    let h = '<div class="wrap" style="max-width:720px"><section class="card"><div class="card-h"><h2>설정</h2><span class="muted" style="font-size:13px">On Diamond · ' + VERSION + '</span></div>';
     const D = C.diffOf(S);
     h += '<div class="set-row"><b>난이도</b><div class="chips-wrap">' + ['easy', 'normal', 'hard'].map((k) => '<button class="chip' + (D.key === k ? ' on' : '') + '" data-setdiff="' + k + '" aria-pressed="' + (D.key === k) + '">' + C.DIFF[k].name + '</button>').join('') + '</div><p>' + esc(D.note) + ' 바꾸면 다음 경기와 다음 트레이드 제안부터 바로 적용됩니다.' + (!S.diff ? ' 난이도 기능 이전에 시작한 게임이라 쉬움으로 되어 있습니다.' : '') + '</p></div>';
     h += '<div class="set-row"><b>새 게임 시작</b><p>지금 게임을 지우고 새 리그를 만들어 구단을 다시 고릅니다. 지금 게임을 남기려면 먼저 저장 파일을 내려받으세요.</p>' +
@@ -8405,7 +8409,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const hist = p.hist || [];
     const car = p.pr ? (() => { const a = hist.reduce((m, x) => { m.g += x.a[0]; m.w += x.a[2]; m.sv += x.a[4]; m.o += x.a[6]; m.er += x.a[8]; return m; }, { g: 0, w: 0, sv: 0, o: 0, er: 0 }); return [['시즌', hist.length], ['경기', a.g], ['승', a.w], ['세이브', a.sv], ['ERA', hist.length ? C.era(a.er, a.o) : '-']]; })()
       : (() => { const a = hist.reduce((m, x) => { m.g += x.a[0]; m.ab += x.a[2]; m.h += x.a[3]; m.hr += x.a[6]; m.rbi += x.a[7]; return m; }, { g: 0, ab: 0, h: 0, hr: 0, rbi: 0 }); return [['시즌', hist.length], ['경기', a.g], ['타율', hist.length ? C.avg3(a.h, a.ab) : '-'], ['홈런', a.hr], ['타점', a.rbi]]; })();
-    const kvRow = (L) => '<div class="fm-mini" style="--n:' + L.length + '">' + L.map(([k, v]) => '<div><span>' + k + '</span><b class="num">' + v + '</b></div>').join('') + '</div>';
+    const kvRow = (L) => '<div class="fm-mini" style="--n:' + L.length + '">' + L.map(([k, v]) => '<div><span>' + k + '</span><b class="num">' + String(v).replace(/ ([12])\/3$/, (m, d) => d === '1' ? '⅓' : '⅔') + '</b></div>').join('') + '</div>';
     h += '<div class="fm-foot"><section><h3>컨디션</h3><div class="fm-st">' + cond + '</div></section><section><h3>인기도</h3><div class="fm-st">' + pop + '</div></section>' +
       '<section><h3>최근 5경기 평점</h3>' + perf + '</section>' +
       (pool ? '<section class="wide"><h3>' + (p.pool === 'D' ? '아마추어' : '지난 시즌 (' + esc(p.lg || '해외') + ')') + '</h3><span>' + esc(p.pool === 'D' ? (p.school || '') + ' · ' + MK.regName(p.sreg) : p.prev || '-') + '</span></section><section class="wide"><h3>통산 (1군)</h3><span>KBO리그 기록이 없습니다.</span></section>'
@@ -8472,7 +8476,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const H = team(r.h), A = team(r.a);
     const lg = S.logs && S.logs[gid];
     const round = r.round ? S.post.rounds.find((x) => x.key === r.round).name : '정규시즌';
-    let h = '<div class="g-head"><div class="tm">' + patch(A, 44) + esc(A.name) + '</div><div><div class="sc num">' + r.as + ' : ' + r.hs + '</div><div class="muted" style="font-size:12.5px">' + esc(round) + ' · ' + C.fmtDate(r.date) + (r.inn > 9 ? ' · ' + r.inn + '회' : '') + (r.tie ? ' · 무승부' : '') + '</div></div><div class="tm">' + patch(H, 44) + esc(H.name) + '</div></div>';
+    let h = '<div class="g-head"><div class="tm">' + patch(A, 44) + esc(A.name) + '</div><div><div class="sc num">' + r.as + ' : ' + r.hs + '</div><div class="muted" style="font-size:13px">' + esc(round) + ' · ' + C.fmtDate(r.date) + (r.inn > 9 ? ' · ' + r.inn + '회' : '') + (r.tie ? ' · 무승부' : '') + '</div></div><div class="tm">' + patch(H, 44) + esc(H.name) + '</div></div>';
     if (b) {
       const tabs = [['sum', '요약'], ['box', '기록'], ['log', '문자 중계']];
       h += '<div class="tabs" role="tablist">' + tabs.map(([k, n]) => '<button class="chip' + (ui.gtab === k ? ' on' : '') + '" data-gtab="' + k + ':' + gid + '" role="tab" aria-selected="' + (ui.gtab === k) + '">' + n + '</button>').join('') + '</div>';
