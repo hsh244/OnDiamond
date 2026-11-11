@@ -710,6 +710,19 @@ table.rec tr.click:hover .sticky, table.rec tr.click:hover .sticky2 { background
 .cut-t td, .cut-t th { white-space: nowrap; }
 .cut-t .linkish { background: none; border: 0; padding: 0; color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; }
 .cut-t .linkish:hover { text-decoration: underline; }
+.gg-w { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.gg-w span { font-size: 12px; padding: 3px 8px; border-radius: 999px; background: var(--chip, rgba(255,255,255,.06)); color: var(--muted); }
+.gg-tabs { margin-top: 12px; flex-wrap: wrap; }
+.gg-list { margin-top: 10px; display: grid; gap: 6px; }
+.gg-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; }
+.gg-row.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.gg-who { min-width: 0; }
+.gg-who .linkish { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; }
+.gg-st { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.gg-perf { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--muted); min-width: 28px; text-align: right; }
+.gg-t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+@media (max-width: 560px) { .gg-t .gg-tn { display: none; } .gg-t td, .gg-t th { padding-left: 5px; padding-right: 5px; } }
+.gg-t .linkish { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; }
 @media (max-width: 560px) { .cut-t .c-sal { display: none; } .cut-t td, .cut-t th { padding-left: 6px; padding-right: 6px; } }
 .tp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: stretch; }
 .tp-row .tp-pf { align-self: center; padding: 6px 10px; font-size: 12px; }
@@ -5043,6 +5056,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 시상
     const aw = awards(S);
     S.off.awards = aw;
+    if (G.OD.GG) G.OD.GG.open(S); // 골든글러브 후보
     const h = S.history[S.history.length - 1];
     if (h && h.year === L.year) h.awards = aw;
     // 경력: 1군에서 충분히 뛰면 1시즌
@@ -5695,6 +5709,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 다음 단계 열기
     if (nx.key === 'fa') openFA(S);
     if (nx.key === 'foreign') openForeign(S);
+    if (nx.key === 'military' && G.OD.GG) { if (!S.off.gg) G.OD.GG.open(S); G.OD.GG.ceremony(S, o.date); }
     if (nx.key === 'military') { if (G.OD.Military) G.OD.Military.openStep(S, o.date); else return advanceStep(S); }
     if (nx.key === 'draft') { openDraft(S); draftAdvance(S, false); }
     if (nx.key === 'salary') { yearEnd(S); openSalary(S); }
@@ -5778,6 +5793,144 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   G.OD.Offseason = { STEPS, FA_ROUNDS, DRAFT_ROUNDS, MAX_ROSTER, startOffseason, advanceStep, canAdvance, develop, warLike,
     userOffer, cancelOffer, runFARound, compOptions, chooseComp, demandFor, budgetFor,
     decideForeign, foreignPending, onClock, slotOf, protectToggle, protectSubmit, postingDecide, postingList, legendOf, peakOf, makeDraftClass, draftClass, draftPick, draftAdvance, setUserSalary, rosterExcess, cutList, cutToggle, cutLeft, perfScore };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- gglove.js ---- */
+// 골든글러브: 포지션별 시상 (투수·포수·1루·2루·3루·유격·외야 3명·지명타자)
+// 점수 = 선수 성적 50% + 팀 성적 20% + 인기도 10% + 단장 투표 20% (AI 9개 구단 단장 + 사용자, 자기 구단 선수에게는 투표 불가)
+// 투표는 시즌 결산~외국인 재계약 단계에서, 시상식은 병역 단계(12월 8일)에 열림
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  const C = OD.Core;
+  const LG = () => OD.League;
+  const OF = () => OD.Offseason;
+  const SE = () => OD.Season;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+  const POS = [
+    { k: 'P', n: '투수', win: 1 },
+    { k: 'C', n: '포수', win: 1 },
+    { k: '1B', n: '1루수', win: 1 },
+    { k: '2B', n: '2루수', win: 1 },
+    { k: '3B', n: '3루수', win: 1 },
+    { k: 'SS', n: '유격수', win: 1 },
+    { k: 'OF', n: '외야수', win: 3 },
+    { k: 'DH', n: '지명타자', win: 1 }
+  ];
+  const W = { perf: 0.5, team: 0.2, pop: 0.1, vote: 0.2 };
+  const SHOW = { OF: 12 };
+
+  function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function group(p) { if (p.pr) return 'P'; return ['LF', 'CF', 'RF'].includes(p.pos) ? 'OF' : p.pos; }
+  function obp(s) { const d = s.ab + s.bb + s.hbp + s.sf; return d ? (s.h + s.bb + s.hbp) / d : 0; }
+  function slg(s) { return s.ab ? (s.h + s.d + 2 * s.t + 3 * s.hr) / s.ab : 0; }
+  // 선수 성적 점수: 공격·투구 기여 + 수비 능력
+  function perfRaw(p) {
+    const s = p.st, w = OF().warLike(p);
+    if (p.pr) return w;
+    const fld = p.br ? (p.br.fld - 10) * 0.12 * s.pa / 600 : 0;
+    return w + fld;
+  }
+  function eligible(S) {
+    const clubs = new Set(S.league.teams.map((t) => t.id));
+    const all = Object.values(S.league.players).filter((p) => clubs.has(p.team) && p.st);
+    const maxPA = Math.max(1, ...all.filter((p) => !p.pr).map((p) => p.st.pa));
+    const maxOut = Math.max(1, ...all.filter((p) => p.pr).map((p) => p.st.outs));
+    const out = {};
+    for (const g of POS) out[g.k] = [];
+    for (const p of all) {
+      const s = p.st, g = group(p);
+      if (!out[g]) continue;
+      if (p.pr) { if (!(s.outs >= maxOut * 0.55 || s.w >= 10 || s.sv >= 25 || s.hld >= 25)) continue; }
+      else if (s.pa < maxPA * 0.5) continue;
+      out[g].push(p);
+    }
+    return out;
+  }
+  function teamScore(S, tid) { const t = S.league.teams.find((x) => x.id === tid); const r = t.lastRank || 5; return (S.league.teams.length + 1 - r) * (100 / S.league.teams.length); }
+
+  // 시즌 결산 때 후보를 정함
+  function open(S) {
+    const E = eligible(S), cands = {};
+    for (const g of POS) {
+      const arr = E[g.k].map((p) => ({ id: p.id, raw: perfRaw(p) })).sort((a, b) => b.raw - a.raw);
+      const top = arr.slice(0, SHOW[g.k] || 8);
+      const hi = top.length ? top[0].raw : 1, lo = top.length ? top[top.length - 1].raw : 0;
+      cands[g.k] = top.map((x) => ({ id: x.id, tid: S.league.players[x.id].team, perf: Math.round(top.length < 2 || hi === lo ? 100 : 40 + (x.raw - lo) / (hi - lo) * 60) }));
+    }
+    S.off.gg = { year: S.league.year, cands, uvote: {}, res: null };
+    return S.off.gg;
+  }
+  function state(S) { return S.off && S.off.gg; }
+  function voteCheck(S, pos, pid) {
+    const gg = state(S); if (!gg || gg.res) return '투표가 끝났습니다';
+    const c = gg.cands[pos]; if (!c || !c.some((x) => x.id === pid)) return '후보가 아닙니다';
+    const p = S.league.players[pid];
+    if (c.find((x) => x.id === pid).tid === S.user) return '우리 구단 선수에게는 투표할 수 없습니다';
+    return '';
+  }
+  // 투표/취소 (외야는 3명까지)
+  function vote(S, pos, pid) {
+    const err = voteCheck(S, pos, pid); if (err) return { ok: false, msg: err };
+    const gg = state(S), lim = POS.find((g) => g.k === pos).win;
+    const cur = gg.uvote[pos] || [];
+    if (cur.includes(pid)) gg.uvote[pos] = cur.filter((x) => x !== pid);
+    else if (lim === 1) gg.uvote[pos] = [pid];
+    else { if (cur.length >= lim) return { ok: false, msg: '외야수는 3명까지 투표할 수 있습니다' }; gg.uvote[pos] = cur.concat(pid); }
+    return { ok: true };
+  }
+  // 시상식: AI 단장 투표 + 사용자 투표 → 종합 점수
+  function ceremony(S, date) {
+    const gg = state(S); if (!gg || gg.res) return gg && gg.res;
+    const P = S.league.players, rng = new C.RNG(hash('gg' + gg.year + ':' + (S.seed || 7)));
+    const voters = S.league.teams.map((t) => t.id);
+    const res = {}, win = {};
+    for (const g of POS) {
+      const cs = (gg.cands[g.k] || []).filter((c) => P[c.id]);
+      const votes = {}; for (const c of cs) votes[c.id] = 0;
+      for (const v of voters) {
+        let picks;
+        if (v === S.user) picks = (gg.uvote[g.k] || []).filter((id) => cs.some((c) => c.id === id && c.tid !== S.user));
+        else picks = cs.filter((c) => c.tid !== v)
+          .map((c) => ({ id: c.id, s: c.perf * 0.6 + teamScore(S, c.tid) * 0.25 + (P[c.id].pop || 0) * 0.15 + rng.normal(0, 9) }))
+          .sort((a, b) => b.s - a.s).slice(0, g.win).map((x) => x.id);
+        for (const id of picks) if (votes[id] != null) votes[id]++;
+      }
+      const rows = cs.map((c) => {
+        const p = P[c.id], team = Math.round(teamScore(S, c.tid)), pop = Math.round(p.pop || 0), vs = Math.round(votes[c.id] / voters.length * 100);
+        return { id: c.id, tid: c.tid, perf: c.perf, team, pop, vote: vs, votes: votes[c.id], tot: Math.round((c.perf * W.perf + team * W.team + pop * W.pop + vs * W.vote) * 10) / 10 };
+      }).sort((a, b) => b.tot - a.tot || b.perf - a.perf);
+      res[g.k] = rows;
+      win[g.k] = rows.slice(0, g.win).map((r) => r.id);
+    }
+    gg.res = res; gg.win = win; gg.date = date;
+    // 기록·인기도
+    const mine = [];
+    for (const k in win) for (const id of win[k]) {
+      const p = P[id]; if (!p) continue;
+      p.gg = (p.gg || []).concat(gg.year);
+      p.pop = clamp((p.pop || 0) + 4, 0, 100);
+      if (res[k].find((r) => r.id === id).tid === S.user) mine.push(POS.find((g) => g.k === k).n + ' ' + p.name);
+    }
+    const h = S.history[S.history.length - 1];
+    if (h && h.year === gg.year && h.awards) h.awards.gg = win;
+    SE().msg(S, date, 'KBO', gg.year + ' 골든글러브 시상식', POS.map((g) => g.n + ' ' + win[g.k].map((id) => P[id].name + '(' + (S.league.teams.find((t) => t.id === res[g.k].find((r) => r.id === id).tid) || {}).name + ')').join(', ')).join(' / ') + '.' +
+      (mine.length ? ' 우리 구단에서는 ' + mine.join(', ') + '이(가) 황금장갑을 받았습니다!' : ' 올해 우리 구단 수상자는 없습니다.'));
+    return res;
+  }
+  // 프로필·투표 화면용 성적 한 줄
+  function line(p) {
+    const s = p.st; if (!s) return '';
+    if (p.pr) {
+      const era = s.outs ? (s.er * 27 / s.outs).toFixed(2) : '-';
+      return '평균자책 ' + era + ' · ' + (s.sv >= 10 ? s.sv + '세이브' : s.hld >= 10 ? s.hld + '홀드' : s.w + '승 ' + s.l + '패') + ' · ' + Math.floor(s.outs / 3) + '이닝 · 탈삼진 ' + s.pso;
+    }
+    const ops = obp(s) + slg(s);
+    return '타율 ' + C.avg3(s.h, s.ab) + ' · 홈런 ' + s.hr + ' · 타점 ' + s.rbi + ' · OPS ' + ops.toFixed(3).replace(/^0/, '') + (p.pos !== 'DH' && p.br ? ' · 수비 ' + Math.round(p.br.fld) : '');
+  }
+
+  OD.GG = { POS, W, open, state, vote, voteCheck, ceremony, line, group, eligible };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- season.js ---- */
@@ -7598,6 +7751,31 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (ev) h += '<section class="card"><div class="card-h"><h2>구단주 평가</h2><span class="muted" style="font-size:12.5px">신뢰도 ' + ev.before + ' → <b class="' + gaugeCls(ev.after) + '">' + ev.after + '</b></span></div><div class="tbl-wrap"><table class="t"><tbody>' + ev.parts.map((x) => '<tr><td class="l txt">' + esc(x[0]) + '</td><td class="' + (x[1] >= 0 ? 'wi' : 'lo') + '">' + (x[1] > 0 ? '+' : '') + x[1] + '</td></tr>').join('') + '</tbody></table></div></section>';
     return h;
   }
+  // ---- 골든글러브 ----
+  function ggVoteHTML() {
+    const GG = OD.GG, gg = S.off.gg, P = S.league.players;
+    const pos = GG.POS.find((x) => x.k === ui.ggPos) || GG.POS[0];
+    const cs = (gg.cands[pos.k] || []).filter((c) => P[c.id]);
+    const mine = gg.uvote[pos.k] || [];
+    const done = GG.POS.filter((x) => (gg.uvote[x.k] || []).length).length;
+    return '<section class="card gg"><div class="card-h"><h2>' + gg.year + ' 골든글러브 투표</h2><span class="muted" style="font-size:12.5px">시상식 12월 8일 · ' + done + '/' + GG.POS.length + ' 포지션 투표</span></div>' +
+      '<div class="gg-w"><span>선수 성적 50%</span><span>팀 성적 20%</span><span>인기도 10%</span><span>10개 구단 단장 투표 20%</span></div>' +
+      '<div class="tabs gg-tabs">' + GG.POS.map((x) => '<button class="chip' + (x.k === pos.k ? ' on' : '') + '" data-ggpos="' + x.k + '">' + x.n + ((gg.uvote[x.k] || []).length ? ' ✓' : '') + '</button>').join('') + '</div>' +
+      (pos.win > 1 ? '<p class="muted" style="margin:8px 0 0;font-size:12.5px">외야수는 3명에게 투표합니다 (' + mine.length + '/3)</p>' : '') +
+      '<div class="gg-list">' + cs.map((c) => {
+        const p = P[c.id], t = team(c.tid), own = c.tid === S.user, on = mine.includes(c.id);
+        return '<div class="gg-row' + (on ? ' on' : '') + '">' + patch(t, 26) + '<div class="gg-who"><button class="linkish" data-player="' + p.id + '"><b>' + esc(p.name) + '</b></button> <span class="muted">' + esc(t.name) + (pos.k === 'OF' ? ' · ' + LG.POS_KO[p.pos] : '') + '</span><div class="gg-st">' + esc(GG.line(p)) + '</div></div>' +
+          '<span class="gg-perf" title="선수 성적 점수">' + c.perf + '</span>' +
+          (own ? '<span class="badge">우리 선수</span>' : '<button class="btn sm' + (on ? ' primary' : '') + '" data-ggv="' + pos.k + ':' + p.id + '">' + (on ? '투표함' : '투표') + '</button>') + '</div>';
+      }).join('') + (cs.length ? '' : '<div class="empty">자격을 갖춘 후보가 없습니다</div>') + '</div></section>';
+  }
+  function ggResultHTML() {
+    const GG = OD.GG, gg = S.off.gg, P = S.league.players;
+    return '<section class="card gg"><div class="card-h"><h2>' + gg.year + ' 골든글러브 수상자</h2><span class="muted" style="font-size:12.5px">성적 50 · 팀 20 · 인기 10 · 투표 20</span></div><div class="tbl-wrap"><table class="t gg-t"><thead><tr><th class="l">포지션</th><th class="l">수상자</th><th>총점</th><th>성적</th><th>팀</th><th>인기</th><th>표</th></tr></thead><tbody>' +
+      GG.POS.map((x) => gg.win[x.k].map((id, i) => { const r = gg.res[x.k].find((y) => y.id === id), p = P[id], t = team(r.tid);
+        return '<tr' + (r.tid === S.user ? ' class="me"' : '') + '><td class="l txt muted">' + (i ? '' : x.n) + '</td><td class="l txt">' + patch(t, 20) + ' ' + (p ? '<button class="linkish" data-player="' + id + '">' + esc(p.name) + '</button>' : '-') + ' <span class="muted gg-tn">' + esc(t.name) + '</span></td><td><b>' + r.tot + '</b></td><td>' + r.perf + '</td><td>' + r.team + '</td><td>' + r.pop + '</td><td>' + r.votes + '</td></tr>'; }).join('')).join('') +
+      '</tbody></table></div></section>';
+  }
   // 12월 연말 보고서: 우리 선수 등급 변화 + 은퇴
   function yearEndHTML() {
     const o = S.off, P = S.league.players;
@@ -7780,6 +7958,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else if (o.step === 'military') h += offMilitary();
     else if (o.step === 'salary') h += yearEndHTML() + offSalary();
     else if (o.step === 'roster') h += offRoster();
+    if (OD.GG && o.gg) h += o.gg.res ? ggResultHTML() : ggVoteHTML(); // 골든글러브 투표·결과
     const err = OF.canAdvance(S);
     if (nx) h += '<section class="card nextbar"><div><b>다음: ' + esc(nx.name === '새 시즌' ? (S.league.year + 1) + ' 시즌 시작' : nx.name) + '</b>' + (err ? '<div class="muted" style="font-size:12.5px">' + esc(err) + '</div>' : '') + '</div><button class="btn primary" data-off="next"' + (err ? ' disabled' : '') + '>다음 단계로</button></section>';
     return h + '</div>';
@@ -8455,7 +8634,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-ggpos],[data-ggv],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -8647,6 +8826,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       keepScroll(render); return;
     }
     if (d.parkt) { ui.parkT = d.parkt; keepScroll(render); return; }
+    if (d.ggpos) { ui.ggPos = d.ggpos; keepScroll(render); return; }
+    if (d.ggv) { const [pos, pid] = d.ggv.split(':'); const r = OD.GG.vote(S, pos, Number(pid)); if (!r.ok) toast(r.msg); save(); keepScroll(render); return; }
     if (d.facshare) { ui.facShare = Number(d.facshare); keepScroll(render); return; }
     if (d.facreq) { const sh = [30, 50, 70].includes(ui.facShare) ? ui.facShare : 50; const r = OD.Facility.request(S, S.user, d.facreq, sh, SE.currentDate(S)); toast(r.ok ? '시청에 요청서를 보냈습니다. 몇 주 안에 답이 옵니다.' : r.err); if (r.ok) save(); keepScroll(render); return; }
     if (d.facup) { const r = OD.Facility.upgrade(S, S.user, SE.currentDate(S)); toast(r.ok ? '2군 훈련시설 공사를 시작했습니다.' : r.err); if (r.ok) save(); keepScroll(render); return; }
