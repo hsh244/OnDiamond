@@ -4048,9 +4048,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   // 구장 수용 인원
   const CAPACITY = { SGM: 23750, SGR: 23750, SWR: 16000, ICS: 23000, SWM: 18700, DJH: 17000, DGL: 24000, GJJ: 20500, BSM: 22990, CWR: 17891 };
   const MKT = {
-    '대형': { fill: 0.66, spon: 1000000, support: 500000, ops: 2650000 },
-    '중형': { fill: 0.57, spon: 750000, support: 500000, ops: 2300000 },
-    '소형': { fill: 0.47, spon: 500000, support: 600000, ops: 1950000 }
+    '대형': { fill: 0.66, spon: 1000000, support: 500000, ops: 2000000 },
+    '중형': { fill: 0.57, spon: 750000, support: 500000, ops: 1750000 },
+    '소형': { fill: 0.47, spon: 500000, support: 600000, ops: 1500000 }
   };
   const PRICE = 1.2, POST_PRICE = 3, GOODS = 0.22;   // 1인당 만 원
   const TV = 900000;                                 // (예전 저장) 계약 없는 시즌의 중계료 — 운영비 인상분 포함. 지금은 방송사 계약으로 대체
@@ -4096,7 +4096,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     { key: 'dev', name: '2군 감독', eff: '24세 이하 유망주 성장' },
     { key: 'med', name: '트레이닝 코치', eff: '부상 빈도·회복 기간' }
   ];
-  const REV = [['gate', '입장 수입'], ['tv', '중계권'], ['spon', '스폰서·광고'], ['goods', '상품 판매'], ['support', '모기업 지원금'], ['post', '포스트시즌'], ['comp', 'FA 보상금 등'], ['mlb', '포스팅 이적료'], ['event', '은퇴식·영구결번'], ['bonus', '구단주 특별 지원']];
+  const REV = [['gate', '입장 수입'], ['tv', '중계권'], ['spon', '스폰서·광고'], ['goods', '상품 판매'], ['support', '모기업 지원금'], ['post', '포스트시즌'], ['comp', 'FA 보상금 등'], ['mlb', '포스팅 이적료'], ['event', '은퇴식·영구결번'], ['bonus', '구단주 특별 지원'], ['bail', '모기업 적자 보전']];
   const EXP = [['sal', '선수 연봉'], ['staff', '감독·코치 연봉'], ['ops', '구장·운영비'], ['dead', '남은 연봉(방출·경질)'], ['fees', '이적료·계약금·보상금'], ['camp', '전지훈련'], ['dev', '유망주 파견'], ['fac', '구장·시설'], ['cut', '구단주 예산 삭감'], ['tax', '경쟁균형세 기금']];
 
   const team = (S, id) => S.league.teams.find((t) => t.id === id);
@@ -4165,6 +4165,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     S.owner.limit = Math.round(cap * clamp(f, 0.55, 1.08) / 1000) * 1000;
     S.owner.support = Math.round(m.support * (1 + (S.owner.trust - 60) / 200));
   }
+  // 모기업 지원금: 지난해 흑자가 클수록 줄임 (흑자 0 → 100%, 흑자 100억마다 −35%, 최소 30%)
+  const SUP_CUT = 0.35, SUP_MIN = 0.3, BAIL = 0.6;
+  function supMult(t) { return t.supMult != null ? t.supMult : 1; }
+  function supportOf(S, t) { return Math.round((t.id === S.user && S.owner ? S.owner.support : MKT[t.market].support) * supMult(t)); }
   function payLimit(S) { return S.owner ? S.owner.limit : Infinity; }
 
   // ================= 관중 =================
@@ -4203,7 +4207,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       const f = S.fin[t.id], m = MKT[t.market], k = t.id === S.user ? RV : 1;
       if (!bcastOf(S, t.id)) f.rev.tv += TV / n * k; // 계약 없는 시즌(예전 저장)은 예전 중계료
       f.rev.spon += (t.spon || m.spon) / n * k;
-      f.rev.support += (t.id === S.user && S.owner ? S.owner.support : m.support) / n * k;
+      f.rev.support += supportOf(S, t) / n * k;
       f.exp.sal += roster(S, t.id).reduce((a, p) => a + (p.sal || 0), 0) / n;
       f.exp.staff += staffSal(t) / n;
       f.exp.ops += m.ops / n;
@@ -4502,6 +4506,18 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       const hist = (f.hist || []).concat([rec]).slice(-15);
       t.cash = (t.cash != null ? t.cash : START_CASH) + rec.net; rec.cash = t.cash;
       S.fin[t.id] = blankLedger(L.year); S.fin[t.id].hist = hist;
+      // 흑자일수록 다음 해 모기업 지원금 감액
+      t.supMult = clamp(1 - Math.max(0, rec.net) / 1000000 * SUP_CUT, SUP_MIN, 1); rec.supMult = t.supMult;
+      // 현금이 마이너스면 모기업이 60%를 메워 줌 (사용자 구단은 구단주 신뢰도 하락)
+      if (t.cash < 0) {
+        const amt = Math.round(-t.cash * BAIL / 1000) * 1000;
+        S.fin[t.id].rev.bail += amt; rec.bail = amt;
+        if (t.id === S.user && S.owner) {
+          const d = -Math.round(clamp(5 + amt / 100000, 5, 15));
+          S.owner.trust = clamp(S.owner.trust + d, 0, 100);
+          SE().msg(S, (S.off && S.off.date) || (L.year + '-01-01'), '구단주', '모기업 적자 보전', '구단 현금이 ' + C.money(Math.round(-t.cash)) + ' 적자입니다. 모기업이 ' + C.money(amt) + '을 메워 주기로 했지만 이런 일이 반복되면 곤란합니다. (구단주 신뢰도 ' + d + ')');
+        }
+      }
       // 스폰서 재계약: 지난 성적
       const rank = (t.lastRank || 5);
       t.spon = Math.round(MKT[t.market].spon * (1.15 - rank * 0.03));
@@ -4533,7 +4549,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return { ok: true, owed };
   }
 
-  G.OD.Finance = { setDirective, checkDirective, evaluateDirective, addRetiredCoach, BCAST, START_CASH, bcastOf, signBroadcast, broadcastStart, broadcastDeadline, cash, aiBroadcast, refreshCoaches, CAPACITY, MKT, ROLES, REV, EXP, setup, setupOwner, setBudget, payLimit, attendance, daySettle, postGame, postBonus, sweep,
+  G.OD.Finance = { supportOf, supMult, SUP_CUT, BAIL, setDirective, checkDirective, evaluateDirective, addRetiredCoach, BCAST, START_CASH, bcastOf, signBroadcast, broadcastStart, broadcastDeadline, cash, aiBroadcast, refreshCoaches, CAPACITY, MKT, ROLES, REV, EXP, setup, setupOwner, setBudget, payLimit, attendance, daySettle, postGame, postBonus, sweep,
     fanEvent, fanSay, onMove, heal, onInjuries, healAll, monthly, luxuryTax, evaluate, acceptOffer, updatePop, newSeason, hireCoach, staffSal, projNet, sum, initPop };
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -7449,7 +7465,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const myAttRank = attRank.findIndex((y) => y.x.id === S.user) + 1;
     const cap = FI.CAPACITY[S.user];
     let h = '<div class="wrap">' + directiveCard(true) + bcastCard(true) + '<div class="grid2 even"><section class="card"><div class="card-h"><h2>구단주</h2><span class="muted" style="font-size:12.5px">' + esc(t.city) + ' 모기업</span></div>' + gauge(o.trust, '신뢰도') +
-      '<dl class="kv" style="margin-top:12px"><dt>올해 목표</dt><dd>' + esc(t.goal.text) + '</dd><dt>연봉 한도</dt><dd class="num' + (pay > o.limit ? ' lo' : '') + '">' + C.money(pay) + ' / ' + C.money(o.limit) + '</dd><dt>모기업 지원금</dt><dd class="num">연 ' + C.money(o.support) + '</dd><dt>보유 현금</dt><dd class="num' + (FI.cash(S, S.user) < 0 ? ' lo' : '') + '">' + C.money(Math.round(FI.cash(S, S.user))) + '</dd><dt>중계권</dt><dd>' + (FI.bcastOf(S, S.user) || '미계약') + '</dd></dl>' +
+      '<dl class="kv" style="margin-top:12px"><dt>올해 목표</dt><dd>' + esc(t.goal.text) + '</dd><dt>연봉 한도</dt><dd class="num' + (pay > o.limit ? ' lo' : '') + '">' + C.money(pay) + ' / ' + C.money(o.limit) + '</dd><dt>모기업 지원금</dt><dd class="num">연 ' + C.money(FI.supportOf(S, t)) + (FI.supMult(t) < 1 ? ' <small class="muted">지난해 흑자로 ' + Math.round((1 - FI.supMult(t)) * 100) + '% 감액</small>' : '') + '</dd><dt>보유 현금</dt><dd class="num' + (FI.cash(S, S.user) < 0 ? ' lo' : '') + '">' + C.money(Math.round(FI.cash(S, S.user))) + '</dd><dt>중계권</dt><dd>' + (FI.bcastOf(S, S.user) || '미계약') + '</dd></dl>' +
       '<p class="muted" style="font-size:12.5px;margin:10px 0 0">신뢰도는 매달 성적·팬 여론·재정으로 조금씩 바뀌고, 시즌이 끝나면 크게 평가됩니다. 15 아래로 떨어지면 해임됩니다. 연봉 한도(경쟁균형세 기준)를 넘는 FA 계약·트레이드는 구단주가 승인하지 않습니다.</p>' +
       (o.hist.length ? '<div class="sect">지난 평가</div><div class="news">' + o.hist.slice().reverse().slice(0, 4).map((e) => '<div class="nw nw2"><span><b>' + e.year + '</b> 신뢰도 ' + e.before + ' → ' + e.after + ' · ' + e.parts.map((x) => esc(x[0]) + ' ' + (x[1] > 0 ? '+' : '') + x[1]).join(', ') + '</span></div>').join('') + '</div>' : '') + '</section>';
     h += '<section class="card"><div class="card-h"><h2>팬</h2><span class="muted" style="font-size:12.5px">' + esc(t.park) + ' · ' + cap.toLocaleString('ko-KR') + '석</span></div>' + gauge(t.fans.mood, '팬 여론') +
