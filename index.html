@@ -429,6 +429,14 @@ button.gm:hover { border-color: var(--line2); }
 .bracket { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; }
 .br-col { display: grid; gap: 6px; align-content: start; }
 .br-col h3 { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.po-next { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin-top: 4px; }
+.po-next.me { border-color: var(--accent); }
+.po-vs { display: flex; align-items: center; gap: 8px; margin: 6px 0 4px; flex-wrap: wrap; font-size: 16px; }
+.bracket.lob { margin-top: 12px; }
+.br-col.live h3 { color: var(--fg); }
+.br-t.me { outline: 1px solid var(--accent); }
+.br-col h3 .badge { margin-left: 4px; font-size: 10.5px; }
+@media (max-width: 560px) { .bracket.lob { grid-template-columns: repeat(2, minmax(0, 1fr)); overflow-x: visible; } }
 .br-m { border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
 .br-t { display: flex; align-items: center; gap: 8px; padding: 7px 10px; font-size: 13px; }
 .br-t + .br-t { border-top: 1px solid var(--line); }
@@ -6338,6 +6346,15 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     }
     return null;
   }
+  // 포스트시즌 다음 경기 (어느 팀이든)
+  function nextPostGame(S) {
+    if (S.phase !== 'post' || !S.post) return null;
+    const rd = S.post.rounds[S.post.ri];
+    if (!rd || !rd.lo) return null;
+    const def = ROUNDS[S.post.ri], gi = rd.games.length;
+    const hiHome = def.home[Math.min(gi, def.home.length - 1)];
+    return { date: S.post.date, h: hiHome ? rd.hi : rd.lo, a: hiHome ? rd.lo : rd.hi, rd, n: gi + 1, need: def.need };
+  }
   function currentDate(S) {
     if (S.phase === 'off' && S.off) return S.off.date;
     if (S.phase === 'pre' && S.pre) return S.pre.date;
@@ -6346,7 +6363,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     return S.sched.days[S.sched.days.length - 1].date;
   }
 
-  G.OD.Season = { hcapFor, GAP_K, preMsgs, ownerGoal, resetEntries, buildSchedule, newGame, startCareer, standings, leaders, advance, nextGame, currentDate, team, msg,
+  G.OD.Season = { nextPostGame, hcapFor, GAP_K, preMsgs, ownerGoal, resetEntries, buildSchedule, newGame, startCareer, standings, leaders, advance, nextGame, currentDate, team, msg,
     powerRanks, teamPower, obp, slg, pct, ROUNDS };
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -6798,6 +6815,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       '<span class="muted">승률 <span class="num">' + pctStr(r) + '</span> · ' + streakStr(r.streak) + ' · 득실 <span class="num">' + (r.rs - r.ra >= 0 ? '+' : '') + (r.rs - r.ra) + '</span></span></div>') +
       simButtonsHTML() + '</section>';
     if (S.phase === 'done' && S.post && S.post.champ) h += champHTML();
+    if (S.post && (S.phase === 'post' || S.phase === 'done')) h += lobbyPostHTML();
     if (S.phase === 'off') h += offStepperCard();
     h += hijackCard();
     h += lobbyTiles(ng) + '</div>';
@@ -6834,6 +6852,9 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       T.push(tile(ng.post ? esc(ng.post.name) : '다음 경기',
         '<div class="t-vs">' + patch(opp, 34) + '<div><b>' + (home ? 'vs ' : '@ ') + esc(opp.name) + '</b><span class="muted num">' + opp.rec.w + '-' + opp.rec.l + '-' + opp.rec.t + '</span></div></div>' +
         '<div class="t-sub muted">' + C.fmtDate(ng.date, true) + ' · ' + esc(team(g.h).park) + '</div>', 'data-nav="sched"'));
+    } else if (SE.nextPostGame(S)) {
+      const nx = SE.nextPostGame(S);
+      T.push(tile('다음 경기', '<div class="t-goal">' + esc(nx.rd.name) + ' ' + nx.n + '차전</div><div class="t-sub muted">' + esc(team(nx.a).name) + ' @ ' + esc(team(nx.h).name) + ' · ' + C.fmtDate(nx.date, true) + '</div>', 'data-nav="stand"'));
     } else T.push(tile('다음 경기', '<div class="t-sub muted">예정된 경기가 없습니다.</div>', 'data-nav="sched"'));
     // 2. 지난 경기
     const lgid = lastUserGame();
@@ -6970,6 +6991,29 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (!rows.length) return h + '<div class="empty">규정 타석·이닝을 채운 선수가 아직 없습니다.</div>';
     h += '<div class="tbl-wrap"><table class="t"><tbody>' + rows.map((x, i) => '<tr class="click' + (x.p.team === S.user ? ' me' : '') + '" data-player="' + x.p.id + '"><td class="l" style="width:28px">' + (i + 1) + '</td><td class="l txt"><span class="tn-cell">' + patch(team(x.p.team), 20) + esc(x.p.name) + '</span></td><td class="l txt muted">' + esc(team(x.p.team).name) + '</td><td><b>' + x.f + '</b></td></tr>').join('') + '</tbody></table></div>';
     return h;
+  }
+  // 로비: 포스트시즌 일정·결과 (다음 경기 + 대진표)
+  function lobbyPostHTML() {
+    const po = S.post, nx = SE.nextPostGame(S);
+    const T = (id) => esc(team(id).name);
+    let head = '';
+    if (nx) {
+      const mine = nx.h === S.user || nx.a === S.user;
+      head = '<div class="po-next' + (mine ? ' me' : '') + '"><span class="eyebrow">다음 경기 · ' + C.fmtDate(nx.date, true) + '</span><div class="po-vs">' + patch(team(nx.a), 28) + '<b>' + T(nx.a) + '</b><span class="muted">@</span><b>' + T(nx.h) + '</b>' + patch(team(nx.h), 28) + '</div>' +
+        '<div class="muted" style="font-size:12.5px">' + esc(nx.rd.name) + ' ' + nx.n + '차전 · 시리즈 ' + T(nx.rd.hi) + ' ' + nx.rd.wHi + ' : ' + nx.rd.wLo + ' ' + T(nx.rd.lo) + ' (' + nx.need + '승 먼저) · ' + esc(team(nx.h).park) + '</div></div>';
+      // 우리 팀이 기다리는 중이면 어느 라운드에서 만나는지
+      const wait = po.rounds.findIndex((rd, i) => i > po.ri && rd.hi === S.user);
+      if (!mine && wait >= 0) head += '<p class="muted" style="margin:8px 0 0;font-size:13px">우리 구단은 <b>' + esc(po.rounds[wait].name) + '</b>에 직행해 ' + (wait === po.ri + 1 ? '이 시리즈 승자를' : '상대를') + ' 기다립니다.</p>';
+      else if (!mine && !po.rounds.some((rd) => rd.hi === S.user || rd.lo === S.user)) head += '<p class="muted" style="margin:8px 0 0;font-size:13px">우리 구단은 올해 가을야구에 나서지 못했습니다.</p>';
+    }
+    return '<section class="card po-lobby"><div class="card-h"><h2>' + S.league.year + ' 포스트시즌 일정·결과</h2><button class="more" data-nav="stand">순위 화면</button></div>' + head +
+      '<div class="bracket lob">' + po.rounds.map((rd, i) => bracketCol(rd, i === po.ri && S.phase === 'post')).join('') + '</div></section>';
+  }
+  function bracketCol(rd, live) {
+    const tr = (id, w, win) => id ? '<div class="br-t' + (win ? ' win' : '') + (id === S.user ? ' me' : '') + '">' + patch(team(id), 20) + esc(team(id).name) + '<span class="s">' + w + '</span></div>' : '<div class="br-t tbd">미정</div>';
+    return '<div class="br-col' + (live ? ' live' : '') + '"><h3>' + esc(rd.name) + (live ? ' <span class="badge acc">진행 중</span>' : rd.winner ? ' <span class="badge">종료</span>' : '') + '</h3><div class="br-m">' + tr(rd.hi, rd.wHi, rd.winner && rd.winner === rd.hi) + tr(rd.lo, rd.wLo, rd.winner && rd.winner === rd.lo) + '</div>' +
+      (rd.key === 'wc' ? '<span class="dim" style="font-size:11.5px">4위가 1승 안고 시작</span>' : '') +
+      (rd.games.length ? '<div class="br-g">' + rd.games.map((gid, i) => { const r = S.results[gid]; if (!r) return ''; const mine = r.h === S.user || r.a === S.user; return '<button class="br-gb' + (mine ? ' me' : '') + '" data-game="' + gid + '" aria-label="' + esc(rd.name) + ' ' + (i + 1) + '차전 경기 기록"><span class="muted">' + (i + 1) + '차전 · ' + C.fmtDate(r.date) + '</span><span class="num">' + esc(team(r.a).name) + ' ' + r.as + ':' + r.hs + ' ' + esc(team(r.h).name) + '</span></button>'; }).join('') + '</div>' : '') + '</div>';
   }
   function bracketHTML() {
     const po = S.post;
