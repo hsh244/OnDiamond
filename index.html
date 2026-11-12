@@ -1093,8 +1093,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else s = rest.toLocaleString('ko-KR') + '만';
     return (neg ? '-' : '') + s;
   }
-  // 표·목록용 짧은 금액: 항상 억 단위 (100억 미만은 소수 한 자리) → 2.6억 · 0.5억 · 134억
+  // 표·목록용 짧은 금액: 억 단위 (100억 미만은 소수 한 자리) → 2.6억 · 0.5억 · 134억
+  // 1,000만 원 미만(스카우트 주급 같은 작은 비용)은 0.0억이 되지 않게 만 단위로
   function moneyShort(man) {
+    if (Math.abs(man) < 1000) return Math.round(man).toLocaleString('ko-KR') + '만';
     const v = man / 10000;
     return (Math.abs(v) >= 100 ? Math.round(v).toLocaleString('ko-KR') : v.toFixed(1)) + '억';
   }
