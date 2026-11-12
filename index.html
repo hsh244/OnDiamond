@@ -2610,6 +2610,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
   function moveTo(S, p, tid, date) {
     const num = freeNumber(S, tid, p.num);
     p.team = tid; p.num = num; p.ent = 0; p.joined = date; p.since = S.league.year;
+    if (p.foreign) p.fyr = 0; // 팀을 옮기면 재계약 연차는 처음부터
     delete p.downCal;
   }
   function refreshEntries(S, cal) {
@@ -2842,13 +2843,14 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
       let to = null;
       for (const tid of st) {
         if (tid === p.waiver.from) continue;
-        if (tid === S.user) { if (S.claims && S.claims[pid] && roster(S, tid).length < MAX_ROSTER) { to = tid; break; } }
-        else if (aiWants(S, p, tid)) { to = tid; break; }
+        if (tid === S.user) { if (S.claims && S.claims[pid] && roster(S, tid).length < MAX_ROSTER) { const ff = foreignFits(S, tid, p); if (!ff) { to = tid; break; } SE().msg(S, date, '프런트', '웨이버 영입 실패', p.name + ' 선수를 웨이버로 데려오지 못했습니다. ' + ff + '.'); } }
+        else if (aiWants(S, p, tid) && !foreignFits(S, tid, p)) { to = tid; break; }
       }
       const from = p.waiver.from;
       if (to) {
         S.dead[from] = Math.max(0, (S.dead[from] || 0) - p.waiver.owed);
         delete p.waiver;
+        if (p.foreign) countReplace(S, to);
         moveTo(S, p, to, date);
         log(S, date, 'waiver', team(S, to).name + ', 웨이버로 ' + p.name + ' 영입 (전 소속 ' + team(S, from).name + ')');
         if (to === S.user || from === S.user) SE().msg(S, date, '프런트', '웨이버 결과', team(S, to).name + '가 ' + p.name + ' 선수를 웨이버로 데려갔습니다.' + (from === S.user ? ' 남은 연봉 부담이 없어졌습니다.' : ''));
@@ -2857,7 +2859,12 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
         // 울산 오르카스가 데려갈지
         const uso = roster(S, 'USO');
         const worstU = uso.filter((x) => !!x.pr === !!p.pr).sort((a, b) => a.ca - b.ca)[0];
-        if (L.fteams && (uso.length < 35 || (worstU && p.ca > worstU.ca + 0.5))) {
+        if (p.foreign) {
+          // 외국인·아시아쿼터는 울산으로 가지 않고 한국을 떠남
+          p.team = null; p.ent = 0; p.fa = 1;
+          log(S, date, 'fa', p.name + ', 데려간 구단이 없어 한국을 떠남');
+          if (from === S.user) SE().msg(S, date, '프런트', '웨이버 결과', p.name + ' 선수를 데려간 구단이 없어 한국을 떠났습니다.');
+        } else if (L.fteams && (uso.length < 35 || (worstU && p.ca > worstU.ca + 0.5))) {
           if (uso.length >= 35 && worstU) { worstU.team = null; worstU.fa = 1; }
           moveTo(S, p, 'USO', date);
           p.sal = 3000; p.yrs = 1;
@@ -2883,6 +2890,8 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     if (!p || p.team !== 'USO') return { ok: false, msg: '울산 오르카스 선수가 아닙니다' };
     if ((S.phase !== 'reg' && S.phase !== 'pre') || date > deadline(S.league.year)) return { ok: false, msg: '시즌 중(7월 31일까지)에만 영입할 수 있습니다' };
     if (roster(S, S.user).length >= MAX_ROSTER) return { ok: false, msg: '선수가 이미 ' + MAX_ROSTER + '명입니다' };
+    const ff = foreignFits(S, S.user, p); if (ff) return { ok: false, msg: ff };
+    if (p.foreign) countReplace(S, S.user);
     const fee = usoFee(p);
     S.fees = S.fees || {};
     S.fees[S.user] = (S.fees[S.user] || 0) + fee;
@@ -3239,6 +3248,14 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
       S.frep[t.id] = Math.min(S.frep[t.id] || 0, n);
     }
   }
+  // 예전 저장: 울산에 가 있는 외국인·아시아쿼터는 내보냄 (자리·연봉 상한을 피해 영입되던 문제)
+  function fixUsoForeign(S) {
+    for (const p of Object.values(S.league.players)) if (p.team === 'USO' && p.foreign) { p.team = null; p.ent = 0; p.fa = 1; }
+    if (S.user && !S.fOverMsg) {
+      const c = foreignCount(S, S.user);
+      if (c.f > F_MAX || c.a > A_MAX) { S.fOverMsg = 1; SE().msg(S, SE().currentDate(S), '프런트', '외국인 선수 정원 초과', '외국인 선수가 정원(' + F_MAX + '명, 아시아쿼터 ' + A_MAX + '명)을 넘었습니다. 한 명을 방출하거나 트레이드해 주세요. 정원을 넘은 상태에서는 새 외국인 선수를 데려올 수 없습니다.'); }
+    }
+  }
   function setupForeign(S, rng) {
     for (let i = 0; i < 27; i++) makeCandidate(S, rng, 'F', true);
     for (let i = 0; i < 19; i++) makeCandidate(S, rng, 'F', false);
@@ -3251,6 +3268,20 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
   function salaryOf(p) { return p.ask * WON_PER_MANUSD; }
   // ---- 외국인 연봉 총액 상한: 외국인 3명 합계 40억 (아시아쿼터 제외) ----
   const F_TOTAL_CAP = 400000;
+  // KBO 규정: 기존 외국인 선수와 재계약하면 재계약 연차마다 합계 상한이 10만 달러씩 늘어남 (1년 차 +10만, 2년 차 +20만 …)
+  const F_RE_BONUS = 10; // 만 달러
+  function reYears(S, p) { if (!p || p.foreign !== 1) return 0; return p.fyr != null ? p.fyr : Math.max(0, S.league.year - (p.since || S.league.year)); }
+  function fCapBonus(S, tid) { return roster(S, tid).filter((p) => p.foreign === 1).reduce((a, p) => a + reYears(S, p), 0) * F_RE_BONUS * WON_PER_MANUSD; }
+  function fCap(S, tid) { return F_TOTAL_CAP + fCapBonus(S, tid); }
+  // 웨이버·울산 영입처럼 이미 계약이 있는 외국인을 데려올 때: 자리·유형·교체 횟수·연봉 합계 확인
+  function foreignFits(S, tid, p) {
+    if (!p.foreign) return null;
+    const fc = foreignCheck(S, tid, [], [p.id]); if (fc) return fc;
+    if (isReplace(S, tid) && ((S.frep && S.frep[tid]) || 0) >= F_REPLACE) return '올해 외국인 교체 ' + F_REPLACE + '번을 모두 썼습니다';
+    if (p.foreign === 1 && fTotal(S, tid) + (p.sal || 0) > fCap(S, tid)) return '외국인 연봉 합계 상한(' + C.money(fCap(S, tid)) + ')을 넘습니다';
+    return null;
+  }
+  function countReplace(S, tid) { if (isReplace(S, tid)) { S.frep = S.frep || {}; S.frep[tid] = (S.frep[tid] || 0) + 1; } }
   function fTotal(S, tid) { return roster(S, tid).filter((p) => p.foreign === 1).reduce((a, p) => a + (p.sal || 0), 0); }
   // ---- 에이전트 협상 + 다른 구단 가로채기 (사용자) ----
   function negoRng(S, p) { p.nego = p.nego || { n: 0 }; return new RNG(((S.rng ^ (p.id * 2654435761) ^ ((p.nego.n + 1) * 40503)) >>> 0) || 1); }
@@ -3320,7 +3351,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     const fc = foreignCheck(S, tid, [], [p.id]);
     if (fc) return fc;
     if (isReplace(S, tid) && (S.frep[tid] || 0) >= F_REPLACE) return '올해 외국인 교체 ' + F_REPLACE + '번을 모두 썼습니다';
-    if (p.pool === 'F' && fTotal(S, tid) + (amt != null ? amt : p.ask) * WON_PER_MANUSD > F_TOTAL_CAP) return '외국인 3명 연봉 합계 상한(40억)을 넘습니다 (지금 ' + C.money(fTotal(S, tid)) + ')';
+    if (p.pool === 'F' && fTotal(S, tid) + (amt != null ? amt : p.ask) * WON_PER_MANUSD > fCap(S, tid)) return '외국인 3명 연봉 합계 상한(' + C.money(fCap(S, tid)) + ')을 넘습니다 (지금 ' + C.money(fTotal(S, tid)) + ')';
     return null;
   }
   function signForeign(S, tid, pid, date, quiet) {
@@ -3402,7 +3433,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     if (S.frep) foreignWeekly(S, date, rng);
   }
 
-  G.OD.Market = { posCheck, migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
+  G.OD.Market = { reYears, fCap, fCapBonus, F_RE_BONUS, foreignFits, fixUsoForeign, posCheck, migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
     acceptOffer, declineOffer, MAX_CASH, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
     seasonLeft, refreshEntries, log, moveTo, makeCandidate, setupManagers, mgrRating, mgrText, hireManager, weekly, fairSalary,
     F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, regLabel, migrateScouts, FREG, DREG, HREG, UREG, SCOUT_H, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
@@ -5756,7 +5787,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     for (const pid of S.off.foreign.list) {
       const p = P[pid];
       if (!p.fre) continue;
-      if (p.fre.dec === 'keep') { p.sal = p.fre.ask * MK().WON_PER_MANUSD; p.yrs = 1; MK().log(S, S.off.date, 'foreign', team(S, p.team).name + ', ' + p.name + ' 재계약 (' + p.fre.ask + '만 달러)'); }
+      if (p.fre.dec === 'keep') { p.fyr = MK().reYears(S, p) + 1; p.sal = p.fre.ask * MK().WON_PER_MANUSD; p.yrs = 1; MK().log(S, S.off.date, 'foreign', team(S, p.team).name + ', ' + p.name + ' 재계약 (' + p.fre.ask + '만 달러)'); }
       else { MK().log(S, S.off.date, 'foreign', team(S, p.team).name + ', ' + p.name + ' 결별'); p.team = null; p.ent = 0; p.gone = 1; }
       delete p.fre;
     }
@@ -6063,7 +6094,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     else { const c = MK().foreignCount(S, S.user); SE().msg(S, d0, '스카우트팀', '외국인 선수 영입', '개막 전입니다. 현재 외국인 ' + c.f + '/3명, 아시아쿼터 ' + c.a + '/1명.'); }
   }
 
-  G.OD.Offseason = { STEPS, FA_ROUNDS, DRAFT_ROUNDS, MAX_ROSTER, startOffseason, advanceStep, canAdvance, develop, warLike,
+  G.OD.Offseason = { closeForeign, STEPS, FA_ROUNDS, DRAFT_ROUNDS, MAX_ROSTER, startOffseason, advanceStep, canAdvance, develop, warLike,
     userOffer, cancelOffer, runFARound, compOptions, chooseComp, demandFor, budgetFor,
     decideForeign, foreignPending, onClock, slotOf, protectToggle, protectSubmit, postingDecide, postingList, legendOf, peakOf, makeDraftClass, draftClass, draftPick, draftAdvance, setUserSalary, rosterExcess, cutList, cutToggle, cutLeft, perfScore };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -6807,6 +6838,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     if (!S.scoutDate) S.scoutDate = SE.currentDate(S);
     if (MK.migrateScouts) MK.migrateScouts(S);
     if (MK.migrateForeign) MK.migrateForeign(S);
+    if (MK.fixUsoForeign) MK.fixUsoForeign(S);
     for (const t of S.league.teams) { const R = Object.values(S.league.players).filter((x) => x.team === t.id); const used = new Set(R.map((x) => x.num)); for (const x of R) if (typeof x.num !== 'number' || isNaN(x.num)) { let n = 1 + Math.floor(Math.random() * 98); while (used.has(n)) n = (n + 1) % 100; used.add(n); x.num = n; } }
     if (OD.PPM) OD.PPM.ensureAll(S);
     if (OD.Facility) { OD.Facility.st(S); OD.Facility.sync(S); }
@@ -7720,7 +7752,7 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
     const dl = MK.fDeadline(S.league.year);
     let h = hijackCard() + '<section class="card"><div class="fstat">' +
       '<div><div class="eyebrow">' + (isF ? '외국인 선수' : '아시아쿼터') + '</div><b class="disp" style="font-size:28px">' + (isF ? c.f + ' / ' + MK.F_MAX + '명' : c.a + ' / ' + MK.A_MAX + '명') + '</b>' + (isF ? '<div class="muted" style="font-size:13px">투수 ' + c.fp + ' · 타자 ' + c.fb + ' (같은 유형 최대 ' + MK.F_SAME + '명)</div>' : '<div class="muted" style="font-size:13px">아시아 국적·호주, 아시아 리그 출신</div>') + '</div>' +
-      '<dl class="kv"><dt>신규 계약 상한</dt><dd class="num">' + (isF ? MK.F_CAP : MK.A_CAP) + '만 달러</dd>' + (isF ? '<dt>연봉 합계</dt><dd class="num' + (MK.fTotal(S, S.user) > MK.F_TOTAL_CAP * 0.85 ? ' lo' : '') + '">' + C.money(MK.fTotal(S, S.user)) + ' / 40억</dd>' : '') + '<dt>영입 마감</dt><dd>' + C.fmtDate(dl) + '</dd><dt>시즌 중 교체</dt><dd>' + (S.fStarted ? (MK.F_REPLACE - used) + '번 남음 (외국인·아시아쿼터 합산)<br><small class="muted">' + (MK.isReplace(S, S.user) ? '지금 영입하면 교체 1번을 씁니다' : '빈 자리를 채우는 영입은 교체로 치지 않음') + '</small>' : '개막 전 영입은 교체로 치지 않음') + '</dd></dl></div>';
+      '<dl class="kv"><dt>신규 계약 상한</dt><dd class="num">' + (isF ? MK.F_CAP : MK.A_CAP) + '만 달러</dd>' + (isF ? '<dt>연봉 합계</dt><dd class="num' + (MK.fTotal(S, S.user) > MK.fCap(S, S.user) * 0.85 ? ' lo' : '') + '">' + C.money(MK.fTotal(S, S.user)) + ' / ' + C.money(MK.fCap(S, S.user)) + '</dd><dt>상한 내역</dt><dd>기본 40억' + (MK.fCapBonus(S, S.user) ? ' + 재계약 증액 ' + C.money(MK.fCapBonus(S, S.user)) + '<br><small class="muted">' + LG.teamPlayers(S.league, S.user).filter((p) => MK.reYears(S, p) > 0).map((p) => esc(p.name) + ' 재계약 ' + MK.reYears(S, p) + '년 차 +' + (MK.reYears(S, p) * MK.F_RE_BONUS) + '만 달러').join(' · ') + '</small>' : '<br><small class="muted">재계약한 선수는 연차마다 +' + MK.F_RE_BONUS + '만 달러</small>') + '</dd>' : '') + '<dt>영입 마감</dt><dd>' + C.fmtDate(dl) + '</dd><dt>시즌 중 교체</dt><dd>' + (S.fStarted ? (MK.F_REPLACE - used) + '번 남음 (외국인·아시아쿼터 합산)<br><small class="muted">' + (MK.isReplace(S, S.user) ? '지금 영입하면 교체 1번을 씁니다' : '빈 자리를 채우는 영입은 교체로 치지 않음') + '</small>' : '개막 전 영입은 교체로 치지 않음') + '</dd></dl></div>';
     if (!S.fStarted) h += '<div class="scout-note" style="margin-top:12px">' + (S.phase === 'pre' ? '2월 1일 스프링캠프가 출발하면 다른 9개 구단이 남은 후보로 영입을 마칩니다. 1월에는 \'1주 진행\'으로 스카우트 정보를 모으면서 고를 수 있습니다.' : '개막 전입니다. 지금 먼저 고르세요. 첫 경기를 진행하면 다른 9개 구단이 남은 후보로 영입을 마칩니다.') + '</div>';
     h += '</section>';
     // 우리 선수
@@ -8236,12 +8268,12 @@ table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0
   function offForeign() {
     const P = S.league.players;
     const mine = S.off.foreign.list.map((id) => P[id]).filter((p) => p && p.team === S.user && p.fre);
-    let h = '<section class="card"><div class="card-h"><h2>외국인 재계약</h2></div><p class="muted" style="font-size:13px;margin:0">재계약에는 신규 계약 상한이 없습니다. 성적이 좋으면 몸값이 오릅니다. 결별하면 새 시즌 개막 전에 후보 중에서 다시 고를 수 있습니다.</p></section>';
+    let h = '<section class="card"><div class="card-h"><h2>외국인 재계약</h2></div><p class="muted" style="font-size:13px;margin:0">재계약에는 신규 계약 상한이 없습니다. 재계약하면 그 선수의 재계약 연차마다 외국인 연봉 합계 상한이 10만 달러(1억 4,000만)씩 늘어납니다. 성적이 좋으면 몸값이 오릅니다. 결별하면 새 시즌 개막 전에 후보 중에서 다시 고를 수 있습니다.</p></section>';
     if (!mine.length) return h + '<section class="card"><div class="empty">재계약할 외국인 선수가 없습니다. 새 시즌 개막 전에 이적시장에서 영입하세요.</div></section>';
     for (const p of mine) {
       const s = p.st, f = p.fre;
       const rec = p.pr ? s.w + '승 ' + s.l + '패 · ERA ' + C.era(s.er, s.outs) + ' · ' + C.ipStr(s.outs) + '이닝' : C.avg3(s.h, s.ab) + ' · ' + s.hr + '홈런 · OPS ' + (s.ab ? (SE.obp(s) + SE.slg(s)).toFixed(3).replace(/^0/, '') : '-');
-      h += '<section class="card"><div class="card-h"><h2>' + pname(p.id) + '</h2>' + starsHTML(p.ca) + '</div><dl class="kv"><dt>올해 기록</dt><dd class="num">' + rec + '</dd><dt>평가</dt><dd>' + (f.perf >= 0.8 ? '리그 정상급' : f.perf >= 0.2 ? '제 몫을 함' : f.perf > -0.3 ? '아쉬움' : '실패') + '</dd><dt>올해 연봉</dt><dd class="num">' + Math.round(p.sal / MK.WON_PER_MANUSD) + '만 달러</dd><dt>재계약 요구</dt><dd class="num">' + f.ask + '만 달러 (' + C.money(f.ask * MK.WON_PER_MANUSD) + ')</dd></dl>' +
+      h += '<section class="card"><div class="card-h"><h2>' + pname(p.id) + '</h2>' + starsHTML(p.ca) + '</div><dl class="kv"><dt>올해 기록</dt><dd class="num">' + rec + '</dd><dt>재계약 연차</dt><dd>재계약하면 ' + (MK.reYears(S, p) + 1) + '년 차 · 연봉 합계 상한 +' + ((MK.reYears(S, p) + 1) * MK.F_RE_BONUS) + '만 달러</dd><dt>평가</dt><dd>' + (f.perf >= 0.8 ? '리그 정상급' : f.perf >= 0.2 ? '제 몫을 함' : f.perf > -0.3 ? '아쉬움' : '실패') + '</dd><dt>올해 연봉</dt><dd class="num">' + Math.round(p.sal / MK.WON_PER_MANUSD) + '만 달러</dd><dt>재계약 요구</dt><dd class="num">' + f.ask + '만 달러 (' + C.money(f.ask * MK.WON_PER_MANUSD) + ')</dd></dl>' +
         '<div class="sim-row" style="margin-top:12px"><button class="btn' + (f.dec === 'keep' ? ' primary' : '') + '" data-fre="keep:' + p.id + '">재계약</button><button class="btn' + (f.dec === 'drop' ? ' danger' : ' ghost') + '" data-fre="drop:' + p.id + '">결별</button></div></section>';
     }
     return h;
