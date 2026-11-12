@@ -162,6 +162,8 @@ b, strong { font-weight: 600; }
 #menuBtn svg { width: 20px; height: 20px; }
 .top-team { display: flex; gap: 10px; align-items: center; min-width: 0; }
 .top-team b { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-short { display: none; }
+@media (max-width: 480px) { .tt-full { display: none; } .tt-short { display: inline; } }
 .top-date { margin-left: auto; text-align: right; font-size: 13px; color: var(--muted); line-height: 1.3; white-space: nowrap; }
 #setBtn { flex: none; display: grid; place-items: center; width: 40px; height: 40px; margin-left: 12px; border-radius: 10px; border: 1px solid var(--line2); background: var(--panel2); color: var(--muted); cursor: pointer; }
 #setBtn svg { width: 20px; height: 20px; }
@@ -287,15 +289,18 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 /* 단장실 요약 타일 */
 .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 @media (min-width: 900px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
-.tile { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 150px; padding: 12px 12px 40px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.tile { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 150px; padding: 12px 12px 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
 .tile.todo { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
 .t-goal { font-weight: 600; font-size: 14px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .tile-h { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; }
 .tile-h h2 { font-family: var(--f-display); font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile-h .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
 .tile-b { min-width: 0; font-size: 13px; display: grid; gap: 6px; align-content: start; }
-.tile-more { position: absolute; right: 6px; bottom: 6px; min-height: 30px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--accent); font-size: 13px; font-weight: 500; cursor: pointer; }
-.tile-more:hover { background: var(--panel2); }
+.tile-more { margin-top: auto; align-self: flex-end; margin-right: -6px; min-height: 36px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--accent); font-size: 13px; font-weight: 500; cursor: pointer; }
+.tile-more::after { content: ''; position: absolute; inset: 0; border-radius: 12px; }
+.tile:has(.tile-more):hover { border-color: var(--line2); }
+.tile:has(.tile-more:active) { background: var(--panel2); }
+.tile .tile-b button, .tile .tile-h button { position: relative; z-index: 1; }
 .t-sub { font-size: 12px; line-height: 1.4; }
 .t-vs { display: flex; gap: 8px; align-items: center; min-width: 0; }
 .t-vs > div { display: grid; min-width: 0; }
@@ -315,7 +320,7 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 .t-ldr dd { font-family: var(--f-body); font-weight: 400; }
 .t-ldr dd b { font-family: var(--f-num); }
 .t-msgs { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.t-msgs button { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 7px; align-items: center; width: 100%; padding: 4px 2px; border: 0; background: transparent; color: var(--muted); font-size: 13px; text-align: left; cursor: pointer; border-radius: 6px; }
+.t-msgs button { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 7px; align-items: center; width: 100%; min-height: 32px; padding: 4px 2px; border: 0; background: transparent; color: var(--muted); font-size: 13px; text-align: left; cursor: pointer; border-radius: 6px; }
 .t-msgs button.unread { color: var(--fg); font-weight: 500; }
 .t-msgs button:hover { background: var(--panel2); }
 .t-msgs span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -363,6 +368,12 @@ table.t tr.me td { background: color-mix(in srgb, var(--accent) 10%, transparent
 
 /* ---------- 표 ---------- */
 .tbl-wrap { overflow-x: auto; margin: 0 -4px; }
+.tbl-wrap.scr { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+table.t.stk th:first-child, table.t.stk td:first-child { position: sticky; left: 0; z-index: 1; background: var(--panel); }
+/* 누름 반응: 색만 짧게 바뀌고, 버튼은 살짝 눌림 */
+.btn, .chip, .seg-b, .rail-btn, .prow, .tile, .gm, #setBtn, #menuBtn { transition: background-color .12s ease-out, border-color .12s ease-out, color .12s ease-out; }
+.btn:not(:disabled):active, .chip:active, .seg-b:active { transform: scale(.98); }
+@media (prefers-reduced-motion: reduce) { .btn, .chip, .seg-b, .rail-btn, .prow, .tile, .gm, #setBtn, #menuBtn { transition: none; } .btn:not(:disabled):active, .chip:active, .seg-b:active { transform: none; } }
 table.t { border-collapse: collapse; width: 100%; font-size: 13px; }
 table.t th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 6px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 table.t td { text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; font-family: var(--f-num); font-variant-numeric: tabular-nums; font-size: 13px; }
@@ -617,7 +628,7 @@ table.t tr.tot td { font-weight: 600; color: var(--fg); border-top: 1px solid va
 .mv { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); align-items: start; }
 .mv:last-child { border-bottom: 0; }
 .mv .d { color: var(--muted); font-size: 13px; padding-top: 4px; }
-.mv-p { display: inline-flex; gap: 6px; align-items: center; border: 0; background: none; color: var(--fg); padding: 3px 8px 3px 0; cursor: pointer; font-size: 13px; }
+.mv-p { display: inline-flex; gap: 6px; align-items: center; min-height: 32px; border: 0; background: none; color: var(--fg); padding: 3px 8px 3px 0; cursor: pointer; font-size: 13px; }
 .mv-p:hover { color: var(--accent); }
 
 /* 개인 기록 */
@@ -6673,6 +6684,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
   const GROUPS = {
     team: [['squad', '1군'], ['lineup', '라인업'], ['fut', '퓨처스'], ['mil', '병역'], ['disp', '파견']],
     trans: [['mkt', '이적시장'], ['scout', '스카우트']],
+    club: [['clubm', '구단주·팬'], ['fac', '시설'], ['fin', '재정']],
     league: [['sched', '일정·결과'], ['stand', '순위'], ['rec', '기록']],
   };
   IC.team = IC.squad; IC.trans = IC.mkt; IC.league = IC.sched;
@@ -6771,6 +6783,13 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if ($('#rail')) $('#rail').scrollTop = st.rail;
     window.scrollTo(0, st.y);
   }
+  // 옆으로 넘치는 표에 오른쪽 흐림 표시 (끝까지 밀면 사라짐)
+  function scrollHints(root) {
+    root.querySelectorAll('.tbl-wrap').forEach((w) => {
+      const upd = () => { w.classList.toggle('scr', w.scrollWidth > w.clientWidth + 2 && w.scrollLeft + w.clientWidth < w.scrollWidth - 2); };
+      upd(); w.addEventListener('scroll', upd, { passive: true });
+    });
+  }
   function render() {
     if (!S) return;
     const m = $('#main');
@@ -6791,13 +6810,16 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     else if (view === 'camp') m.innerHTML = campHTML();
     else if (view === 'scout') m.innerHTML = scoutHTML();
     else if (view === 'mil') m.innerHTML = milHTML();
-    else if (view === 'club') m.innerHTML = clubHTML();
+    else if (view === 'clubm' || view === 'club') m.innerHTML = clubHTML('main');
+    else if (view === 'fac') m.innerHTML = clubHTML('fac');
+    else if (view === 'fin') m.innerHTML = clubHTML('fin');
     else if (view === 'mgr') m.innerHTML = mgrHTML();
     else if (view === 'rec') m.innerHTML = recHTML();
     else if (view === 'sched') m.innerHTML = schedHTML();
     else if (view === 'stand') m.innerHTML = standHTML();
     else if (view === 'settings') m.innerHTML = settingsHTML();
     if (g && GROUPS[g]) m.insertAdjacentHTML('afterbegin', subnavHTML(g));
+    scrollHints(m);
     if (st) restoreScroll(m, st);
   }
   function renderRail() {
@@ -6813,7 +6835,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const t = team(S.user), r = t.rec;
     const phase = S.phase === 'pre' ? (S.pre && S.pre.stage === 'plan' ? '비시즌' : S.pre && S.pre.stage === 'exh' ? '시범경기' : '스프링캠프') : S.phase === 'reg' ? '정규시즌' : S.phase === 'post' ? '포스트시즌' : S.phase === 'off' ? '오프시즌' : '시즌 종료';
     $('#top').innerHTML = '<button id="menuBtn" data-act="menu" aria-label="메뉴 열기">' + IC.menu + '</button>' +
-      '<div class="top-team">' + patch(t, 30) + '<b>' + esc(LG.teamName(t)) + '</b></div>' +
+      '<div class="top-team">' + patch(t, 30) + '<b><span class="tt-full">' + esc(LG.teamName(t)) + '</span><span class="tt-short" aria-hidden="true">' + esc(t.name) + '</span></b></div>' +
       '<div class="top-date"><b class="num">' + C.fmtDate(SE.currentDate(S), true) + '</b>' + S.league.year + ' ' + phase + ' · <span class="num">' + r.w + '-' + r.l + '-' + r.t + '</span></div>' +
       '<button id="setBtn" class="' + (view === 'settings' ? 'on' : '') + '" data-act="settings-toggle" aria-label="' + (view === 'settings' ? '설정 닫고 돌아가기' : '설정') + '" aria-pressed="' + (view === 'settings') + '" title="' + (view === 'settings' ? '설정 닫기' : '설정') + '">' + (view === 'settings' ? IC.close : IC.settings) + '</button>';
   }
@@ -6849,11 +6871,11 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 0. 할 일 타일 (개막 전에만 나오는 결정들)
     if (S.phase === 'pre' && S.pre) {
       const d = S.dir;
-      if (d && d.year === S.league.year) T.push(tile('구단주 과제', '<div class="t-goal">' + esc(d.goals[0].text) + '</div><div class="t-sub muted">11월 1주 평가 · 실패 시 예산 삭감</div>', 'data-nav="club"', { cls: 'todo', badge: '<span class="badge acc">과제</span>' }));
+      if (d && d.year === S.league.year) T.push(tile('구단주 과제', '<div class="t-goal">' + esc(d.goals[0].text) + '</div><div class="t-sub muted">11월 1주 평가 · 실패 시 예산 삭감</div>', 'data-nav="clubm"', { cls: 'todo', badge: '<span class="badge acc">과제</span>' }));
       if (S.fin && FI.BCAST) {
         const cur = FI.bcastOf(S, S.user);
         T.push(tile('중계권 계약', cur ? '<div class="t-goal">' + esc(FI.BCAST[cur].name) + ' 계약 완료</div><div class="t-sub muted">' + esc(FI.BCAST[cur].note) + '</div>' : '<div class="t-goal">아직 계약 안 함</div><div class="t-sub muted">2월 1일까지 정하지 않으면 MBC와 자동 계약</div>',
-          'data-nav="club"', { cls: cur ? '' : 'todo', badge: cur ? '<span class="badge">완료</span>' : '<span class="badge acc">할 일</span>' }));
+          'data-nav="clubm"', { cls: cur ? '' : 'todo', badge: cur ? '<span class="badge">완료</span>' : '<span class="badge acc">할 일</span>' }));
       }
       const stg = OD.Camp.STAGES.find((x) => x.key === S.pre.stage), nx = OD.Camp.nextStage(S);
       T.push(tile('스프링캠프', '<div class="t-goal">지금: ' + esc(stg ? stg.name : '-') + '</div><div class="t-sub muted">' + (nx ? '다음 ' + esc(nx.name) + ' · ' + C.fmtDate(OD.Camp.stageDate(S, nx.key)) : '개막 준비 완료') + '</div>', 'data-nav="camp"'));
@@ -6894,7 +6916,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     // 5. 구단
     if (S.owner) {
       T.push(tile('구단', '<dl class="t-kv"><dt>구단주 신뢰</dt><dd class="' + gaugeCls(S.owner.trust) + '">' + Math.round(S.owner.trust) + '</dd><dt>팬 여론</dt><dd class="' + gaugeCls(t.fans.mood) + '">' + Math.round(t.fans.mood) + '</dd>' +
-        (FI.cash ? '<dt>보유 현금</dt><dd>' + C.moneyShort(Math.round(FI.cash(S, S.user))) + '</dd>' : '') + '</dl>', 'data-nav="club"'));
+        (FI.cash ? '<dt>보유 현금</dt><dd>' + C.moneyShort(Math.round(FI.cash(S, S.user))) + '</dd>' : '') + '</dl>', 'data-nav="clubm"'));
     }
     // 6. 선수단
     const mine = LG.teamPlayers(S.league, S.user);
@@ -7240,7 +7262,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const list = pit ? all.filter((p) => p.pr && ent.has(p.id)).sort((a, b) => orderP(t, a) - orderP(t, b))
       : all.filter((p) => !p.pr && ent.has(p.id)).sort((a, b) => LG.POS.indexOf(a.pos) - LG.POS.indexOf(b.pos) || b.ca - a.ca);
     const sorted = applySort(list, 'sq', (p, k) => k === 'name' ? p.name : k === 'role' ? (pit ? orderP(t, p) : LG.POS.indexOf(p.pos)) : k === 'age' ? p.age : k === 'ca' ? p.ca : k === 'pa' ? p.pa : k === 'sal' ? p.sal : null);
-    h += '<section class="card"><div class="tbl-wrap"><table class="t"><thead><tr>' + sortTh('sq', 'name', '선수', 'l') + sortTh('sq', 'role', pit ? '역할' : '포지션', 'l') + sortTh('sq', 'age', '나이') + sortTh('sq', 'ca', '현재', 'l') + sortTh('sq', 'pa', '잠재력', 'l');
+    h += '<section class="card"><div class="tbl-wrap"><table class="t stk"><thead><tr>' + sortTh('sq', 'name', '선수', 'l') + sortTh('sq', 'role', pit ? '역할' : '포지션', 'l') + sortTh('sq', 'age', '나이') + sortTh('sq', 'ca', '현재', 'l') + sortTh('sq', 'pa', '잠재력', 'l');
     h += pit ? '<th>경기</th><th>승-패</th><th>세</th><th>홀</th><th>이닝</th><th>ERA</th><th>삼진</th>' : '<th>경기</th><th>타율</th><th>홈런</th><th>타점</th><th>도루</th><th>OPS</th>';
     h += sortTh('sq', 'sal', '연봉') + '</tr></thead><tbody>';
     for (const p of sorted) {
@@ -7681,7 +7703,8 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     h += '</div>' + (pick ? '<div class="sim-row" style="margin-top:10px"><button class="btn primary" data-bcastgo="' + pick + '">' + FI.BCAST[pick].name + '와 계약하기</button></div>' : '') + '</section>';
     return h;
   }
-  function clubHTML() {
+  // 구단 메뉴: 구단주·팬 / 시설 / 재정 세 갈래
+  function clubHTML(part) {
     if (!S.fin || !S.owner) return '<div class="wrap"><section class="card"><div class="empty">이 저장 파일에는 재정 정보가 없습니다. 새 게임을 시작해 주세요.</div></section></div>';
     const t = team(S.user), f = S.fin[S.user], o = S.owner;
     const pay = LG.payroll(S.league, S.user);
@@ -7690,15 +7713,14 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     const attRank = S.league.teams.map((x) => ({ x, a: S.fin[x.id].attN ? S.fin[x.id].att / S.fin[x.id].attN : 0 })).sort((a, b) => b.a - a.a);
     const myAttRank = attRank.findIndex((y) => y.x.id === S.user) + 1;
     const cap = FI.CAPACITY[S.user];
-    let h = '<div class="wrap">' + directiveCard(true) + bcastCard(true) + '<div class="grid2 even"><section class="card"><div class="card-h"><h2>구단주</h2><span class="muted" style="font-size:13px">' + esc(t.city) + ' 모기업</span></div>' + gauge(o.trust, '신뢰도') +
+    let h = directiveCard(true) + bcastCard(true) + '<div class="grid2 even"><section class="card"><div class="card-h"><h2>구단주</h2><span class="muted" style="font-size:13px">' + esc(t.city) + ' 모기업</span></div>' + gauge(o.trust, '신뢰도') +
       '<dl class="kv" style="margin-top:12px"><dt>올해 목표</dt><dd>' + esc(t.goal.text) + '</dd><dt>연봉 한도</dt><dd class="num' + (pay > o.limit ? ' lo' : '') + '">' + C.money(pay) + ' / ' + C.money(o.limit) + '</dd><dt>모기업 지원금</dt><dd class="num">연 ' + C.money(FI.supportOf(S, t)) + (FI.supMult(t) < 1 ? ' <small class="muted">지난해 흑자로 ' + Math.round((1 - FI.supMult(t)) * 100) + '% 감액</small>' : '') + '</dd><dt>보유 현금</dt><dd class="num' + (FI.cash(S, S.user) < 0 ? ' lo' : '') + '">' + C.money(Math.round(FI.cash(S, S.user))) + '</dd><dt>중계권</dt><dd>' + (FI.bcastOf(S, S.user) || '미계약') + '</dd></dl>' +
       '<p class="muted" style="font-size:13px;margin:10px 0 0">신뢰도는 매달 성적·팬 여론·재정으로 조금씩 바뀌고, 시즌이 끝나면 크게 평가됩니다. 15 아래로 떨어지면 해임됩니다. 연봉 한도(경쟁균형세 기준)를 넘는 FA 계약·트레이드는 구단주가 승인하지 않습니다.</p>' +
       (o.hist.length ? '<div class="sect">지난 평가</div><div class="news">' + o.hist.slice().reverse().slice(0, 4).map((e) => '<div class="nw nw2"><span><b>' + e.year + '</b> 신뢰도 ' + e.before + ' → ' + e.after + ' · ' + e.parts.map((x) => esc(x[0]) + ' ' + (x[1] > 0 ? '+' : '') + x[1]).join(', ') + '</span></div>').join('') + '</div>' : '') + '</section>';
     h += '<section class="card"><div class="card-h"><h2>팬</h2><span class="muted" style="font-size:13px">' + esc(t.park) + ' · ' + cap.toLocaleString('ko-KR') + '석</span></div>' + gauge(t.fans.mood, '팬 여론') +
       '<dl class="kv" style="margin-top:12px"><dt>평균 관중</dt><dd class="num">' + (attAvg ? attAvg.toLocaleString('ko-KR') + '명 (' + Math.round(attAvg / cap * 100) + '%, 리그 ' + myAttRank + '위)' : '아직 홈경기 없음') + '</dd></dl>' +
       '<div class="sect">팬 게시판</div>' + ((S.fan || []).length ? '<div class="news">' + S.fan.slice(0, 8).map((x) => '<div class="nw"><span class="d num">' + C.fmtDate(x.date) + '</span><span></span><span>' + esc(x.text) + '</span></div>').join('') + '</div>' : '<div class="empty">아직 반응이 없습니다</div>') + '</section></div>';
-    h += facHTML();
-    h += parksHTML();
+    const hMain = h; h = '';
     // 장부
     const row = (lab, v, neg) => '<tr><td class="l txt">' + lab + '</td><td class="' + (neg ? 'lo' : '') + '">' + (neg && v ? '-' : '') + eok(v) + '</td></tr>';
     h += '<div class="grid2 even"><section class="card"><div class="card-h"><h2>' + f.year + ' 재정</h2><span class="muted" style="font-size:13px">' + (S.phase === 'reg' ? '지금까지' : '') + '</span></div>' +
@@ -7708,9 +7730,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
       '<p class="muted" style="font-size:13px;margin:10px 0 0">연봉·운영비·중계권·스폰서·지원금은 정규시즌 동안 매일 나눠 들어오고 나갑니다. 경쟁균형세와 포스트시즌 배당금은 시즌이 끝날 때 정산합니다.</p></section>';
     h += '<section class="card"><div class="card-h"><h2>구단별 관중·재정</h2></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">구단</th><th>평균 관중</th><th>순이익</th><th>보유 현금</th><th>여론</th></tr></thead><tbody>' +
       attRank.map(({ x, a }) => { const fx = S.fin[x.id]; const nx = FI.sum(fx.rev) - FI.sum(fx.exp); return '<tr' + (x.id === S.user ? ' class="me"' : '') + '><td class="l txt"><span class="tn-cell">' + patch(x, 20) + esc(x.name) + '</span></td><td>' + (a ? Math.round(a).toLocaleString('ko-KR') : '-') + '</td><td class="' + (nx >= 0 ? '' : 'lo') + '">' + C.moneyShort(Math.round(nx)) + '</td><td>' + C.moneyShort(Math.round(FI.cash(S, x.id))) + '</td><td>' + Math.round(x.fans.mood) + '</td></tr>'; }).join('') + '</tbody></table></div>' +
-      ((f.hist || []).length ? '<div class="sect">지난 시즌</div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">연도</th><th>수입</th><th>지출</th><th>순이익</th><th>평균 관중</th></tr></thead><tbody>' + f.hist.slice().reverse().map((x) => '<tr><td class="l">' + x.year + '</td><td>' + C.moneyShort(Math.round(x.rev)) + '</td><td>' + C.moneyShort(Math.round(x.exp)) + '</td><td class="' + (x.net >= 0 ? '' : 'lo') + '">' + C.moneyShort(Math.round(x.net)) + '</td><td>' + x.att.toLocaleString('ko-KR') + '</td></tr>').join('') + '</tbody></table></div>' : '') + '</section></div></div>';
+      ((f.hist || []).length ? '<div class="sect">지난 시즌</div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">연도</th><th>수입</th><th>지출</th><th>순이익</th><th>평균 관중</th></tr></thead><tbody>' + f.hist.slice().reverse().map((x) => '<tr><td class="l">' + x.year + '</td><td>' + C.moneyShort(Math.round(x.rev)) + '</td><td>' + C.moneyShort(Math.round(x.exp)) + '</td><td class="' + (x.net >= 0 ? '' : 'lo') + '">' + C.moneyShort(Math.round(x.net)) + '</td><td>' + x.att.toLocaleString('ko-KR') + '</td></tr>').join('') + '</tbody></table></div>' : '') + '</section></div>';
+    const hFin = h; h = '';
     if ((t.retiredNums || []).length) h += '<section class="card"><div class="card-h"><h2>영구결번</h2></div><div class="nums">' + t.retiredNums.map((x) => '<div class="rnum"><b class="num">' + x.num + '</b><span>' + esc(x.name) + '</span><small class="muted">' + x.year + '</small></div>').join('') + '</div></section>';
-    return h;
+    return '<div class="wrap">' + (part === 'fac' ? facHTML() + parksHTML() : part === 'fin' ? hFin : hMain + h) + '</div>';
   }
   function coachHTML() {
     const t = team(S.user);
@@ -8620,6 +8643,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     el.dataset.key = key;
     el.innerHTML = '<div class="sheet-in' + (html.startsWith('<div class="fm">') ? ' pfx' : '') + '" role="dialog" aria-modal="true"><div class="sheet-x"><button data-act="sheet-close" aria-label="닫기">' + IC.x + '</button></div><div class="sheet-body">' + html + '</div></div>';
     el.hidden = false; el.scrollTop = st ? st.y : 0;
+    scrollHints(el);
     if (st) { const els = el.querySelectorAll(SCROLLERS); st.inner.forEach((v, i) => { if (els[i]) { els[i].scrollTop = v[0]; els[i].scrollLeft = v[1]; } }); }
     document.body.style.overflow = 'hidden';
   }
@@ -8716,7 +8740,7 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
     if (d.setdiff && S && C.DIFF[d.setdiff]) { S.diff = d.setdiff; for (const t of S.league.teams) delete t.pw; save(); toast('난이도를 ' + C.DIFF[d.setdiff].name + '(으)로 바꿨습니다.'); keepScroll(render); return; }
     if (d.amreg) { ui.amReg = d.amreg; keepScroll(render); return; }
     if (d.amlvl) { ui.amLvl = d.amlvl; ui.amReg = 'all'; keepScroll(render); return; }
-    if (d.nav) { document.body.classList.remove('menu-open'); closeSheet(); view = navTarget(d.nav); ui.confirmNew = false; render(); window.scrollTo(0, 0); return; }
+    if (d.nav) { document.body.classList.remove('menu-open'); closeSheet(); view = navTarget(d.nav); ui.confirmNew = false; render(); window.scrollTo(0, 0); if (view === 'sched') { const nx = $('#main .gm.next'); if (nx) nx.scrollIntoView({ block: 'center' }); } return; }
     if (d.sim) return simRun(d.sim);
     if (d.watch) return watchNext();
     if (d.live) {
