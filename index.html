@@ -924,6 +924,14 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
 .g-logos { justify-self: stretch; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))) calc(-1 * max(18px, env(safe-area-inset-bottom, 0px))); padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px)); background: #000; border-top: 3px solid #dcb23c; }
 .g-logos img { filter: none; }
 @media (max-width: 700px) { .g-logo { font-size: min(11vw, 68px); } }
+table.t .linkish, .plain-list .linkish { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; text-decoration: underline; text-decoration-color: var(--line2); text-underline-offset: 3px; }
+@media (max-width: 760px) { #toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); } }
+.gd-list { display: grid; gap: 8px; }
+.gd-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; background: var(--panel2); border-left: 3px solid var(--line2); }
+.gd-row.on { border-left-color: var(--accent); }
+.gd-row p { margin: 4px 0; font-size: 13px; color: var(--muted); }
+.plain-list { list-style: none; margin: 0; padding: 0; }
+.plain-list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .rl-s { display: none; }
 /* 아래쪽 탭·고정 칸에 가려지지 않게 스크롤 여백 */
 @media (max-width: 760px) { html { scroll-padding-bottom: 84px; scroll-padding-top: 72px; } }
@@ -3135,6 +3143,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     if (G.OD.Amateur) G.OD.Amateur.tick(S, date);
     if (G.OD.Dispatch) G.OD.Dispatch.tick(S, date);
     if (G.OD.Facility) G.OD.Facility.tick(S, date);
+    if (G.OD.Goods) G.OD.Goods.tick(S, date);
     if (!S.scoutDate) { S.scoutDate = date; return; }
     const days = Math.round((Date.parse(date) - Date.parse(S.scoutDate)) / 864e5);
     if (days < 7) { if (days < 0) S.scoutDate = date; return; }
@@ -3830,6 +3839,188 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
   OD.Facility = { REQ, SHARES, FARM, BUILD_DAYS, st, sync, tick, stadMult, stadLabel, approvalChance, canRequest, request, canUpgrade, upgrade };
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* ---- goods.js ---- */
+// 굿즈: 스타 유니폼 판매 · 스페셜 유니폼 데이 · 기념 상품 · 팀 스토어 투자
+// 금액 단위: 만 원. 장부 수입 항목 jersey(유니폼 판매) / merch(기획·기념 상품), 지출 항목 goods(굿즈 제작·매장)
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  const C = OD.Core;
+  const SE = () => OD.Season;
+  const FI = () => OD.Finance;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+  // 팀 스토어 (1~5단계): 굿즈 수입 전체에 배율, 올리는 비용, 해마다 유지비
+  const STORE = [
+    null,
+    { name: '구장 매점 한 칸', mult: 1, up: 0, keep: 0 },
+    { name: '구장 팀 스토어', mult: 1.15, up: 100000, keep: 10000 },
+    { name: '대형 팀 스토어', mult: 1.3, up: 200000, keep: 20000 },
+    { name: '플래그십 스토어 + 온라인 몰', mult: 1.45, up: 350000, keep: 35000 },
+    { name: '복합 팬 스토어 (전국 팝업)', mult: 1.6, up: 550000, keep: 50000 }
+  ];
+  const BUILD_DAYS = 90;
+  // 스페셜 유니폼 데이: 시즌 전에 최대 2개. 제작비는 고를 때, 수입은 행사 날
+  const SPECIAL = [
+    { k: 'kids', name: '어린이날 유니폼', date: '05-05', cost: 20000, base: 40000, mood: 2, note: '5월 5일. 가족 관중이 몰립니다. 성적과 상관없이 꾸준히 팔립니다.', flat: 0.7 },
+    { k: 'mil', name: '밀리터리 유니폼', date: '06-06', cost: 20000, base: 36000, mood: 1, note: '6월 6일 현충일. 무난하게 팔리고 팬 여론이 조금 오릅니다.', flat: 0.5 },
+    { k: 'city', name: '연고지 한정 유니폼', date: '07-15', cost: 40000, base: 65000, mood: 2, note: '7월 중순. 제작비가 크지만 연고 시장이 클수록 많이 팔립니다.', flat: 0.3, mkt: true },
+    { k: 'retro', name: '올드 유니폼 데이', date: '08-15', cost: 30000, base: 58000, mood: 3, note: '8월 중순. 그때까지 성적이 좋을수록 크게 팔립니다.', flat: 0 }
+  ];
+  const MAX_SPECIAL = 2;
+  // 기념 상품 (한 번 들어오는 수입)
+  const MEMO = { champ: 150000, ks: 50000, post: 20000, mvp: 30000, roy: 20000, gg: 10000, retire: 30000 };
+  const MEMO_KO = { champ: '한국시리즈 우승', ks: '한국시리즈 준우승', post: '가을야구 진출', mvp: '정규시즌 MVP', roy: '신인상', gg: '골든글러브', retire: '은퇴식' };
+  const MKT_MULT = { '대형': 1.15, '중형': 1, '소형': 0.9 };
+  const JERSEY_K = 8; // (인기도-50)^2 × 8만 원 / 년 (인기도 90 = 약 1.3억)
+
+  function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function team(S, id) { return S.league.teams.find((t) => t.id === id); }
+  function md(d) { return d.slice(5); }
+  function st(S) {
+    if (!S.goods) { S.goods = { t: {}, log: [] }; }
+    for (const t of S.league.teams) if (!S.goods.t[t.id]) S.goods.t[t.id] = { store: 1, build: null, plan: null };
+    return S.goods;
+  }
+  function ledger(S, tid) { return S.fin && S.fin[tid]; }
+  function add(S, tid, key, amt) { const f = ledger(S, tid); if (f) f.rev[key] = (f.rev[key] || 0) + amt * (tid === S.user ? C.diffOf(S).rev : 1); }
+  function charge(S, tid, amt) { const f = ledger(S, tid); if (f) f.exp.goods = (f.exp.goods || 0) + amt; }
+  function cash(S, tid) { return FI() && FI().cash ? FI().cash(S, tid) : 1e9; }
+  function storeMult(S, tid) { return STORE[st(S).t[tid].store].mult; }
+  function moodMult(t) { return 0.7 + (((t.fans && t.fans.mood) || 50) / 100) * 0.6; }
+
+  // ---- 스타 유니폼 ----
+  function jerseyOf(p) { return Math.pow(Math.max(0, (p.pop || 0) - 50), 2) * JERSEY_K; }
+  // 올해 예상 판매 (선수별) — 인기도·팬 여론·시장·팀 스토어
+  function jerseyList(S, tid) {
+    const t = team(S, tid), m = MKT_MULT[t.market] * moodMult(t) * storeMult(S, tid);
+    return Object.values(S.league.players).filter((p) => p.team === tid && jerseyOf(p) > 0)
+      .map((p) => ({ p, amt: Math.round(jerseyOf(p) * m) })).sort((a, b) => b.amt - a.amt);
+  }
+  function jerseyYear(S, tid) { return jerseyList(S, tid).reduce((a, x) => a + x.amt, 0); }
+  // 정규시즌 하루치 (finance.daySettle에서 부름)
+  function daySettle(S, n) {
+    st(S);
+    for (const t of S.league.teams) add(S, t.id, 'jersey', jerseyYear(S, t.id) / n);
+  }
+
+  // ---- 스페셜 유니폼 데이 ----
+  function planOf(S, tid) { const g = st(S).t[tid]; return g.plan && g.plan.y === S.league.year ? g.plan : null; }
+  function canPlan(S, tid, k) {
+    const sp = SPECIAL.find((x) => x.k === k); if (!sp) return '알 수 없는 기획입니다';
+    if (S.phase !== 'pre') return '스페셜 유니폼은 개막 전(1~3월)에만 기획할 수 있습니다';
+    const pl = planOf(S, tid);
+    if (pl && pl.picks.some((x) => x.k === k)) return '이미 고른 기획입니다';
+    if (pl && pl.picks.length >= MAX_SPECIAL) return '한 시즌에 ' + MAX_SPECIAL + '개까지 기획할 수 있습니다';
+    if (cash(S, tid) < sp.cost) return '보유 현금이 부족합니다 (제작비 ' + C.money(sp.cost) + ')';
+    return '';
+  }
+  function plan(S, tid, k) {
+    const err = canPlan(S, tid, k); if (err) return { ok: false, msg: err };
+    const g = st(S).t[tid], sp = SPECIAL.find((x) => x.k === k);
+    if (!planOf(S, tid)) g.plan = { y: S.league.year, picks: [] };
+    g.plan.picks.push({ k, done: false });
+    charge(S, tid, sp.cost);
+    return { ok: true };
+  }
+  function winPct(S, tid) { const r = S.league.teams.find((t) => t.id === tid).rec; const n = r ? r.w + r.l : 0; return n ? r.w / n : 0.5; }
+  // 예상 수입: 성적(승률)과 무관한 몫 flat + 승률에 따라 0.4~1.6배가 되는 몫
+  function specialEst(S, tid, sp, wp) {
+    const t = team(S, tid);
+    const perf = clamp(0.4 + (wp - 0.35) * 4, 0.4, 1.6);
+    return Math.round(sp.base * (sp.flat + (1 - sp.flat) * perf) * (sp.mkt ? MKT_MULT[t.market] * 1.1 : 1) * moodMult(t) * storeMult(S, tid) / 100) * 100;
+  }
+  function runSpecial(S, tid, pk, date) {
+    const sp = SPECIAL.find((x) => x.k === pk.k), t = team(S, tid);
+    const amt = specialEst(S, tid, sp, winPct(S, tid));
+    pk.done = true; pk.amt = amt;
+    add(S, tid, 'merch', amt);
+    if (t.fans) t.fans.mood = clamp(t.fans.mood + sp.mood, 0, 100);
+    if (tid === S.user) {
+      S.goods.log.push({ y: S.league.year, date, name: sp.name, amt });
+      SE().msg(S, date, '마케팅팀', sp.name + ' 결과', sp.name + ' 행사를 마쳤습니다. 판매 수입 ' + C.money(amt) + ' (제작비 ' + C.money(sp.cost) + '), 팬 여론 +' + sp.mood + '.');
+    }
+  }
+
+  // ---- 기념 상품 ----
+  function memo(S, tid, kind, who, date) {
+    if (!ledger(S, tid) || !MEMO[kind]) return 0;
+    const t = team(S, tid); st(S);
+    const amt = Math.round(MEMO[kind] * MKT_MULT[t.market] * storeMult(S, tid) / 100) * 100;
+    add(S, tid, 'merch', amt);
+    if (tid === S.user) {
+      const name = MEMO_KO[kind] + ' 기념 상품' + (who ? ' (' + who + ')' : '');
+      S.goods.log.push({ y: S.league.year, date, name, amt });
+      SE().msg(S, date, '마케팅팀', name, name + '이 잘 팔렸습니다. 판매 수입 ' + C.money(amt) + '.');
+    }
+    return amt;
+  }
+
+  // ---- 팀 스토어 ----
+  function canUpgrade(S, tid) {
+    const g = st(S).t[tid];
+    if (g.build) return '공사 중입니다 (' + C.fmtDate(g.build.done) + ' 완공)';
+    if (g.store >= 5) return '이미 최고 단계입니다';
+    if (cash(S, tid) < STORE[g.store + 1].up) return '보유 현금이 부족합니다 (' + C.money(STORE[g.store + 1].up) + ')';
+    return '';
+  }
+  function upgrade(S, tid, date) {
+    const err = canUpgrade(S, tid); if (err) return { ok: false, msg: err };
+    const g = S.goods.t[tid];
+    charge(S, tid, STORE[g.store + 1].up);
+    g.build = { lv: g.store + 1, done: C.addDays(date, BUILD_DAYS) };
+    return { ok: true };
+  }
+
+  // ---- 매일 ----
+  function tick(S, date) {
+    if (!S.user || !S.fin) return;
+    const GS = st(S), y = Number(date.slice(0, 4));
+    for (const t of S.league.teams) {
+      const g = GS.t[t.id];
+      if (g.build && date >= g.build.done) {
+        g.store = g.build.lv; g.build = null;
+        if (t.id === S.user) SE().msg(S, date, '마케팅팀', '팀 스토어 확장 완료', '"' + STORE[g.store].name + '"(' + g.store + '단계)이 문을 열었습니다. 유니폼·굿즈 수입이 ' + Math.round((STORE[g.store].mult - 1) * 100) + '% 늘어납니다. 해마다 유지비 ' + C.money(STORE[g.store].keep) + '이 듭니다.');
+      }
+      const pl = g.plan && g.plan.y === y ? g.plan : null;
+      if (pl && S.phase !== 'pre') for (const pk of pl.picks) if (!pk.done && md(date) >= SPECIAL.find((x) => x.k === pk.k).date) runSpecial(S, t.id, pk, date);
+    }
+    // 1월: AI 구단 기획 (사용자에게는 안내 메시지)
+    if (S.phase === 'pre' && GS.planY !== y) {
+      GS.planY = y;
+      const rng = new C.RNG(hash('sp' + y + ':' + (S.seed || 7)));
+      for (const t of S.league.teams) {
+        if (t.id === S.user) continue;
+        const ks = SPECIAL.map((x) => x.k); const a = rng.pick(ks), b = rng.pick(ks.filter((x) => x !== a));
+        for (const k of [a, b]) plan(S, t.id, k);
+      }
+      SE().msg(S, date, '마케팅팀', y + ' 스페셜 유니폼 기획', '올해 스페셜 유니폼 데이를 정해 주세요. 개막 전까지 ' + MAX_SPECIAL + '개까지 고를 수 있습니다. 구단 > 굿즈에서 고릅니다.');
+    }
+    // 개막 무렵: 매장 유지비
+    if (md(date) >= '03-01' && GS.keepY !== y) {
+      GS.keepY = y;
+      for (const t of S.league.teams) charge(S, t.id, STORE[GS.t[t.id].store].keep);
+    }
+    // 시즌 뒤: AI 구단 매장 투자
+    if (md(date) >= '11-01' && GS.aiY !== y) {
+      GS.aiY = y;
+      const rng = new C.RNG(hash('st' + y + ':' + (S.seed || 7)));
+      for (const t of S.league.teams) {
+        const g = GS.t[t.id];
+        if (t.id === S.user || g.build || g.store >= 5) continue;
+        if (cash(S, t.id) > STORE[g.store + 1].up * 3 && rng.chance(t.market === '대형' ? 0.4 : 0.25)) upgrade(S, t.id, date);
+      }
+    }
+  }
+  // 올해 굿즈 수입 요약 (화면용)
+  function summary(S, tid) {
+    const f = ledger(S, tid) || { rev: {}, exp: {} };
+    return { jersey: f.rev.jersey || 0, merch: f.rev.merch || 0, stadium: f.rev.goods || 0, cost: f.exp.goods || 0 };
+  }
+
+  OD.Goods = { STORE, SPECIAL, MAX_SPECIAL, MEMO, MEMO_KO, BUILD_DAYS, st, storeMult, jerseyList, jerseyYear, daySettle, planOf, canPlan, plan, specialEst, winPct, memo, canUpgrade, upgrade, tick, summary };
+})(typeof window !== 'undefined' ? window : globalThis);
+
 /* ---- military.js ---- */
 /* On Diamond — 병역: 미필·군필·면제, 상무·현역 18개월, 전역 복귀, 상무 모집(12월·6월), 아시안게임 특례 */
 (function (G) {
@@ -4140,12 +4331,27 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     SBS: { name: 'SBS', fee: 600000, win: 0, ps: 400000, note: '계약금 60억 + 가을야구 진출 시 40억 (10월)' },
     SOOP: { name: 'SOOP', fee: 0, win: 20000, ps: 0, note: '계약금 없음 + 1승마다 2억' }
   };
+  // 중계권·스폰서 기준은 해마다 3%씩 오름 (첫 시즌 = 1.0)
+  const GROW = 0.03;
+  function growth(S) {
+    if (!S.y0) S.y0 = (S.history && S.history[0] && S.history[0].year) || S.league.year;
+    return Math.pow(1 + GROW, Math.max(0, S.league.year - S.y0));
+  }
+  const eokTxt = (v) => (Math.round(v / 1000) / 10).toString().replace(/\.0$/, '') + '억';
+  // 올해 조건으로 환산한 방송사 계약
+  function bcastTerms(S, key) {
+    const b = BCAST[key]; if (!b) return null;
+    const g = growth(S), r = (v) => Math.round(v * g / 1000) * 1000;
+    const o = { name: b.name, fee: r(b.fee), win: r(b.win), ps: r(b.ps) };
+    o.note = key === 'KBS' ? '계약금 ' + eokTxt(o.fee) + ' + 1승마다 ' + eokTxt(o.win) : key === 'MBC' ? '계약금 ' + eokTxt(o.fee) + ' (승리 수당 없음)' : key === 'SBS' ? '계약금 ' + eokTxt(o.fee) + ' + 가을야구 진출 시 ' + eokTxt(o.ps) + ' (10월)' : '계약금 없음 + 1승마다 ' + eokTxt(o.win);
+    return o;
+  }
   const START_CASH = 500000; // 시작 보유 현금 50억
   // AI 방송사 선택: 예상 8~10위 MBC, 1~3위 KBS·SBS, 4~7위 KBS·SBS·SOOP 중 무작위
   function aiBroadcast(t, rng) { const r = t.pred || 5; return r >= 8 ? 'MBC' : r <= 3 ? rng.pick(['KBS', 'SBS']) : rng.pick(['KBS', 'SBS', 'SOOP']); }
   function bcastOf(S, tid) { return S.bcast && S.bcast[tid] && S.bcast[tid].y === S.league.year ? S.bcast[tid].k : null; }
   function signBroadcast(S, tid, key, date) {
-    const b = BCAST[key];
+    const b = bcastTerms(S, key);
     if (!b) return { ok: false, msg: '알 수 없는 방송사' };
     if (bcastOf(S, tid)) return { ok: false, msg: '올해 중계권 계약을 이미 맺었습니다' };
     S.bcast = S.bcast || {};
@@ -4175,8 +4381,8 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     { key: 'dev', name: '2군 감독', eff: '24세 이하 유망주 성장' },
     { key: 'med', name: '트레이닝 코치', eff: '부상 빈도·회복 기간' }
   ];
-  const REV = [['gate', '입장 수입'], ['tv', '중계권'], ['spon', '스폰서·광고'], ['goods', '상품 판매'], ['support', '모기업 지원금'], ['post', '포스트시즌'], ['comp', 'FA 보상금 등'], ['mlb', '포스팅 이적료'], ['event', '은퇴식·영구결번'], ['bonus', '구단주 특별 지원'], ['bail', '모기업 적자 보전']];
-  const EXP = [['sal', '선수 연봉'], ['staff', '감독·코치 연봉'], ['ops', '구장·운영비'], ['dead', '남은 연봉(방출·경질)'], ['fees', '이적료·계약금·보상금'], ['camp', '전지훈련'], ['dev', '유망주 파견'], ['fac', '구장·시설'], ['cut', '구단주 예산 삭감'], ['tax', '경쟁균형세 기금']];
+  const REV = [['gate', '입장 수입'], ['tv', '중계권'], ['spon', '스폰서·광고'], ['goods', '구장 상품 판매'], ['jersey', '유니폼 판매'], ['merch', '기획·기념 상품'], ['support', '모기업 지원금'], ['post', '포스트시즌'], ['comp', 'FA 보상금 등'], ['mlb', '포스팅 이적료'], ['event', '은퇴식·영구결번'], ['bonus', '구단주 특별 지원'], ['bail', '모기업 적자 보전']];
+  const EXP = [['sal', '선수 연봉'], ['staff', '감독·코치 연봉'], ['ops', '구장·운영비'], ['dead', '남은 연봉(방출·경질)'], ['fees', '이적료·계약금·보상금'], ['camp', '전지훈련'], ['dev', '유망주 파견'], ['fac', '구장·시설'], ['goods', '굿즈 제작·매장'], ['cut', '구단주 예산 삭감'], ['tax', '경쟁균형세 기금']];
 
   const team = (S, id) => S.league.teams.find((t) => t.id === id);
   const roster = (S, id) => LG.teamPlayers(S.league, id);
@@ -4281,11 +4487,11 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     if (!S.fin) return;
     const L = S.league, n = S.sched.days.length;
     const rng = rngOf(S, day.cal + 7);
-    const RV = C.diffOf(S).rev;
+    const RV = C.diffOf(S).rev, GR = growth(S);
     for (const t of L.teams) {
       const f = S.fin[t.id], m = MKT[t.market], k = t.id === S.user ? RV : 1;
-      if (!bcastOf(S, t.id)) f.rev.tv += TV / n * k; // 계약 없는 시즌(예전 저장)은 예전 중계료
-      f.rev.spon += (t.spon || m.spon) / n * k;
+      if (!bcastOf(S, t.id)) f.rev.tv += TV * GR / n * k; // 계약 없는 시즌(예전 저장)은 예전 중계료
+      f.rev.spon += (t.spon || m.spon) * GR / n * k;
       f.rev.support += supportOf(S, t) / n * k;
       f.exp.sal += roster(S, t.id).reduce((a, p) => a + (p.sal || 0), 0) / n;
       f.exp.staff += staffSal(t) / n;
@@ -4297,11 +4503,12 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
       const att = attendance(S, g.h, g.a, day.date, rng);
       res.att = att;
       const f = S.fin[g.h], k = g.h === S.user ? RV : 1;
-      f.rev.gate += att * PRICE * k; f.rev.goods += att * GOODS * k; f.att += att; f.attN++;
+      f.rev.gate += att * PRICE * k; f.rev.goods += att * GOODS * k * (G.OD.Goods ? G.OD.Goods.storeMult(S, g.h) : 1); f.att += att; f.attN++;
       fanResult(S, g.h, res.hs, res.as, res.tie); fanResult(S, g.a, res.as, res.hs, res.tie);
       // 방송사 승리 수당 (KBS 1억, SOOP 2억)
-      if (!res.tie) { const w = res.hs > res.as ? g.h : g.a, b = BCAST[bcastOf(S, w)]; if (b && b.win) S.fin[w].rev.tv += b.win * (w === S.user ? RV : 1); }
+      if (!res.tie) { const w = res.hs > res.as ? g.h : g.a, b = bcastTerms(S, bcastOf(S, w)); if (b && b.win) S.fin[w].rev.tv += b.win * (w === S.user ? RV : 1); }
     }
+    if (G.OD.Goods) G.OD.Goods.daySettle(S, n);
     sweep(S);
   }
   function postGame(S, res) {
@@ -4321,6 +4528,11 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
       const loser = rd.winner === rd.hi ? rd.lo : rd.hi;
       if (loser && S.fin[loser]) S.fin[loser].rev.post += POST_BONUS[rd.key] || 0;
       if (rd.key === 'ks') S.fin[rd.winner].rev.post += POST_BONUS.champ;
+    }
+    // 기념 상품: 우승 / 준우승 / 가을야구 진출
+    if (G.OD.Goods && po.champ) {
+      const ks = po.rounds.find((r) => r.key === 'ks'), ru = ks && (ks.winner === ks.hi ? ks.lo : ks.hi);
+      for (const id of (po.seeds || [])) G.OD.Goods.memo(S, id, id === po.champ ? 'champ' : id === ru ? 'ks' : 'post', null, po.date);
     }
   }
 
@@ -4628,7 +4840,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     return { ok: true, owed };
   }
 
-  G.OD.Finance = { supportOf, supMult, SUP_CUT, BAIL, setDirective, checkDirective, evaluateDirective, addRetiredCoach, BCAST, START_CASH, bcastOf, signBroadcast, broadcastStart, broadcastDeadline, cash, aiBroadcast, refreshCoaches, CAPACITY, MKT, ROLES, REV, EXP, setup, setupOwner, setBudget, payLimit, attendance, daySettle, postGame, postBonus, sweep,
+  G.OD.Finance = { growth, GROW, bcastTerms, supportOf, supMult, SUP_CUT, BAIL, setDirective, checkDirective, evaluateDirective, addRetiredCoach, BCAST, START_CASH, bcastOf, signBroadcast, broadcastStart, broadcastDeadline, cash, aiBroadcast, refreshCoaches, CAPACITY, MKT, ROLES, REV, EXP, setup, setupOwner, setBudget, payLimit, attendance, daySettle, postGame, postBonus, sweep,
     fanEvent, fanSay, onMove, heal, onInjuries, healAll, monthly, luxuryTax, evaluate, acceptOffer, updatePop, newSeason, hireCoach, staffSal, projNet, sum, initPop };
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -5118,6 +5330,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     if (G.OD.GG) G.OD.GG.open(S); // 골든글러브 후보
     const h = S.history[S.history.length - 1];
     if (h && h.year === L.year) h.awards = aw;
+    if (G.OD.Goods) for (const k of ['mvp', 'roy']) { const ap = aw[k] && S.league.players[aw[k]]; if (ap && isClub(S, ap.team)) G.OD.Goods.memo(S, ap.team, k, ap.name, S.off.date); }
     // 경력: 1군에서 충분히 뛰면 1시즌
     for (const id in P) {
       const p = P[id];
@@ -5160,6 +5373,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
       T.retiredNums = (T.retiredNums || []).concat([{ num: p.num, name: p.name, year: L.year }]);
       if (S.fin && S.fin[tid]) S.fin[tid].rev.event = (S.fin[tid].rev.event || 0) + bonus;
       rec.legend = bonus;
+      if (G.OD.Goods) G.OD.Goods.memo(S, tid, 'retire', p.name, S.off.date);
       SE().msg(S, S.off.date, '구단주', '은퇴식·영구결번', p.name + ' 선수의 은퇴식을 열고 등번호 ' + p.num + '번을 영구결번합니다. 팬들의 감사 행렬로 티켓·상품 수입 ' + C.money(bonus) + '이 들어왔습니다.');
     }
     // B- 이상으로 은퇴하면 코치 후보로 합류
@@ -5970,6 +6184,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
       const p = P[id]; if (!p) continue;
       p.gg = (p.gg || []).concat(gg.year);
       p.pop = clamp((p.pop || 0) + 4, 0, 100);
+      if (OD.Goods && S.league.teams.some((t) => t.id === p.team)) OD.Goods.memo(S, p.team, 'gg', p.name, date);
       if (res[k].find((r) => r.id === id).tid === S.user) mine.push(POS.find((g) => g.k === k).n + ' ' + p.name);
     }
     const h = S.history[S.history.length - 1];
@@ -6315,7 +6530,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     if (S.phase !== 'reg') return;
     const st = standings(S);
     const seeds = st.slice(0, 5).map((x) => x.t.id);
-    if (G.OD.Finance && S.fin) for (const id of seeds) if (G.OD.Finance.bcastOf(S, id) === 'SBS') S.fin[id].rev.tv += G.OD.Finance.BCAST.SBS.ps * (id === S.user ? C.diffOf(S).rev : 1);
+    if (G.OD.Finance && S.fin) for (const id of seeds) if (G.OD.Finance.bcastOf(S, id) === 'SBS') S.fin[id].rev.tv += G.OD.Finance.bcastTerms(S, 'SBS').ps * (id === S.user ? C.diffOf(S).rev : 1);
     const last = S.sched.days[S.sched.days.length - 1];
     S.phase = 'post';
     S.post = {
@@ -6708,7 +6923,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
   const GROUPS = {
     team: [['squad', '1군'], ['lineup', '라인업'], ['fut', '퓨처스'], ['mil', '병역'], ['disp', '파견']],
     trans: [['mkt', '이적시장'], ['scout', '스카우트']],
-    club: [['clubm', '구단주·팬'], ['fac', '시설'], ['fin', '재정']],
+    club: [['clubm', '구단주·팬'], ['fac', '시설'], ['goods', '굿즈'], ['fin', '재정']],
     league: [['sched', '일정·결과'], ['stand', '순위'], ['rec', '기록']],
   };
   IC.team = IC.squad; IC.trans = IC.mkt; IC.league = IC.sched;
@@ -6837,6 +7052,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     else if (view === 'clubm' || view === 'club') m.innerHTML = clubHTML('main');
     else if (view === 'fac') m.innerHTML = clubHTML('fac');
     else if (view === 'fin') m.innerHTML = clubHTML('fin');
+    else if (view === 'goods') m.innerHTML = goodsHTML();
     else if (view === 'mgr') m.innerHTML = mgrHTML();
     else if (view === 'rec') m.innerHTML = recHTML();
     else if (view === 'sched') m.innerHTML = schedHTML();
@@ -6898,7 +7114,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
       if (d && d.year === S.league.year) T.push(tile('구단주 과제', '<div class="t-goal">' + esc(d.goals[0].text) + '</div><div class="t-sub muted">11월 1주 평가 · 실패 시 예산 삭감</div>', 'data-nav="clubm"', { cls: 'todo', badge: '<span class="badge acc">과제</span>' }));
       if (S.fin && FI.BCAST) {
         const cur = FI.bcastOf(S, S.user);
-        T.push(tile('중계권 계약', cur ? '<div class="t-goal">' + esc(FI.BCAST[cur].name) + ' 계약 완료</div><div class="t-sub muted">' + esc(FI.BCAST[cur].note) + '</div>' : '<div class="t-goal">아직 계약 안 함</div><div class="t-sub muted">2월 1일까지 정하지 않으면 MBC와 자동 계약</div>',
+        T.push(tile('중계권 계약', cur ? '<div class="t-goal">' + esc(FI.bcastTerms(S, cur).name) + ' 계약 완료</div><div class="t-sub muted">' + esc(FI.bcastTerms(S, cur).note) + '</div>' : '<div class="t-goal">아직 계약 안 함</div><div class="t-sub muted">2월 1일까지 정하지 않으면 MBC와 자동 계약</div>',
           'data-nav="clubm"', { cls: cur ? '' : 'todo', badge: cur ? '<span class="badge">완료</span>' : '<span class="badge acc">할 일</span>' }));
       }
       const stg = OD.Camp.STAGES.find((x) => x.key === S.pre.stage), nx = OD.Camp.nextStage(S);
@@ -7183,6 +7399,42 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     const cmp = '<section class="card" style="margin-top:16px"><div class="card-h"><h2>리그 시설 비교</h2></div><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">구단</th><th class="l">구장</th><th>구장 상태</th><th class="l">2군 시설</th></tr></thead><tbody>' +
       rows.map(({ x, f }) => '<tr class="' + (x.id === S.user ? 'me' : '') + '"><td class="l txt">' + patch(x, 18) + ' ' + esc(LG.teamName(x)) + '</td><td class="l txt muted">' + esc(x.park) + '</td><td><b>' + f.st + '</b> <small class="muted">' + FA.stadLabel(f.st) + '</small></td><td class="l txt">' + f.farm + '단계' + (f.build ? ' <small class="muted">(공사 중)</small>' : '') + '</td></tr>').join('') + '</tbody></table></div></section>';
     return '<div class="grid2 even" style="margin-top:16px">' + a + b + '</div>' + cmp;
+  }
+  // ---- 굿즈 (구단 > 굿즈) ----
+  function goodsHTML() {
+    const GD = OD.Goods; if (!GD || !S.fin) return '<div class="wrap"><div class="empty">굿즈 정보가 없습니다</div></div>';
+    const g = GD.st(S).t[S.user], sm = GD.summary(S, S.user), t = team(S.user);
+    const tot = sm.jersey + sm.merch + sm.stadium;
+    let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + S.league.year + ' 굿즈 수입</h2><span class="muted" style="font-size:13px">지금까지</span></div>' +
+      '<div class="fin-net"><span>합계</span><b class="num pos">' + C.money(Math.round(tot)) + '</b></div>' +
+      '<dl class="kv"><dt>유니폼 판매</dt><dd class="num">' + C.money(Math.round(sm.jersey)) + '</dd><dt>기획·기념 상품</dt><dd class="num">' + C.money(Math.round(sm.merch)) + '</dd><dt>구장 상품 판매</dt><dd class="num">' + C.money(Math.round(sm.stadium)) + '</dd><dt>굿즈 제작·매장 비용</dt><dd class="num neg">' + (sm.cost ? '-' + C.money(Math.round(sm.cost)) : C.money(0)) + '</dd></dl></section>';
+    // 스타 유니폼
+    const jl = GD.jerseyList(S, S.user), jy = jl.reduce((a, x) => a + x.amt, 0);
+    h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>유니폼 판매 순위</h2><span class="muted" style="font-size:13px">올해 예상 ' + C.moneyShort(jy) + '</span></div>' +
+      '<p class="muted" style="margin:0 0 8px;font-size:13px">인기 있는 선수일수록 유니폼이 많이 팔립니다. 팬 여론과 팀 스토어 단계에 따라 늘고, 선수가 팀을 떠나면 그만큼 사라집니다.</p>' +
+      (jl.length ? '<div class="tbl-wrap"><table class="t"><thead><tr><th class="l">순위</th><th class="l">선수</th><th>인기도</th><th>올해 예상</th></tr></thead><tbody>' + jl.slice(0, 8).map((x, i) => '<tr><td class="l">' + (i + 1) + '</td><td class="l txt"><button class="linkish" data-player="' + x.p.id + '">' + esc(x.p.name) + '</button> <span class="muted">' + (x.p.pr ? '투수' : LG.POS_KO[x.p.pos]) + '</span></td><td>' + Math.round(x.p.pop || 0) + '</td><td>' + C.moneyShort(x.amt) + '</td></tr>').join('') + '</tbody></table></div>' : '<div class="empty">유니폼이 팔릴 만큼 인기 있는 선수가 아직 없습니다</div>') + '</section>';
+    // 스페셜 유니폼
+    const pl = GD.planOf(S, S.user), picks = pl ? pl.picks : [], canPick = S.phase === 'pre';
+    h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>스페셜 유니폼 데이</h2><span class="muted" style="font-size:13px">' + picks.length + '/' + GD.MAX_SPECIAL + ' 기획' + (canPick ? ' · 개막 전까지' : '') + '</span></div><div class="gd-list">' +
+      GD.SPECIAL.map((sp) => {
+        const pk = picks.find((x) => x.k === sp.k), err = pk ? '' : GD.canPlan(S, S.user, sp.k);
+        const lo = GD.specialEst(S, S.user, sp, 0.4), hi = GD.specialEst(S, S.user, sp, 0.6);
+        return '<div class="gd-row' + (pk ? ' on' : '') + '"><div><b>' + esc(sp.name) + '</b> <span class="muted">' + Number(sp.date.slice(0, 2)) + '월 ' + Number(sp.date.slice(3)) + '일</span><p>' + esc(sp.note) + '</p><small class="muted">제작비 ' + C.moneyShort(sp.cost) + ' · 예상 수입 ' + C.moneyShort(lo) + '~' + C.moneyShort(hi) + ' · 팬 여론 +' + sp.mood + '</small></div>' +
+          (pk ? (pk.done ? '<span class="badge">수입 ' + C.moneyShort(pk.amt) + '</span>' : '<span class="badge acc">기획 확정</span>') : '<button class="btn sm" data-gplan="' + sp.k + '"' + (err ? ' disabled title="' + esc(err) + '"' : '') + '>기획하기</button>') + '</div>';
+      }).join('') + '</div>' + (canPick ? '' : '<p class="muted" style="margin:10px 0 0;font-size:13px">스페셜 유니폼은 개막 전(1~3월)에 기획합니다.</p>') + '</section>';
+    // 팀 스토어
+    const cur = GD.STORE[g.store], nx = GD.STORE[g.store + 1], uerr = GD.canUpgrade(S, S.user);
+    h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>팀 스토어</h2><span class="muted" style="font-size:13px">' + g.store + '단계 · ' + esc(cur.name) + '</span></div>' +
+      '<div class="fac-lv">' + [1, 2, 3, 4, 5].map((i) => '<i class="' + (i <= g.store ? 'on' : '') + '"></i>').join('') + '</div>' +
+      '<dl class="kv"><dt>굿즈 수입 배율</dt><dd class="num">' + (cur.mult === 1 ? '기본' : '+' + Math.round((cur.mult - 1) * 100) + '%') + '</dd><dt>유지비</dt><dd class="num">' + (cur.keep ? C.money(cur.keep) + ' / 년' : '없음') + '</dd></dl>' +
+      (g.build ? '<p class="muted" style="margin:10px 0 0;font-size:13px">확장 공사 중 · ' + C.fmtDate(g.build.done) + ' 완공 (' + g.build.lv + '단계)</p>' :
+        nx ? '<div class="fac-req" style="margin-top:10px"><div><b>' + (g.store + 1) + '단계로 확장</b> <span class="muted">' + esc(nx.name) + '</span><p>유니폼·기획 상품·구장 상품 판매가 모두 +' + Math.round((nx.mult - 1) * 100) + '%가 됩니다.</p><small class="muted">공사 3개월 · 비용 ' + C.money(nx.up) + ' (바로 냄) · 유지비 ' + C.money(nx.keep) + '/년</small></div><button class="btn sm" data-gstore="1"' + (uerr ? ' disabled title="' + esc(uerr) + '"' : '') + '>확장하기</button></div>' : '<p class="muted" style="margin:10px 0 0;font-size:13px">최고 단계입니다.</p>') + '</section>';
+    // 기념 상품 기록
+    const lg = (S.goods.log || []).slice(-8).reverse();
+    h += '<section class="card" style="margin-top:16px"><div class="card-h"><h2>기획·기념 상품 기록</h2></div>' +
+      '<p class="muted" style="margin:0 0 8px;font-size:13px">우승·가을야구 진출, MVP·신인상·골든글러브 수상, 은퇴식 때 기념 상품 수입이 들어옵니다.</p>' +
+      (lg.length ? '<ul class="plain-list">' + lg.map((x) => '<li><span>' + x.y + ' · ' + esc(x.name) + '</span><b class="num">' + C.moneyShort(x.amt) + '</b></li>').join('') + '</ul>' : '<div class="empty">아직 기록이 없습니다</div>') + '</section>';
+    return h + '</div>';
   }
   // ---- 다른 구단 1군 구장 보기 (구단 화면) ----
   function parksHTML() {
@@ -7711,17 +7963,17 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
     const t = team(S.user);
     if (cur) {
       if (!full) return '';
-      const b = FI.BCAST[cur];
+      const b = FI.bcastTerms(S, cur);
       return '<section class="card"><div class="card-h"><h2>' + S.league.year + ' 중계권</h2><span class="badge acc">' + b.name + '</span></div><p class="muted" style="margin:0;font-size:13px">' + esc(b.note) + '. 다른 구단: ' + S.league.teams.filter((x) => x.id !== S.user && FI.bcastOf(S, x.id)).map((x) => esc(x.name) + ' ' + FI.bcastOf(S, x.id)).join(' · ') + '</p></section>';
     }
     if (S.phase !== 'pre') return full ? '<section class="card"><div class="card-h"><h2>중계권</h2></div><p class="muted" style="margin:0;font-size:13px">중계권은 매년 1월에 방송사와 계약합니다. 올해는 예전 방식의 중계료(연 90억)를 받습니다.</p></section>' : '';
     const wins = Math.round(72 + (5.5 - (t.pred || 5)) * 3.5);
     const ps = (t.pred || 5) <= 5;
-    const est = (k) => { const b = FI.BCAST[k]; return b.fee + b.win * wins + (ps ? b.ps : 0); };
+    const est = (k) => { const b = FI.bcastTerms(S, k); return b.fee + b.win * wins + (ps ? b.ps : 0); };
     const pick = ui.bcastPick;
     let h = '<section class="card"><div class="card-h"><h2>' + S.league.year + ' 중계권 계약</h2><span class="muted" style="font-size:13px">1월 안에 · 계약 후 변경 불가</span></div><p class="muted" style="margin:0 0 10px;font-size:13px">방송사 하나와 계약합니다. 예상 ' + (t.pred || '-') + '위 기준 예상 승수 ' + wins + '승, 가을야구 ' + (ps ? '진출' : '탈락') + '으로 계산한 예상 수입입니다. 2월 1일까지 정하지 않으면 MBC와 자동 계약합니다.</p><div class="opts">';
     for (const k of Object.keys(FI.BCAST)) {
-      const b = FI.BCAST[k];
+      const b = FI.bcastTerms(S, k);
       h += '<button class="opt' + (pick === k ? ' on' : '') + '" data-bcast="' + k + '" aria-pressed="' + (pick === k) + '"><span class="opt-h"><b>' + b.name + '</b><span class="num">약 ' + C.money(est(k)) + '</span></span><span class="opt-n muted">' + esc(b.note) + '</span></button>';
     }
     h += '</div>' + (pick ? '<div class="sim-row" style="margin-top:10px"><button class="btn primary" data-bcastgo="' + pick + '">' + FI.BCAST[pick].name + '와 계약하기</button></div>' : '') + '</section>';
@@ -8748,7 +9000,7 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-ggpos],[data-ggv],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-ggpos],[data-ggv],[data-gplan],[data-gstore],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -8940,6 +9192,8 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
       keepScroll(render); return;
     }
     if (d.parkt) { ui.parkT = d.parkt; keepScroll(render); return; }
+    if (d.gplan) { const r = OD.Goods.plan(S, S.user, d.gplan); if (!r.ok) toast(r.msg); else toast('기획을 확정했습니다'); save(); keepScroll(render); return; }
+    if (d.gstore) { const r = OD.Goods.upgrade(S, S.user, SE.currentDate(S)); if (!r.ok) toast(r.msg); else toast('팀 스토어 확장 공사를 시작했습니다'); save(); keepScroll(render); return; }
     if (d.ggpos) { ui.ggPos = d.ggpos; keepScroll(render); return; }
     if (d.ggv) { const [pos, pid] = d.ggv.split(':'); const r = OD.GG.vote(S, pos, Number(pid)); if (!r.ok) toast(r.msg); save(); keepScroll(render); return; }
     if (d.facshare) { ui.facShare = Number(d.facshare); keepScroll(render); return; }
