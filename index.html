@@ -16,7 +16,7 @@
   --panel2: #24272e;
   --line: #30343d;
   --line2: #444955;
-  --fg: #f4f5f7;
+  --fg: #d3d5da;
   --muted: #a3a9b5;
   --dim: #6f7582;
   --accent: #dcb23c;
@@ -516,7 +516,7 @@ button.gm:hover { border-color: var(--line2); }
 .fm-top > div:first-child { background: color-mix(in srgb, var(--tc) 30%, var(--panel2)); }
 .fm-top > div { padding: 10px 14px; min-width: 0; }
 .fm-top > div + div { border-left: 1px solid rgba(255,255,255,.08); }
-.fm-name { font-family: var(--f-display); font-size: 24px; line-height: 1.15; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: #fff; }
+.fm-name { font-family: var(--f-display); font-size: 24px; line-height: 1.15; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--fg); }
 .fm-sub { font-size: 13px; color: rgba(255,255,255,.78); margin-top: 3px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .fm-hc { display: grid; align-content: center; gap: 2px; font-size: 13px; }
 .fm-hc > b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -881,10 +881,10 @@ b.wi { color: var(--win); } b.lo { color: var(--loss); }
 /* ========== 중계 방송 테마 (버전 66) ========== */
 body { background: var(--bg); }
 .card, .tile { border-radius: 2px; border: 0; border-top: 3px solid var(--line2); }
-.card.hero { background: var(--fg); color: #111; border-top-color: var(--accent); }
+.card.hero { background: #b9bcc3; color: #111; border-top-color: var(--accent); }
 .card.hero .muted, .card.hero .eyebrow { color: #4a4f5a; }
 .card.hero .hero-rec .rank { color: #111; background: var(--accent); padding: 0 10px; transform: skewX(-8deg); display: inline-block; }
-.card.hero .btn { background: #111; color: #fff; border-color: #111; } .card.hero .btn.primary { background: var(--accent); color: #111; border-color: var(--accent); }
+.card.hero .btn { background: #111; color: #d3d5da; border-color: #111; } .card.hero .btn.primary { background: var(--accent); color: #111; border-color: var(--accent); }
 .card-h h2, .tile-h h2 { font-weight: 400; letter-spacing: 0; }
 .card-h h2 { font-size: 22px; } .tile-h h2 { font-size: 18px; }
 .btn { border-radius: 2px; } .btn.primary { font-family: var(--f-display); font-weight: 400; font-size: 16px; }
@@ -910,16 +910,16 @@ table.t.stk th:first-child, table.t.stk td:first-child { background: var(--panel
 }
 
 /* ---------- 시작 화면 (중계 방송 오프닝) ---------- */
-#gate { background: #0f1013; color: #f4f5f7; }
+#gate { background: #0f1013; color: #d3d5da; }
 .g-bg { display: none; }
 .gate-in { gap: 0; padding-top: 0; width: 100%; }
-.g-logo { font-family: "OD Title", "Russo One", "Arial Black", Impact, sans-serif; font-size: clamp(38px, 9vw, 112px); padding: .22em .3em .18em; background: #dcb23c; transform: skewY(-5deg); box-shadow: -50vw 0 0 #dcb23c, 50vw 0 0 #dcb23c, -50vw 14px 0 #0f1013, 50vw 14px 0 #0f1013, 0 14px 0 #0f1013, -50vw 22px 0 #f4f5f7, 50vw 22px 0 #f4f5f7, 0 22px 0 #f4f5f7; }
+.g-logo { font-family: "OD Title", "Russo One", "Arial Black", Impact, sans-serif; font-size: clamp(38px, 9vw, 112px); padding: .22em .3em .18em; background: #dcb23c; transform: skewY(-5deg); box-shadow: -50vw 0 0 #dcb23c, 50vw 0 0 #dcb23c, -50vw 14px 0 #0f1013, 50vw 14px 0 #0f1013, 0 14px 0 #0f1013, -50vw 22px 0 #d3d5da, 50vw 22px 0 #d3d5da, 0 22px 0 #d3d5da; }
 .g-word { background: none; -webkit-text-fill-color: #111; color: #111; filter: none; }
 .g-ball { filter: drop-shadow(0 4px 0 rgba(0,0,0,.3)); }
 .gate-btns { margin-top: clamp(64px, 12vh, 110px); }
 .gate-btns .btn { border-radius: 2px; min-height: 52px; }
 #gate .btn.primary { background: #dcb23c; border-color: #dcb23c; color: #111; box-shadow: none; font-family: var(--f-display); font-weight: 400; font-size: 20px; }
-#gate .btn:not(.primary) { background: #000; border-color: #f4f5f7; color: #f4f5f7; backdrop-filter: none; }
+#gate .btn:not(.primary) { background: #000; border-color: #d3d5da; color: #d3d5da; backdrop-filter: none; }
 .gate-note { color: #a3a9b5; text-shadow: none; margin-top: 10px; }
 .g-logos { justify-self: stretch; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))) calc(-1 * max(18px, env(safe-area-inset-bottom, 0px))); padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px)); background: #000; border-top: 3px solid #dcb23c; }
 .g-logos img { filter: none; }
