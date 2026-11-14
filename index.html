@@ -959,6 +959,19 @@ table.t tr.dim td { color: var(--dim); }
 @media (max-width: 760px) { html { scroll-padding-bottom: 84px; scroll-padding-top: 72px; } }
 .tbl-wrap { scroll-padding-left: 140px; }
 @media (max-width: 760px) { #rail .rl-f { display: none; } #rail .rl-s { display: inline; } #rail .rail-btn { font-size: 11px; } }
+
+/* 심화 기록 */
+.rec-mode { flex: 0 0 auto; width: 150px; }
+.rec-mode .seg-b, .pf-mode .seg-b { min-height: 34px; font-size: 13px; padding: 0 12px; }
+.pf-sh { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.seg.pf-mode { display: inline-flex; width: 120px; flex: 0 0 auto; }
+.pf-mode .seg-b { min-height: 28px; font-size: 12px; letter-spacing: 0; text-transform: none; }
+.adv-help { margin-top: 10px; font-size: 13px; }
+.adv-help summary { cursor: pointer; color: var(--muted); }
+.adv-help dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0 0; }
+.adv-help dt { font-weight: 700; color: var(--fg); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding-top: 1px; }
+.adv-help dd { margin: 0; color: var(--muted); line-height: 1.5; }
+@media (max-width: 760px) { .adv-help dl { grid-template-columns: 1fr; gap: 2px; } .adv-help dd { margin-bottom: 6px; } }
 </style>
 </head>
 <body>
@@ -1414,7 +1427,7 @@ table.t tr.dim td { color: var(--dim); }
 
   function blankStats() {
     return {
-      g: 0, pa: 0, ab: 0, h: 0, d: 0, t: 0, hr: 0, r: 0, rbi: 0, bb: 0, so: 0, hbp: 0, sf: 0, sb: 0, cs: 0, gdp: 0, e: 0,
+      g: 0, pa: 0, ab: 0, h: 0, d: 0, t: 0, hr: 0, r: 0, rbi: 0, bb: 0, so: 0, hbp: 0, sf: 0, sb: 0, cs: 0, gdp: 0, e: 0, rab: 0, rh: 0,
       pg: 0, gs: 0, w: 0, l: 0, sv: 0, hld: 0, outs: 0, ph: 0, pr: 0, er: 0, pbb: 0, pso: 0, phr: 0, bf: 0, np: 0, phbp: 0
     };
   }
@@ -1955,6 +1968,7 @@ table.t tr.dim td { color: var(--dim); }
           }
         }
         const res = plateAppearance(b, p, def, off === H, !!(bases[0] || bases[1] || bases[2]));
+        const risp = !!(bases[1] || bases[2]), rAb = b[SK].ab, rH = b[SK].h; // 득점권 타석 기록용
         // 투구 수
         let np = res === 'K' ? 4.8 : res === 'BB' ? 5.7 : res === 'HBP' ? 2.9 : 3.5;
         np += (has(b, 'first') ? -0.9 : has(b, 'patient') ? 0.8 : 0) + (has(p, 'contact') ? -0.6 : has(p, 'strikeout') ? 0.6 : 0);
@@ -2072,6 +2086,7 @@ table.t tr.dim td { color: var(--dim); }
             bs.ab++; bb.ab++; outRec(1);
             if (LOG) desc = tp(['유격수', '2루수', '3루수', '1루수', '좌익수', '중견수', '우익수']) + ' 직선타';
         }
+        if (risp) { const st = b[SK]; st.rab = (st.rab || 0) + st.ab - rAb; st.rh = (st.rh || 0) + st.h - rH; }
         if (LOG) {
           sync();
           if (res === 'HR') scorers = scorers.slice(0, -1); // 홈런 타자 본인은 빼고
@@ -5622,14 +5637,16 @@ table.t tr.dim td { color: var(--dim); }
       const s = p.st;
       if (s && (s.g >= 60 || s.pg >= 30 || s.outs >= 150 || s.gs >= 10)) p.svc++;
     }
+    // 리그 상수 (심화 기록용)
+    if (G.OD.Saber) G.OD.Saber.store(S);
     // 통산 기록 남기기
     for (const id in P) {
       const p = P[id], s = p.st;
       if (!p.team || !s) continue;
       if (!(s.pa || s.bf)) continue;
       p.hist = p.hist || [];
-      p.hist.push(p.pr ? { y: L.year, t: p.team, k: 'p', a: [s.pg, s.gs, s.w, s.l, s.sv, s.hld, s.outs, s.ph, s.er, s.pbb, s.pso, s.phr] }
-        : { y: L.year, t: p.team, k: 'b', a: [s.g, s.pa, s.ab, s.h, s.d, s.t, s.hr, s.rbi, s.r, s.bb, s.so, s.sb, s.hbp, s.sf] });
+      p.hist.push(p.pr ? { y: L.year, t: p.team, k: 'p', a: [s.pg, s.gs, s.w, s.l, s.sv, s.hld, s.outs, s.ph, s.er, s.pbb, s.pso, s.phr, s.bf, s.phbp, s.pr] }
+        : { y: L.year, t: p.team, k: 'b', a: [s.g, s.pa, s.ab, s.h, s.d, s.t, s.hr, s.rbi, s.r, s.bb, s.so, s.sb, s.hbp, s.sf, s.cs, s.rab || 0, s.rh || 0] });
     }
     // 계약 1년 소진
     for (const id in P) { const p = P[id]; if (p.team && p.yrs > 0) p.yrs--; }
@@ -6833,6 +6850,128 @@ table.t tr.dim td { color: var(--dim); }
   OD.Records = { CAREER, SEASON, GAME, makePre, ensurePre, total, tick, game, upcoming };
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* ---- saber.js ---- */
+// 세이버 스탯 (심화 기록): 리그 평균과 구장 효과를 반영한 지표
+// 타자: ISO · BABIP · BB% · K% · BB/K · wOBA · wRC+ · OPS+ · 도루 성공률 · 득점권 타율 · WAR(공격+포지션)
+// 투수: WHIP · K/9 · BB/9 · HR/9 · K% · BB% · K-BB% · FIP · ERA+ · FIP- · 피BABIP · LOB% · WAR(FIP 기반)
+// 리그 상수는 시즌마다 그 리그 선수 전체 기록으로 계산, 시즌 결산 때 S.lgc[연도]에 남겨 지난 시즌 지표에도 씀
+(function (G) {
+  'use strict';
+  const OD = G.OD;
+  // wOBA 가중치 (리그 출루율에 맞춰 크기를 조정)
+  const W = { bb: 0.69, hbp: 0.72, b1: 0.88, b2: 1.25, b3: 1.58, hr: 2.03 };
+  const WOBA_SCALE = 1.2;
+  // 포지션 보정 (600타석당 점수)
+  const POS = { C: 12.5, SS: 7.5, '2B': 2.5, '3B': 2.5, CF: 2.5, LF: -7.5, RF: -7.5, '1B': -12.5, DH: -17.5 };
+  const RPW = 10; // 1승 = 약 10점
+
+  function wobaRaw(s) {
+    const b1 = s.h - s.d - s.t - s.hr;
+    const den = s.ab + s.bb + s.hbp + s.sf;
+    return den ? (W.bb * s.bb + W.hbp * s.hbp + W.b1 * b1 + W.b2 * s.d + W.b3 * s.t + W.hr * s.hr) / den : 0;
+  }
+  // 구장 효과 (홈 경기 절반만 반영, 홈런 지수 → 득점 지수)
+  function pfMap(S) {
+    const T = S.league.teams, m = T.reduce((a, t) => a + (t.hrf || 1), 0) / T.length, out = {};
+    for (const t of T) out[t.id] = 1 + ((t.hrf || 1) / m - 1) * 0.15;
+    return out;
+  }
+  // 리그 상수 계산 (sk: 'st' 1군, 'fst' 퓨처스. 포스트시즌은 1군 상수를 씀)
+  function compute(S, sk) {
+    const L = S.league, fut = sk === 'fst';
+    const ids = new Set((fut ? (L.fteams || []) : L.teams).map((t) => t.id));
+    const b = { pa: 0, ab: 0, h: 0, d: 0, t: 0, hr: 0, bb: 0, hbp: 0, sf: 0, so: 0, r: 0 };
+    const q = { outs: 0, er: 0, pr: 0, ph: 0, phr: 0, pbb: 0, phbp: 0, pso: 0, bf: 0 };
+    for (const id in L.players) {
+      const p = L.players[id];
+      if (!p.team || !ids.has(p.team)) continue;
+      const s = p[sk]; if (!s) continue;
+      if (p.pr) { if (s.bf) for (const k in q) q[k] += s[k] || 0; }
+      else if (s.pa) for (const k in b) b[k] += s[k] || 0;
+    }
+    if (b.pa < 200 || q.outs < 300) return null;
+    const obp = (b.h + b.bb + b.hbp) / (b.ab + b.bb + b.hbp + b.sf);
+    const slg = (b.h + b.d + 2 * b.t + 3 * b.hr) / b.ab;
+    const raw = wobaRaw(b), wm = raw ? obp / raw : 1;
+    const ip = q.outs / 3, era = q.er * 9 / ip;
+    const cfip = era - (13 * q.phr + 3 * (q.pbb + q.phbp) - 2 * q.pso) / ip;
+    return { obp, slg, wm, woba: obp, rpa: b.r / b.pa, era, cfip, pf: fut ? {} : pfMap(S) };
+  }
+  function consts(S, sk) {
+    if (sk === 'pst') sk = 'st';
+    const K = compute(S, sk);
+    if (K) return K;
+    // 시즌 초 등 표본이 적을 때: 지난 시즌 상수
+    const y = Object.keys(S.lgc || {}).map(Number).sort((a, b) => b - a)[0];
+    return y ? S.lgc[y][sk] || S.lgc[y].st : null;
+  }
+  // 시즌 결산 때 남겨 둠
+  function store(S) {
+    S.lgc = S.lgc || {};
+    const st = compute(S, 'st'), fst = compute(S, 'fst');
+    if (st) S.lgc[S.league.year] = { st, fst: fst || undefined };
+    const ys = Object.keys(S.lgc).map(Number).sort((a, b) => a - b);
+    while (ys.length > 30) delete S.lgc[ys.shift()];
+  }
+  function pfOf(K, tid) { return (K && K.pf && K.pf[tid]) || 1; }
+  const div = (a, b) => (b ? a / b : null);
+
+  // 타자
+  function bat(s, p, K, tid) {
+    const o = {};
+    o.pa = s.pa;
+    o.iso = s.ab ? (s.d + 2 * s.t + 3 * s.hr) / s.ab : null;
+    o.babip = div(s.h - s.hr, s.ab - s.so - s.hr + s.sf);
+    o.bbp = div(s.bb, s.pa); o.kp = div(s.so, s.pa);
+    o.bbk = s.so ? s.bb / s.so : s.bb ? 99 : null;
+    o.sbp = s.sb + (s.cs || 0) ? s.sb / (s.sb + (s.cs || 0)) : null;
+    o.sba = s.sb + (s.cs || 0);
+    o.risp = s.rab ? s.rh / s.rab : null; o.rab = s.rab || 0;
+    if (!K || !s.pa) { o.woba = o.wrc = o.opsp = o.war = null; return o; }
+    const pf = pfOf(K, tid != null ? tid : p.team);
+    o.woba = wobaRaw(s) * K.wm;
+    const wraa = (o.woba - K.woba) / WOBA_SCALE * s.pa;
+    o.wrc = ((wraa / s.pa + K.rpa) + (K.rpa - pf * K.rpa)) / K.rpa * 100;
+    const obp = div(s.h + s.bb + s.hbp, s.ab + s.bb + s.hbp + s.sf) || 0, slg = s.ab ? (s.h + s.d + 2 * s.t + 3 * s.hr) / s.ab : 0;
+    o.opsp = 100 * (obp / K.obp + slg / K.slg - 1) / pf;
+    const park = (1 - pf) * K.rpa * s.pa;
+    o.war = (wraa + park + (POS[p.pos] || 0) * s.pa / 600 + 20 * s.pa / 600) / RPW;
+    return o;
+  }
+  // 투수
+  function pit(s, p, K, tid) {
+    const o = {}, ip = s.outs / 3;
+    const bf = s.bf || (s.outs + s.ph + s.pbb + (s.phbp || 0));
+    o.outs = s.outs;
+    o.whip = ip ? (s.ph + s.pbb) / ip : null;
+    o.k9 = ip ? s.pso * 9 / ip : null; o.bb9 = ip ? s.pbb * 9 / ip : null; o.hr9 = ip ? s.phr * 9 / ip : null;
+    o.kp = div(s.pso, bf); o.bbp = div(s.pbb, bf);
+    o.kbb = o.kp != null ? o.kp - o.bbp : null;
+    o.babip = div(s.ph - s.phr, bf - s.pso - s.phr - s.pbb - (s.phbp || 0));
+    const on = s.ph + s.pbb + (s.phbp || 0);
+    o.lob = s.pr != null && on - 1.4 * s.phr > 0 ? Math.max(0, Math.min(1, (on - s.pr) / (on - 1.4 * s.phr))) : null;
+    if (!K || !ip) { o.fip = o.erap = o.fipm = o.war = null; return o; }
+    const pf = pfOf(K, tid != null ? tid : p.team);
+    o.fip = (13 * s.phr + 3 * (s.pbb + (s.phbp || 0)) - 2 * s.pso) / ip + K.cfip;
+    const era = s.er * 9 / ip;
+    o.erap = era ? 100 * K.era * pf / era : 999;
+    o.fipm = 100 * (o.fip + (o.fip - o.fip * pf)) / K.era;
+    const spShare = s.pg ? s.gs / s.pg : p.role === 'SP' ? 1 : 0;
+    const repl = 0.12 * spShare + 0.03 * (1 - spShare); // 대체 선수보다 9이닝당 더 버는 승리
+    o.war = ((K.era * pf - o.fip) / RPW + repl) * ip / 9;
+    return o;
+  }
+  // 지난 시즌 기록(p.hist 한 줄)을 기록 객체로
+  function fromHist(x) {
+    const a = x.a;
+    if (x.k === 'b') return { g: a[0], pa: a[1], ab: a[2], h: a[3], d: a[4], t: a[5], hr: a[6], rbi: a[7], r: a[8], bb: a[9], so: a[10], sb: a[11], hbp: a[12] || 0, sf: a[13] || 0, cs: a[14], rab: a[15], rh: a[16] };
+    return { pg: a[0], gs: a[1], w: a[2], l: a[3], sv: a[4], hld: a[5], outs: a[6], ph: a[7], er: a[8], pbb: a[9], pso: a[10], phr: a[11], bf: a[12], phbp: a[13] || 0, pr: a[14] };
+  }
+  function histK(S, y) { return S.lgc && S.lgc[y] ? S.lgc[y].st : null; }
+
+  OD.Saber = { W, POS, consts, compute, store, bat, pit, fromHist, histK, wobaRaw };
+})(typeof window !== 'undefined' ? window : globalThis);
+
 /* ---- season.js ---- */
 /* On Diamond — 시즌: 일정, 순위, 기록 순위, 포스트시즌, 날짜 진행 */
 (function (G) {
@@ -7275,7 +7414,7 @@ table.t tr.dim td { color: var(--dim); }
   let prevView = 'lobby';
   let pick = null; // {seed, S, sel}
   const ui = { sqTeam: null, sqTab: 'pit', futTab: 'pit', schMonth: null, ldrBat: 'avg', ldrPit: 'era', confirmNew: false, openMsg: null, gtab: 'sum',
-    rec: { lg: 'st', kind: 'bat', team: 'all', qual: true, sort: 'avg', dir: -1, limit: 40 } };
+    rec: { lg: 'st', kind: 'bat', team: 'all', qual: true, sort: 'avg', dir: -1, limit: 40, mode: 'basic' }, pfAdv: false };
   let live = null; // 경기 보기 상태
   ui.mktTab = 'trade';
   ui.trade = { partner: '', give: [], get: [], pgive: [], pget: [], mf: 'all', tf: 'all', res: null };
@@ -9029,6 +9168,32 @@ table.t tr.dim td { color: var(--dim); }
       ['pso', '삼진', (s) => s.pso], ['pbb', '볼넷', (s) => s.pbb], ['phr', '피홈런', (s) => s.phr], ['ph', '피안타', (s) => s.ph]
     ]
   };
+  // 심화 기록 열: [키, 이름, (기록, 지표) → 값, 표시, 낮을수록 좋음]
+  const fx3 = (v) => (v < 0 ? '-' + Math.abs(v).toFixed(3).replace(/^0/, '') : v.toFixed(3).replace(/^0/, ''));
+  const fpc = (v) => (v * 100).toFixed(1) + '%';
+  const f2 = (v) => v.toFixed(2);
+  const fint = (v) => (v >= 999 ? '-' : String(Math.round(v)));
+  REC_COLS.abat = [
+    ['pa', '타석', (s) => s.pa], ['wrc', 'wRC+', (s, a) => a.wrc, fint], ['war', 'WAR', (s, a) => a.war, f2], ['woba', 'wOBA', (s, a) => a.woba, fx3],
+    ['opsp', 'OPS+', (s, a) => a.opsp, fint], ['iso', 'ISO', (s, a) => a.iso, fx3], ['babip', 'BABIP', (s, a) => a.babip, fx3],
+    ['bbp', 'BB%', (s, a) => a.bbp, fpc], ['kp', 'K%', (s, a) => a.kp, fpc, 1], ['bbk', 'BB/K', (s, a) => a.bbk, (v) => (v >= 99 ? '-' : f2(v))],
+    ['risp', '득점권', (s, a) => a.risp, fx3], ['sbp', '도루%', (s, a) => a.sbp, fpc]
+  ];
+  REC_COLS.apit = [
+    ['outs', '이닝', (s) => s.outs, (v) => C.ipStr(v)], ['fip', 'FIP', (s, a) => a.fip, f2, 1], ['war', 'WAR', (s, a) => a.war, f2], ['erap', 'ERA+', (s, a) => a.erap, fint],
+    ['fipm', 'FIP-', (s, a) => a.fipm, fint, 1], ['whip', 'WHIP', (s, a) => a.whip, f2, 1], ['k9', 'K/9', (s, a) => a.k9, f2], ['bb9', 'BB/9', (s, a) => a.bb9, f2, 1],
+    ['hr9', 'HR/9', (s, a) => a.hr9, f2, 1], ['kp', 'K%', (s, a) => a.kp, fpc], ['bbp', 'BB%', (s, a) => a.bbp, fpc, 1], ['kbb', 'K-BB%', (s, a) => a.kbb, fpc],
+    ['babip', '피BABIP', (s, a) => a.babip, fx3, 1], ['lob', 'LOB%', (s, a) => a.lob, fpc]
+  ];
+  function recCols() { const R = ui.rec; return REC_COLS[(R.mode === 'adv' ? 'a' : '') + R.kind]; }
+  const ADV_HELP = {
+    bat: [['wRC+', '리그 평균 타자를 100으로 놓고 득점 생산력을 잰 값. 구장 효과를 뺍니다. 120이면 평균보다 20% 더 많이 만듭니다.'], ['WAR', '대체 선수보다 팀에 몇 승을 더 안겼는지. 공격과 포지션 보정만 넣고 수비는 뺐습니다.'],
+      ['wOBA', '볼넷·안타·장타마다 득점 가치를 달리 매긴 출루율. 리그 평균이 출루율과 같도록 맞췄습니다.'], ['OPS+', '출루율과 장타율을 리그 평균 대비로 바꾼 값 (100이 평균, 구장 보정).'],
+      ['ISO', '순수 장타력 (장타율 − 타율).'], ['BABIP', '인플레이 타구가 안타가 된 비율. 운이 많이 섞이고, 보통 .290~.310 근처로 돌아옵니다.'], ['BB% · K%', '타석당 볼넷·삼진 비율.'], ['득점권', '주자가 2루나 3루에 있을 때의 타율.'], ['도루%', '도루 성공률.']],
+    pit: [['FIP', '삼진·볼넷·몸에 맞는 공·홈런만으로 본 평균자책점. 수비와 운을 덜어 냅니다.'], ['WAR', 'FIP를 바탕으로 대체 선수보다 몇 승을 더 안겼는지 (구장 보정).'],
+      ['ERA+', '리그 평균자책점을 100으로 놓은 값. 높을수록 좋습니다 (구장 보정).'], ['FIP-', '리그 평균 FIP를 100으로 놓은 값. 낮을수록 좋습니다.'], ['K/9 · BB/9 · HR/9', '9이닝당 삼진·볼넷·피홈런.'],
+      ['K% · BB% · K-BB%', '상대 타자당 삼진·볼넷 비율과 그 차이. K-BB%가 높을수록 타자를 압도합니다.'], ['피BABIP', '인플레이 타구가 안타가 된 비율. 높으면 운이 나빴을 수 있습니다.'], ['LOB%', '내보낸 주자를 홈에 들여보내지 않은 비율.']]
+  };
   // ---- 올스타 ----
   function allstarHTML() {
     const AS = OD.AllStar; if (!AS) return '';
@@ -9088,13 +9253,15 @@ table.t tr.dim td { color: var(--dim); }
   }
   function recHTML() {
     const R = ui.rec, L = S.league, P = L.players;
-    const cols = REC_COLS[R.kind];
-    if (!cols.find((c) => c[0] === R.sort)) { R.sort = R.kind === 'bat' ? 'avg' : 'era'; R.dir = R.kind === 'bat' ? -1 : 1; }
+    const adv = R.mode === 'adv', SB = OD.Saber;
+    const cols = recCols();
+    if (!cols.find((c) => c[0] === R.sort)) { R.sort = R.kind === 'bat' ? (adv ? 'wrc' : 'avg') : (adv ? 'fip' : 'era'); R.dir = R.kind === 'bat' ? -1 : 1; }
     const col = cols.find((c) => c[0] === R.sort);
     const futLg = R.lg === 'fst' && !!L.fteams;
     const SK = futLg ? 'fst' : 'st';
     const tlist = futLg ? L.fteams : L.teams;
     const gp = {}; for (const t of tlist) gp[t.id] = t.rec.w + t.rec.l + t.rec.t;
+    const K = adv ? SB.consts(S, SK) : null;
     let rows = [];
     for (const id in P) {
       const p = P[id];
@@ -9104,7 +9271,9 @@ table.t tr.dim td { color: var(--dim); }
       if (!s) continue;
       if (R.kind === 'bat' ? !s.pa : !s.bf) continue;
       if (R.qual && (R.kind === 'bat' ? s.pa < gp[p.team] * 3.1 : s.outs < gp[p.team] * 3)) continue;
-      rows.push({ p, v: col[2](s) });
+      const a = adv ? (R.kind === 'bat' ? SB.bat(s, p, K) : SB.pit(s, p, K)) : null;
+      let v = col[2](s, a); if (v == null) v = R.dir < 0 ? -1e9 : 1e9;
+      rows.push({ p, v, a });
     }
     rows.sort((a, b) => (a.v - b.v) * R.dir || (b.p[SK].pa || b.p[SK].bf) - (a.p[SK].pa || a.p[SK].bf));
     const total = rows.length;
@@ -9114,16 +9283,18 @@ table.t tr.dim td { color: var(--dim); }
     let h = '<div class="wrap"><section class="card"><div class="card-h"><h2>' + L.year + ' 개인 기록</h2><span class="muted" style="font-size:13px">' + total + '명</span></div>' +
       '<div class="tabs" role="tablist" style="margin-bottom:10px">' + [['st', '1군 (KBO리그)'], ['fst', '퓨처스리그']].map(([k, n]) => '<button class="chip' + (R.lg === k ? ' on' : '') + '" data-reclg="' + k + '" role="tab" aria-selected="' + (R.lg === k) + '">' + n + '</button>').join('') + '</div>' +
       '<div class="bar-row"><div class="tabs" role="tablist">' + [['bat', '타자'], ['pit', '투수']].map(([k, n]) => '<button class="chip' + (R.kind === k ? ' on' : '') + '" data-reck="' + k + '" role="tab" aria-selected="' + (R.kind === k) + '">' + n + '</button>').join('') + '</div>' +
+      '<div class="seg rec-mode" role="tablist" aria-label="기록 종류">' + [['basic', '기본'], ['adv', '심화']].map(([k, n]) => '<button class="seg-b' + ((R.mode || 'basic') === k ? ' on' : '') + '" data-recmode="' + k + '" role="tab" aria-selected="' + ((R.mode || 'basic') === k) + '">' + n + '</button>').join('') + '</div>' +
       '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><select class="sel" id="recTeam" aria-label="구단">' + opts + '</select>' +
       '<label class="chk"><input type="checkbox" id="recQual"' + (R.qual ? ' checked' : '') + '> 규정 ' + (R.kind === 'bat' ? '타석' : '이닝') + ' 충족</label></div></div>' +
-      '<p class="muted" style="font-size:13px;margin:10px 0 0">열 제목을 누르면 그 기록 순으로 정렬합니다. 규정: 팀 경기 수 × ' + (R.kind === 'bat' ? '3.1타석' : '1이닝') + '.</p></section>';
+      '<p class="muted" style="font-size:13px;margin:10px 0 0">열 제목을 누르면 그 기록 순으로 정렬합니다. 규정: 팀 경기 수 × ' + (R.kind === 'bat' ? '3.1타석' : '1이닝') + '.' + (adv ? (K ? ' 심화 기록은 올해 리그 평균과 구장 효과를 기준으로 계산합니다.' : ' 리그 기록이 더 쌓이면 리그 평균 기준 지표(wRC+·FIP 등)가 나옵니다.') : '') + '</p>' +
+      (adv ? '<details class="adv-help"><summary>지표 설명</summary><dl>' + ADV_HELP[R.kind].map(([k, v]) => '<dt>' + k + '</dt><dd>' + v + '</dd>').join('') + '</dl></details>' : '') + '</section>';
     h += '<section class="card"><div class="tbl-wrap"><table class="t rec"><thead><tr><th class="l sticky">#</th><th class="l sticky2">선수</th><th class="l">팀</th>' +
       cols.map((c) => '<th><button class="sort' + (c[0] === R.sort ? ' on' : '') + '" data-sort="' + c[0] + '">' + c[1] + (c[0] === R.sort ? (R.dir < 0 ? ' ▼' : ' ▲') : '') + '</button></th>').join('') + '</tr></thead><tbody>';
     rows.forEach((x, i) => {
       const s = x.p[SK];
       const tm = futLg ? fteamOf(x.p.team) : team(x.p.team);
       h += '<tr class="click' + (x.p.team === S.user ? ' me' : '') + '" data-player="' + x.p.id + '"><td class="l sticky">' + (i + 1) + '</td><td class="l txt sticky2">' + esc(x.p.name) + '</td><td class="l txt"><span class="tn-cell">' + patch(tm, 18) + '</span></td>' +
-        cols.map((c) => { const v = c[2](s); return '<td' + (c[0] === R.sort ? ' class="hl"' : '') + '>' + (c[3] ? c[3](v) : v) + '</td>'; }).join('') + '</tr>';
+        cols.map((c) => { const v = c[2](s, x.a); return '<td' + (c[0] === R.sort ? ' class="hl"' : '') + '>' + (v == null ? '-' : c[3] ? c[3](v) : v) + '</td>'; }).join('') + '</tr>';
     });
     if (!rows.length) h += '<tr><td colspan="20" class="empty">조건에 맞는 선수가 없습니다.</td></tr>';
     h += '</tbody></table></div>' + (total > R.limit ? '<div style="margin-top:12px;text-align:center"><button class="btn sm" data-recmore="1">더 보기 (' + (total - R.limit) + '명)</button></div>' : '') + '</section></div>';
@@ -9408,10 +9579,10 @@ table.t tr.dim td { color: var(--dim); }
     h += '<div class="fm-foot"><section><h3>컨디션</h3><div class="fm-st">' + cond + '</div></section><section><h3>인기도</h3><div class="fm-st">' + pop + '</div></section>' + (OD.Morale && !pool && p.team && team(p.team) ? '<section><h3>만족도</h3><div class="fm-st">' + satTag(p) + '<span>' + esc(satWhy(p)) + '</span></div></section>' : '') +
       '<section><h3>최근 5경기 평점</h3>' + perf + '</section>' +
       (pool ? '<section class="wide"><h3>' + (p.pool === 'D' ? '아마추어' : '지난 시즌 (' + esc(p.lg || '해외') + ')') + '</h3><span>' + esc(p.pool === 'D' ? (p.school || '') + ' · ' + MK.regName(p.sreg) : p.prev || '-') + '</span></section><section class="wide"><h3>통산 (1군)</h3><span>KBO리그 기록이 없습니다.</span></section>'
-        : '<section class="wide"><h3>' + S.league.year + ' 시즌 (1군)</h3>' + kvRow(season) + '</section><section class="wide"><h3>통산 (1군, 이 리그에서)</h3>' + (hist.length ? kvRow(car) : '<span>첫 시즌을 마치면 쌓입니다' + (p.svc ? ' (이전 1군 ' + p.svc + '시즌)' : '') + '.</span>') + '</section>') + '</div>';
+        : '<section class="wide"><h3 class="pf-sh">' + S.league.year + ' 시즌 (1군)' + pfToggle(p) + '</h3>' + kvRow(ui.pfAdv ? advKV(p, s) : season) + '</section><section class="wide"><h3>통산 (1군, 이 리그에서)</h3>' + (hist.length ? kvRow(car) : '<span>첫 시즌을 마치면 쌓입니다' + (p.svc ? ' (이전 1군 ' + p.svc + '시즌)' : '') + '.</span>') + '</section>') + '</div>';
     // ---------- 상세 기록 ----------
-    h += '<details class="fm-more"' + (ui.pfMore ? ' open' : '') + '><summary>상세 기록 · 통산 기록 펼치기</summary><div class="fm-more-b"><div class="pf-box"><h3>' + S.league.year + ' KBO리그 (1군)</h3>' + statTable(p, s) + (p.pst && (p.pst.pa || p.pst.bf) ? '<h3 style="margin-top:8px">포스트시즌</h3>' + statTable(p, p.pst) : '') +
-      (p.fst && (p.fst.pa || p.fst.bf) ? '<h3 style="margin-top:8px">퓨처스리그</h3>' + statTable(p, p.fst) : '') + '</div>' + (hist.length || p.pre ? careerHTML(p) : '') + '</div></details>';
+    h += '<details class="fm-more"' + (ui.pfMore ? ' open' : '') + '><summary>상세 기록 · 통산 기록 펼치기</summary><div class="fm-more-b"><div class="pf-box"><h3 class="pf-sh">' + S.league.year + ' KBO리그 (1군)' + pfToggle(p) + '</h3>' + pfStat(p, s, 'st') + (p.pst && (p.pst.pa || p.pst.bf) ? '<h3 style="margin-top:8px">포스트시즌</h3>' + pfStat(p, p.pst, 'pst') : '') +
+      (p.fst && (p.fst.pa || p.fst.bf) ? '<h3 style="margin-top:8px">퓨처스리그</h3>' + pfStat(p, p.fst, 'fst') : '') + '</div>' + (hist.length || p.pre ? (ui.pfAdv ? careerAdvHTML(p) : careerHTML(p)) : '') + '</div></details>';
     return h + '</div>';
   }
   // 비FA 다년 계약 제안 (프로필)
@@ -9482,6 +9653,51 @@ table.t tr.dim td { color: var(--dim); }
     }
     return '<div class="pf-box"><h3>통산 기록 (1군)</h3><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">연도</th><th class="l">팀</th><th>경기</th><th>타석</th><th>타율</th><th>홈런</th><th>타점</th><th>도루</th><th>OPS</th></tr></thead><tbody>' +
       rows.map((x) => { const a = x.a; const s = { ab: a[2], h: a[3], d: a[4], t: a[5], hr: a[6], bb: a[9], hbp: a[12] || 0, sf: a[13] || 0 }; return '<tr><td class="l">' + x.y + '</td><td class="l txt">' + esc(tn(x.t)) + '</td><td>' + a[0] + '</td><td>' + a[1] + '</td><td>' + C.avg3(a[3], a[2]) + '</td><td>' + a[6] + '</td><td>' + a[7] + '</td><td>' + a[11] + '</td><td>' + (a[2] ? (SE.obp(s) + SE.slg(s)).toFixed(3).replace(/^0/, '') : '-') + '</td></tr>'; }).join('') + preRow + '</tbody></table></div>' + tail + '</div>';
+  }
+  // ---- 프로필: 심화 기록 ----
+  function pfToggle(p) {
+    return '<span class="seg pf-mode" role="tablist" aria-label="기록 종류">' + [['basic', '기본'], ['adv', '심화']].map(([k, n]) => '<button class="seg-b' + (!!ui.pfAdv === (k === 'adv') ? ' on' : '') + '" data-pfadv="' + k + '" data-pfid="' + p.id + '" role="tab" aria-selected="' + (!!ui.pfAdv === (k === 'adv')) + '">' + n + '</button>').join('') + '</span>';
+  }
+  const dash = (v, f) => (v == null ? '-' : f(v));
+  function advOf(p, s, sk, tid, K) {
+    const SB = OD.Saber; if (!SB) return null;
+    if (K === undefined) K = SB.consts(S, sk);
+    return p.pr ? SB.pit(s, p, K, tid) : SB.bat(s, p, K, tid);
+  }
+  function advKV(p, s) {
+    const a = advOf(p, s, 'st');
+    if (!a || !(p.pr ? s.bf : s.pa)) return p.pr ? [['FIP', '-'], ['ERA+', '-'], ['K/9', '-'], ['K-BB%', '-'], ['WAR', '-']] : [['wRC+', '-'], ['wOBA', '-'], ['ISO', '-'], ['득점권', '-'], ['WAR', '-']];
+    return p.pr ? [['FIP', dash(a.fip, f2)], ['ERA+', dash(a.erap, fint)], ['K/9', dash(a.k9, f2)], ['K-BB%', dash(a.kbb, fpc)], ['WAR', dash(a.war, f2)]]
+      : [['wRC+', dash(a.wrc, fint)], ['wOBA', dash(a.woba, fx3)], ['ISO', dash(a.iso, fx3)], ['득점권', dash(a.risp, fx3)], ['WAR', dash(a.war, f2)]];
+  }
+  function advHead(pr) {
+    return pr ? ['FIP', 'ERA+', 'FIP-', 'WHIP', 'K/9', 'BB/9', 'HR/9', 'K%', 'BB%', 'K-BB%', '피BABIP', 'LOB%', 'WAR']
+      : ['wRC+', 'wOBA', 'OPS+', 'ISO', 'BABIP', 'BB%', 'K%', 'BB/K', '득점권', '도루%', 'WAR'];
+  }
+  function advCells(pr, a) {
+    return pr ? [dash(a.fip, f2), dash(a.erap, fint), dash(a.fipm, fint), dash(a.whip, f2), dash(a.k9, f2), dash(a.bb9, f2), dash(a.hr9, f2), dash(a.kp, fpc), dash(a.bbp, fpc), dash(a.kbb, fpc), dash(a.babip, fx3), dash(a.lob, fpc), dash(a.war, f2)]
+      : [dash(a.wrc, fint), dash(a.woba, fx3), dash(a.opsp, fint), dash(a.iso, fx3), dash(a.babip, fx3), dash(a.bbp, fpc), dash(a.kp, fpc), dash(a.bbk, (v) => (v >= 99 ? '-' : f2(v))), dash(a.risp, fx3) + (a.rab ? ' <small class="muted">(' + a.rab + ')</small>' : ''), dash(a.sbp, fpc) + (a.sba ? ' <small class="muted">(' + a.sba + ')</small>' : ''), dash(a.war, f2)];
+  }
+  function pfStat(p, s, sk) {
+    if (!ui.pfAdv) return statTable(p, s);
+    const a = advOf(p, s, sk);
+    if (!a) return statTable(p, s);
+    return '<div class="tbl-wrap"><table class="t"><thead><tr>' + advHead(p.pr).map((x) => '<th>' + x + '</th>').join('') + '</tr></thead><tbody><tr>' + advCells(p.pr, a).map((x) => '<td>' + x + '</td>').join('') + '</tr></tbody></table></div>' +
+      (sk === 'st' ? '<p class="muted" style="margin:6px 0 0;font-size:12px">' + (p.pr ? 'FIP·ERA+·WAR은 리그 평균과 홈구장 효과를 반영합니다.' : 'wRC+·OPS+·WAR은 리그 평균과 홈구장 효과를 반영합니다. 득점권·도루% 옆 괄호는 타수·시도 수.') + '</p>' : '');
+  }
+  function careerAdvHTML(p) {
+    const SB = OD.Saber, rows = (p.hist || []).slice().reverse();
+    const tn = (id) => { const t = team(id) || fteamOf(id); return t ? t.name : '-'; };
+    const head = advHead(p.pr).filter((x) => !['BB/K', 'HR/9', 'FIP-', '피BABIP'].includes(x));
+    const pick = (cells) => { const all = advHead(p.pr); return cells.filter((c, i) => head.includes(all[i])); };
+    let h = '<div class="pf-box"><h3>통산 심화 기록 (1군)</h3><div class="tbl-wrap"><table class="t"><thead><tr><th class="l">연도</th><th class="l">팀</th>' + head.map((x) => '<th>' + x + '</th>').join('') + '</tr></thead><tbody>';
+    for (const x of rows) {
+      const s = SB.fromHist(x), K = SB.histK(S, x.y);
+      const a = p.pr ? SB.pit(s, p, K, x.t) : SB.bat(s, p, K, x.t);
+      h += '<tr><td class="l">' + x.y + '</td><td class="l txt">' + esc(tn(x.t)) + '</td>' + pick(advCells(p.pr, a)).map((c) => '<td>' + c + '</td>').join('') + '</tr>';
+    }
+    h += '</tbody></table></div><p class="muted" style="margin:6px 0 0;font-size:12px">리그 평균 기준 지표는 이 기능이 생긴 뒤 치른 시즌부터 나옵니다' + (p.pre ? '. 게임 시작 전 시즌은 기록이 없습니다' : '') + '.</p></div>';
+    return h;
   }
   function statTable(p, s) {
     if (p.pr) {
@@ -9722,7 +9938,7 @@ table.t tr.dim td { color: var(--dim); }
 
   // ================= 이벤트 =================
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-ggpos],[data-ggv],[data-gplan],[data-gstore],[data-asside],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
+    const el = e.target.closest('[data-gate],[data-act],[data-nav],[data-inbox],[data-pick],[data-sim],[data-watch],[data-live],[data-gtab],[data-msg],[data-player],[data-game],[data-team],[data-ldr],[data-sqtab],[data-futtab],[data-month],[data-reck],[data-sort],[data-tsort],[data-luhand],[data-dpick],[data-dsend],[data-dcancel],[data-facshare],[data-parkt],[data-ggpos],[data-ggv],[data-gplan],[data-gstore],[data-asside],[data-cut],[data-cutf],[data-facreq],[data-facup],[data-recmore],[data-recmode],[data-pfadv],[data-reclg],[data-futteam],[data-mkt],[data-tsel],[data-tf],[data-tact],[data-tcdir],[data-tcash],[data-offer],[data-claim],[data-uso],[data-pact],[data-hire],[data-fsign],[data-ff],[data-gomkt],[data-off],[data-fa],[data-comp],[data-fre],[data-draft],[data-sal],[data-roster],[data-mplan],[data-coach],[data-fired],[data-camp],[data-tpk],[data-diff],[data-mall],[data-setdiff],[data-amf],[data-amreg],[data-amlvl],[data-bcast],[data-bcastgo],[data-post],[data-prot],[data-protgo],[data-nego],[data-hj]');
     if (!el) return;
     const d = el.dataset;
     if (d.gate === 'start') return gateStart();
@@ -9754,8 +9970,10 @@ table.t tr.dim td { color: var(--dim); }
     if (d.gtab) { const [k, g] = d.gtab.split(':'); ui.gtab = k; const sc = $('#sheet').scrollTop; openSheet(gameSheet(g)); $('#sheet').scrollTop = sc; return; }
     if (d.futtab) { ui.futTab = d.futtab; render(); return; }
     if (d.reck) { ui.rec.kind = d.reck; ui.rec.sort = ''; ui.rec.limit = 40; render(); return; }
-    if (d.sort) { const R = ui.rec; if (R.sort === d.sort) R.dir = -R.dir; else { R.sort = d.sort; const c = REC_COLS[R.kind].find((x) => x[0] === d.sort); R.dir = c && c[4] ? 1 : -1; } render(); return; }
+    if (d.sort) { const R = ui.rec; if (R.sort === d.sort) R.dir = -R.dir; else { R.sort = d.sort; const c = recCols().find((x) => x[0] === d.sort); R.dir = c && c[4] ? 1 : -1; } render(); return; }
     if (d.recmore) { ui.rec.limit += 40; render(); return; }
+    if (d.recmode) { ui.rec.mode = d.recmode; ui.rec.sort = ''; ui.rec.limit = 40; keepScroll(render); return; }
+    if (d.pfadv) { ui.pfAdv = d.pfadv === 'adv'; if (!$('#sheet').hidden) { const sc = $('#sheet').scrollTop; openSheet(playerSheet(Number(d.pfid))); $('#sheet').scrollTop = sc; } else keepScroll(render); return; }
     if (d.reclg) { ui.rec.lg = d.reclg; ui.rec.team = 'all'; ui.rec.limit = 40; render(); return; }
     if (d.futteam) { ui.futTeam = d.futteam; render(); window.scrollTo(0, 0); return; }
     if (d.mkt) { ui.mktTab = d.mkt; ui.sheetConfirm = null; render(); return; }
