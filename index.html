@@ -987,7 +987,6 @@ table.t tr.dim td { color: var(--dim); }
     </div>
     <div class="gate-note" id="gateNote"></div>
   </div>
-  <div class="g-logos" id="gateLogos" aria-label="KBO 10개 구단"></div>
 </div>
 </div>
 
@@ -7707,7 +7706,6 @@ table.t tr.dim td { color: var(--dim); }
   // ================= 시작 화면 =================
   function showGate() {
     $('#shell').hidden = true; $('#pick').hidden = true; $('#gate').hidden = false;
-    const gl = $('#gateLogos'); if (gl && !gl.childElementCount) gl.innerHTML = LG.TEAMS.map((t) => LOGO[t.id] ? '<img src="' + LOGO[t.id] + '" alt="' + esc(LG.teamName(t)) + '" title="' + esc(LG.teamName(t)) + '" decoding="async">' : '').join('');
     gateNote();
   }
   async function gateStart() {
