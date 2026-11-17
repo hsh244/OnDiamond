@@ -3332,6 +3332,22 @@ table.t tr.dim td { color: var(--dim); }
     if (p.foreign === 1 && fTotal(S, tid) + (p.sal || 0) > fCap(S, tid)) return '외국인 연봉 합계 상한(' + C.money(fCap(S, tid)) + ')을 넘습니다';
     return null;
   }
+  // 지금 선수단이 외국인·아시아쿼터 한도를 넘는지 (예전 버전 구멍으로 들어온 경우 등)
+  function foreignOver(S, tid) { return foreignCheck(S, tid, [], []); }
+  // AI 구단이 한도를 넘으면 실력이 낮은 쪽부터 내보냄. 사용자 구단은 직접 정리하도록 남겨 둠
+  function enforceForeign(S, date) {
+    for (const t of S.league.teams) {
+      if (t.id === S.user) continue;
+      let guard = 0;
+      while (foreignOver(S, t.id) && guard++ < 6) {
+        const c = foreignCount(S, t.id);
+        const ps = roster(S, t.id).filter((p) => c.a > A_MAX ? p.foreign === 2 : c.f > F_MAX ? p.foreign === 1 : c.fp > F_SAME ? p.foreign === 1 && p.pr : p.foreign === 1 && !p.pr).sort((a, b) => a.ca - b.ca);
+        const p = ps[0]; if (!p) break;
+        p.team = null; p.ent = 0; p.fa = 1;
+        log(S, date || '', 'release', t.name + ', ' + (p.foreign === 2 ? '아시아쿼터 ' : '외국인 ') + p.name + ' 방출 (한도 초과)');
+      }
+    }
+  }
   function countReplace(S, tid) { if (isReplace(S, tid)) { S.frep = S.frep || {}; S.frep[tid] = (S.frep[tid] || 0) + 1; } }
   function fTotal(S, tid) { return roster(S, tid).filter((p) => p.foreign === 1).reduce((a, p) => a + (p.sal || 0), 0); }
   // ---- 에이전트 협상 + 다른 구단 가로채기 (사용자) ----
@@ -3484,7 +3500,7 @@ table.t tr.dim td { color: var(--dim); }
     if (S.frep) foreignWeekly(S, date, rng);
   }
 
-  G.OD.Market = { reYears, fCap, fCapBonus, F_RE_BONUS, foreignFits, fixUsoForeign, posCheck, migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
+  G.OD.Market = { foreignOver, enforceForeign, reYears, fCap, fCapBonus, F_RE_BONUS, foreignFits, fixUsoForeign, posCheck, migrateForeign, isReplace, scoutVelo, attrClass, negotiate, hijackResolve, fTotal, F_TOTAL_CAP, refreshManagers, PICK_ROUNDS, pickParse, pickOwner, pickYears, pickList, pickSlot, pickValue, pickLabel, MAX_ROSTER, MIN_ROSTER, MAX_SIDE, deadline, baseValue, valueFor, teamMode, tradeOpen, evaluate, executeTrade,
     acceptOffer, declineOffer, MAX_CASH, aiOffer, aiTrades, release, releaseCheck, processWaivers, claimToggle, usoFee, signFromUso,
     seasonLeft, refreshEntries, log, moveTo, makeCandidate, setupManagers, mgrRating, mgrText, hireManager, weekly, fairSalary,
     F_MAX, F_SAME, A_MAX, F_CAP, A_CAP, F_REPLACE, WON_PER_MANUSD, fDeadline, setupForeign, pool, foreignCount, foreignCheck, signCheck, signForeign, aiFill, salaryOf, scoutEst, scoutAttr, scoutInfo, scoutSync, scoutSeed, scoutLevel, scoutStaff, setScout, scoutsOn, regionStats, weeklyCost, regName, regLabel, migrateScouts, FREG, DREG, HREG, UREG, SCOUT_H, SCOUT_LV, SCOUT_SLOTS, SCOUT_WEEK, SCOUT_COST, SK_SHOW };
@@ -6049,6 +6065,28 @@ table.t tr.dim td { color: var(--dim); }
       list.push(p.id);
     }
     S.off.foreign = { list };
+    // AI: 재계약하기로 한 인원이 한도를 넘으면 성적이 낮은 쪽부터 결별
+    for (const t of S.league.teams) {
+      if (t.id === S.user) continue;
+      const keep = list.map((id) => P[id]).filter((p) => p.team === t.id && p.fre.dec === 'keep').sort((a, b) => b.fre.perf - a.fre.perf);
+      let f = 0, fp = 0, fb = 0, a = 0;
+      for (const p of keep) {
+        const ok = p.foreign === 2 ? a < MK().A_MAX : f < MK().F_MAX && (p.pr ? fp < MK().F_SAME : fb < MK().F_SAME);
+        if (!ok) { p.fre.dec = 'drop'; continue; }
+        if (p.foreign === 2) a++; else { f++; if (p.pr) fp++; else fb++; }
+      }
+    }
+  }
+  // 우리 구단이 재계약하려는 외국인이 한도를 넘는지
+  function foreignKeepOver(S) {
+    const P = S.league.players, M = MK();
+    const keep = (S.off.foreign ? S.off.foreign.list : []).map((id) => P[id]).filter((p) => p && p.fre && p.team === S.user && p.fre.dec === 'keep');
+    const a = keep.filter((p) => p.foreign === 2).length, f = keep.filter((p) => p.foreign === 1);
+    if (a > M.A_MAX) return '아시아쿼터는 ' + M.A_MAX + '명까지만 재계약할 수 있습니다 (지금 ' + a + '명)';
+    if (f.length > M.F_MAX) return '외국인 선수는 ' + M.F_MAX + '명까지만 재계약할 수 있습니다';
+    if (f.filter((p) => p.pr).length > M.F_SAME) return '외국인 투수는 ' + M.F_SAME + '명까지입니다';
+    if (f.filter((p) => !p.pr).length > M.F_SAME) return '외국인 타자는 ' + M.F_SAME + '명까지입니다';
+    return '';
   }
   function decideForeign(S, pid, dec) { const p = S.league.players[pid]; if (p && p.fre && p.team === S.user) p.fre.dec = dec; }
   function closeForeign(S) {
@@ -6261,6 +6299,7 @@ table.t tr.dim td { color: var(--dim); }
       if ((o.fa.protect || []).some((c) => !c.done)) return '보호선수 명단을 제출해 주세요';
     }
     if (o.step === 'foreign' && foreignPending(S)) return '외국인 선수마다 재계약 여부를 정해 주세요';
+    if (o.step === 'foreign' && foreignKeepOver(S)) return foreignKeepOver(S);
     if (o.step === 'draft' && !o.draft.done) return '신인 드래프트를 끝내 주세요';
     if (o.step === 'roster' && cutLeft(S)) return '방출 명단에 ' + cutLeft(S) + '명을 더 넣어 주세요 (' + MAX_ROSTER + '명 이하)';
     return null;
@@ -6367,7 +6406,7 @@ table.t tr.dim td { color: var(--dim); }
 
   G.OD.Offseason = { closeForeign, STEPS, FA_ROUNDS, DRAFT_ROUNDS, MAX_ROSTER, startOffseason, advanceStep, canAdvance, develop, warLike,
     userOffer, cancelOffer, runFARound, compOptions, chooseComp, demandFor, budgetFor,
-    decideForeign, foreignPending, onClock, slotOf, protectToggle, protectSubmit, postingDecide, postingList, legendOf, peakOf, makeDraftClass, draftClass, draftPick, draftAdvance, setUserSalary, rosterExcess, cutList, cutToggle, cutLeft, perfScore };
+    decideForeign, foreignPending, foreignKeepOver, onClock, slotOf, protectToggle, protectSubmit, postingDecide, postingList, legendOf, peakOf, makeDraftClass, draftClass, draftPick, draftAdvance, setUserSalary, rosterExcess, cutList, cutToggle, cutLeft, perfScore };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- gglove.js ---- */
@@ -7574,6 +7613,7 @@ table.t tr.dim td { color: var(--dim); }
     if (MK.migrateScouts) MK.migrateScouts(S);
     if (MK.migrateForeign) MK.migrateForeign(S);
     if (MK.fixUsoForeign) MK.fixUsoForeign(S);
+    if (MK.enforceForeign && S.phase !== 'off') MK.enforceForeign(S, SE.currentDate(S));
     if (OD.Morale && S.user && Object.values(S.league.players).some((p) => p.team === S.user && p.sat == null)) OD.Morale.weekly(S, SE.currentDate(S)); // 예전 저장: 만족도 처음 계산
     for (const t of S.league.teams) { const R = Object.values(S.league.players).filter((x) => x.team === t.id); const used = new Set(R.map((x) => x.num)); for (const x of R) if (typeof x.num !== 'number' || isNaN(x.num)) { let n = 1 + Math.floor(Math.random() * 98); while (used.has(n)) n = (n + 1) % 100; used.add(n); x.num = n; } }
     if (OD.PPM) OD.PPM.ensureAll(S);
@@ -9830,6 +9870,7 @@ table.t tr.dim td { color: var(--dim); }
   function stopLive() { if (live && live.timer) clearTimeout(live.timer); live = null; }
   function watchNext() {
     if (running || !S) return;
+    if (foreignBlock()) return;
     // 우리 경기가 나올 때까지 진행
     let gid = null, guard = 0;
     while (!gid && guard++ < 15 && S.phase !== 'done') {
@@ -9864,8 +9905,16 @@ table.t tr.dim td { color: var(--dim); }
 
   // ================= 진행 =================
   let running = false;
+  // 외국인·아시아쿼터 한도를 넘은 채로는 경기를 진행하지 않음
+  function foreignBlock() {
+    if (!S || S.phase === 'off' || S.phase === 'done' || !MK.foreignOver) return false;
+    const m = MK.foreignOver(S, S.user); if (!m) return false;
+    toast(m + '. 선수단에서 한 명을 방출하거나 트레이드해야 경기를 진행할 수 있습니다.', 5000);
+    return true;
+  }
   function simRun(mode) {
     if (running || !S) return;
+    if (foreignBlock()) return;
     running = true;
     const startPhase = S.phase;
     const startDate = SE.currentDate(S);
@@ -9929,9 +9978,9 @@ table.t tr.dim td { color: var(--dim); }
 
   // ================= 알림 =================
   let toastT = null;
-  function toast(text) {
+  function toast(text, ms) {
     const el = $('#toast'); el.textContent = text; el.hidden = false;
-    clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2600);
+    clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, ms || 2600);
   }
 
   // ================= 이벤트 =================
