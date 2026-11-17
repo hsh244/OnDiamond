@@ -2792,6 +2792,9 @@ table.t tr.dim td { color: var(--dim); }
     if (!o) return { ok: false, msg: '제안이 없습니다.' };
     const ev = evaluate(S, S.user, o.from, o.get, o.give, date, { give: o.pkGet || [], get: o.pkGive || [] });
     if (ev.problems.length) return { ok: false, msg: ev.problems[0] };
+    // 제안을 받은 뒤 상대 구단 사정이 바뀌었을 수 있음 (그새 외국인·아시아쿼터를 채웠거나 포지션 인원이 모자람)
+    const pa = foreignCheck(S, o.from, o.give, o.get) || posCheck(S, o.from, o.give, o.get);
+    if (pa) { S.offers = S.offers.filter((x) => x.id !== oid); return { ok: false, msg: team(S, o.from).name + '가 제안을 거둬들였습니다 (' + pa + ')' }; }
     executeTrade(S, S.user, o.from, o.get, o.give, date, { a: o.pkGet || [], b: o.pkGive || [] });
     if (o.cash) payCash(S, o.cash > 0 ? o.from : S.user, o.cash > 0 ? S.user : o.from, Math.abs(o.cash));
     S.offers = S.offers.filter((x) => x.id !== oid);
@@ -3203,6 +3206,7 @@ table.t tr.dim td { color: var(--dim); }
     if (G.OD.Goods) G.OD.Goods.tick(S, date);
     if (G.OD.AllStar) G.OD.AllStar.tick(S, date);
     if (G.OD.Records) G.OD.Records.tick(S, date);
+    if (S.phase !== 'off') enforceForeign(S, date); // AI 구단이 어떤 길로든 한도를 넘으면 그날 바로 정리
     if (!S.scoutDate) { S.scoutDate = date; return; }
     const days = Math.round((Date.parse(date) - Date.parse(S.scoutDate)) / 864e5);
     if (days < 7) { if (days < 0) S.scoutDate = date; return; }
