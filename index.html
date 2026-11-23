@@ -1740,6 +1740,52 @@ table.t tr.dim td { color: var(--dim); }
     return best;
   }
 
+  // ---- 라인업 배치 ----
+  // 자리마다의 가치: 타격 + 수비(주포지션 우선). 한 번도 맡지 않은 포지션은 크게 깎아 거의 쓰지 않음
+  const DEF_W = 0.9;      // 수비 보정 크기 (예전 0.35)
+  const PRIMARY = 1.5;    // 주포지션 가산
+  const NEW_POS = 9;      // 처음 맡는 포지션 감점
+  const DH_COST = 0.6;    // 수비를 잘하는 선수를 굳이 지명타자로 쓰지 않도록
+  function slotValue(p, pos) {
+    const d = LG.POS_DEF[pos] || 0;
+    const fam = (p.posR && p.posR[pos]) || 0;
+    let v = LG.batValue(p) + (LG.posRating(p, pos) - 10) * DEF_W * d + d * 1.1;
+    if (p.pos === pos) v += PRIMARY;
+    if (!fam) v -= NEW_POS;
+    return v;
+  }
+  // 헝가리안 알고리즘: 행(자리) n ≤ 열(선수) m, 합이 가장 큰 배치. 반환: 자리마다 선수 번호 (-1 = 비움)
+  function assign(V) {
+    const n = V.length, m = V[0] ? V[0].length : 0;
+    if (!m) return V.map(() => -1);
+    if (m < n) { // 선수가 모자라면 가치가 큰 자리부터 채움 (드묾)
+      const out = V.map(() => -1), used = new Set();
+      V.forEach((row, i) => { let b = -1, bv = -1e9; row.forEach((v, j) => { if (!used.has(j) && v > bv) { bv = v; b = j; } }); if (b >= 0) { used.add(b); out[i] = b; } });
+      return out;
+    }
+    let mx = -1e9; for (const r of V) for (const x of r) if (x > mx) mx = x;
+    const a = (i, j) => mx - V[i - 1][j - 1]; // 최소 비용으로 바꿈
+    const u = new Array(n + 1).fill(0), v = new Array(m + 1).fill(0), pp = new Array(m + 1).fill(0), way = new Array(m + 1).fill(0);
+    for (let i = 1; i <= n; i++) {
+      pp[0] = i; let j0 = 0;
+      const minv = new Array(m + 1).fill(Infinity), usedc = new Array(m + 1).fill(false);
+      do {
+        usedc[j0] = true; const i0 = pp[j0]; let delta = Infinity, j1 = 0;
+        for (let j = 1; j <= m; j++) if (!usedc[j]) {
+          const cur = a(i0, j) - u[i0] - v[j];
+          if (cur < minv[j]) { minv[j] = cur; way[j] = j0; }
+          if (minv[j] < delta) { delta = minv[j]; j1 = j; }
+        }
+        for (let j = 0; j <= m; j++) { if (usedc[j]) { u[pp[j]] += delta; v[j] -= delta; } else minv[j] -= delta; }
+        j0 = j1;
+      } while (pp[j0] !== 0);
+      do { const j1 = way[j0]; pp[j0] = pp[j1]; j0 = j1; } while (j0);
+    }
+    const out = new Array(n).fill(-1);
+    for (let j = 1; j <= m; j++) if (pp[j]) out[pp[j] - 1] = j - 1;
+    return out;
+  }
+
   // 오늘 라인업 [{id,pos}] ×9, 타순대로
   function makeLineup(L, t, rng, oppHand) {
     const P = L.players;
@@ -1749,19 +1795,16 @@ table.t tr.dim td { color: var(--dim); }
       const tired = p.pos === 'C' ? 0.16 : (p.age >= 34 ? 0.07 : 0.035);
       if (rng.chance(tired)) rest.add(p.id);
     }
-    const used = new Set();
-    const slots = [];
     const plat = (p) => (p.bats !== 'S' && p.bats === oppHand ? -0.5 : 0);
-    for (const pos of ['C', 'SS', 'CF', '2B', '3B', 'RF', 'LF', '1B']) {
-      let best = null, bv = -99;
-      for (const p of bats) {
-        if (used.has(p.id)) continue;
-        const v = LG.fieldValue(p, pos) + formBase(p) * 0.7 * (0.5 + ((t.mgr && t.mgr.form) || 10) / 20) + plat(p) - (rest.has(p.id) ? 4 : 0);
-        if (v > bv) { bv = v; best = p; }
-      }
-      if (best) { used.add(best.id); slots.push({ id: best.id, pos }); }
-    }
-    { let best = null, bv = -99; for (const p of bats) { if (used.has(p.id)) continue; const v = LG.batValue(p) + plat(p) - (rest.has(p.id) ? 4 : 0); if (v > bv) { bv = v; best = p; } } if (best) { used.add(best.id); slots.push({ id: best.id, pos: 'DH' }); } }
+    const fw = 0.7 * (0.5 + ((t.mgr && t.mgr.form) || 10) / 20);
+    // 9자리(8개 수비 + 지명타자)를 한꺼번에 비교해 합이 가장 큰 배치를 고름
+    const POS9 = ['C', 'SS', 'CF', '2B', '3B', 'RF', 'LF', '1B', 'DH'];
+    const cand = bats.slice(0, 24);
+    const base = cand.map((p) => formBase(p) * fw + plat(p) - (rest.has(p.id) ? 4 : 0));
+    const M = POS9.map((pos) => cand.map((p, j) => (pos === 'DH' ? LG.batValue(p) - DH_COST : slotValue(p, pos)) + base[j]));
+    const asg = assign(M);
+    const slots = [];
+    asg.forEach((j, i) => { if (j >= 0) slots.push({ id: cand[j].id, pos: POS9[i] }); });
     // 타순
     const info = slots.map((s) => {
       const b = P[s.id].br;
@@ -2267,7 +2310,7 @@ table.t tr.dim td { color: var(--dim); }
     return res;
   }
 
-  G.OD.Sim = { TUNE, setEntry, simGame, makeLineup, pickStarter, spValue, rpValue };
+  G.OD.Sim = { TUNE, setEntry, simGame, makeLineup, slotValue, assign, pickStarter, spValue, rpValue };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- futures.js ---- */
@@ -6605,6 +6648,8 @@ table.t tr.dim td { color: var(--dim); }
       const sl = slotOf(p); if (!out[sd][sl]) continue;
       out[sd][sl].push({ id: p.id, tid: p.team, raw: perf(p) });
     }
+    // 주포지션이 지명타자인 선수가 없으면 모든 야수가 지명타자 후보 (다른 자리에 뽑힌 선수는 pickBest에서 건너뜀)
+    for (const sd in out) if (!out[sd].DH.length) for (const p of P) { if (sideOf(p.team) === sd && !p.pr && qualifies(p)) out[sd].DH.push({ id: p.id, tid: p.team, raw: perf(p) }); }
     for (const sd in out) for (const sl of SLOTS) {
       const arr = out[sd][sl.k]; if (!arr.length) continue;
       const hi = Math.max(...arr.map((x) => x.raw)), lo = Math.min(...arr.map((x) => x.raw));
@@ -6627,7 +6672,7 @@ table.t tr.dim td { color: var(--dim); }
   }
   function pickBest(b) {
     const best = { dream: {}, nanum: {} };
-    for (const sd in b) for (const sl of SLOTS) best[sd][sl.k] = (b[sd][sl.k] || []).slice(0, sl.win).map((x) => x.id);
+    for (const sd in b) { const used = new Set(); for (const sl of SLOTS) { best[sd][sl.k] = (b[sd][sl.k] || []).filter((x) => !used.has(x.id)).slice(0, sl.win).map((x) => x.id); best[sd][sl.k].forEach((id) => used.add(id)); } }
     return best;
   }
   // 감독 추천: 베스트12에 안 든 선수 중 성적 순 (투수 6 · 야수 6), 구단마다 최소 1명
