@@ -1863,6 +1863,7 @@ table.t tr.dim td { color: var(--dim); }
       for (const x of s.lineup) { const d = LG.POS_DEF[x.pos] || 0; if (!d) continue; def += r10(LG.posRating(P[x.id], x.pos)) * d; w += d; }
       s.def = (w ? def / w : 0) + (((s.t.staff && s.t.staff.def && s.t.staff.def.r) || 10) - 10) * 0.01;
       s.posOf = {}; for (const x of s.lineup) s.posOf[x.id] = x.pos;
+      for (const x of s.lineup) { const st = P[x.id][SK]; if (st) { const gp = st.gpos || (st.gpos = {}); gp[x.pos] = (gp[x.pos] || 0) + 1; } } // 포지션별 선발 출장 수
       s.catcher = P[(s.lineup.find((x) => x.pos === 'C') || s.lineup[0]).id];
     }
 
@@ -6483,7 +6484,16 @@ table.t tr.dim td { color: var(--dim); }
   const SHOW = { OF: 12 };
 
   function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
-  function group(p) { if (p.pr) return 'P'; return ['LF', 'CF', 'RF'].includes(p.pos) ? 'OF' : p.pos; }
+  const grpOf = (pos) => (['LF', 'CF', 'RF'].includes(pos) ? 'OF' : pos);
+  // 올해 가장 많이 선발로 나간 자리 (기록이 없으면 주포지션)
+  function group(p) {
+    if (p.pr) return 'P';
+    const gp = p.st && p.st.gpos;
+    if (gp) { const c = {}; for (const k in gp) c[grpOf(k)] = (c[grpOf(k)] || 0) + gp[k]; let b = null; for (const k in c) if (!b || c[k] > c[b]) b = k; if (b) return b; }
+    return grpOf(p.pos);
+  }
+  // 이 자리에 선발로 나간 경기 수
+  function gamesAt(p, g) { const gp = (p.st && p.st.gpos) || {}; let n = 0; for (const k in gp) if (grpOf(k) === g) n += gp[k]; return n; }
   function obp(s) { const d = s.ab + s.bb + s.hbp + s.sf; return d ? (s.h + s.bb + s.hbp) / d : 0; }
   function slg(s) { return s.ab ? (s.h + s.d + 2 * s.t + 3 * s.hr) / s.ab : 0; }
   // 선수 성적 점수: 공격·투구 기여 + 수비 능력
@@ -6506,6 +6516,17 @@ table.t tr.dim td { color: var(--dim); }
       if (p.pr) { if (!(s.outs >= maxOut * 0.55 || s.w >= 10 || s.sv >= 25 || s.hld >= 25)) continue; }
       else if (s.pa < maxPA * 0.5) continue;
       out[g].push(p);
+    }
+    // 후보가 모자란 자리(주로 지명타자): 그 자리에 선발로 나간 적 있는 야수 → 그래도 모자라면 규정 타석의 절반을 넘긴 모든 야수 중에서 채움
+    const bats = all.filter((p) => !p.pr && p.st.pa >= maxPA * 0.3);
+    for (const g of POS) {
+      if (g.k === 'P') continue;
+      const need = g.win + 2;
+      if (out[g.k].length >= need) continue;
+      const have = new Set(out[g.k].map((p) => p.id));
+      const more = bats.filter((p) => !have.has(p.id) && gamesAt(p, g.k) > 0).sort((a, b) => gamesAt(b, g.k) - gamesAt(a, g.k));
+      for (const p of more) { if (out[g.k].length >= need) break; out[g.k].push(p); have.add(p.id); }
+      if (out[g.k].length < g.win) for (const p of bats.filter((x) => !have.has(x.id) && x.st.pa >= maxPA * 0.5).sort((a, b) => perfRaw(b) - perfRaw(a))) { if (out[g.k].length >= g.win + 2) break; out[g.k].push(p); have.add(p.id); }
     }
     return out;
   }
@@ -6563,7 +6584,9 @@ table.t tr.dim td { color: var(--dim); }
         return { id: c.id, tid: c.tid, perf: c.perf, team, pop, vote: vs, votes: votes[c.id], tot: Math.round((c.perf * W.perf + team * W.team + pop * W.pop + vs * W.vote) * 10) / 10 };
       }).sort((a, b) => b.tot - a.tot || b.perf - a.perf);
       res[g.k] = rows;
-      win[g.k] = rows.slice(0, g.win).map((r) => r.id);
+      // 한 선수는 한 자리만 수상 (앞 자리에서 받은 선수는 건너뜀) → 언제나 10명
+      const got = new Set(Object.values(win).flat());
+      win[g.k] = rows.filter((r) => !got.has(r.id)).slice(0, g.win).map((r) => r.id);
     }
     gg.res = res; gg.win = win; gg.date = date;
     // 기록·인기도
